@@ -1,0 +1,15 @@
+@import "../../styles/base.scss";
+
+.template-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.attribute-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.top-actions .mat-primary {
+  background-color: #e27e4b;
+}
