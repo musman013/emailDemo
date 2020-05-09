@@ -176,7 +176,9 @@ import com.fastcode.emaildemo.emailbuilder.emailconverter.service.MjmlOwnService
 					|| (list.get(i).replace("%20","").trim().equals("to"))
 					|| (list.get(i).replace("%20","").trim().equals("cc"))
 					|| (list.get(i).replace("%20","").trim().equals("bcc"))
-					|| (list.get(i).replace("%20","").trim().equals("subject")))) {
+					|| (list.get(i).replace("%20","").trim().equals("subject"))
+					|| (list.get(i).replace("%20","").trim().equals("contentJson"))
+					)) {
 
 				// Throw an exception
 				throw new Exception("Wrong URL Format: Property " + list.get(i) + " not found!" );
@@ -309,6 +311,18 @@ import com.fastcode.emaildemo.emailbuilder.emailconverter.service.MjmlOwnService
 				}
 				else if(details.getValue().getOperator().equals("notEqual")) {
 					builder.and(emailTemplate.subject.ne(details.getValue().getSearchValue()));
+				}
+			}
+			
+			if(details.getKey().replace("%20","").trim().equals("contentJson")) {
+				if(details.getValue().getOperator().equals("contains")) {
+					builder.and(emailTemplate.contentJson.likeIgnoreCase("%"+ details.getValue().getSearchValue() + "%"));
+				}
+				else if(details.getValue().getOperator().equals("equals")) {
+					builder.and(emailTemplate.contentJson.eq(details.getValue().getSearchValue()));
+				}
+				else if(details.getValue().getOperator().equals("notEqual")) {
+					builder.and(emailTemplate.contentJson.ne(details.getValue().getSearchValue()));
 				}
 			}
 			
