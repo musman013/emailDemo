@@ -1,3 +1,6 @@
+.template-dialog{
+  max-width: 600px;
+}
 .error-msg .mat-icon {
     position: relative;
     bottom: -7px;

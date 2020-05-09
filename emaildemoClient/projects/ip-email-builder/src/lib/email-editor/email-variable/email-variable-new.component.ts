@@ -6,6 +6,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BaseNewComponent, Globals, PickerDialogService, ErrorService } from 'projects/fast-code-core/src/public_api';// 'fastCodeCore';
+import { IEmailVariableType } from './iemail-variable-type';
+import { EmailVariablTypeService } from './email-variable.type.service';
 
 @Component({
 	selector: 'app-email-variable-new',
@@ -16,6 +18,7 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable> 
 
 	title: string = "New Email Merge Field";
 	entityName: string = 'EmailVariable';
+	emailVariableType: IEmailVariableType[];
 	constructor(
 		public formBuilder: FormBuilder,
 		public router: Router,
@@ -26,7 +29,7 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable> 
 		public global: Globals,
 		public pickerDialogService: PickerDialogService,
 		public dataService: EmailVariableService,
-		
+		public variableTypedataService: EmailVariablTypeService,	
 		public errorService: ErrorService
 	) {
 		super(formBuilder, router, route, dialog, dialogRef, data, global, pickerDialogService, dataService, errorService);
@@ -40,6 +43,10 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable> 
 		});
 		super.ngOnInit();
 		this.checkPassedData();
+		this.variableTypedataService.getAll().subscribe(data => {
+			this.emailVariableType = data;
+			console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", this.emailVariableType);
+		});
 	}
 
 

@@ -149,6 +149,7 @@ public class EmailService implements IEmailService{
 	public void sendEmail(CreateEmailTemplateInput email) throws IOException
 	{
 		if(email.getActive()!=null && email.getActive()) {
+			// replace merge field with value before sending the email.
 			String html = emailTemplateAppService.convertJsonToHtml(replaceVariable(email.getContentJson()));
 			email.setContentHtml(html);
 			if (email.getAttachmentpath() != null && !email.getAttachmentpath().isEmpty() )
