@@ -113,12 +113,19 @@ export class EmailVariableListComponent extends BaseListComponent<IEmailVariable
       const emailTemplates = templates;
       // console.log('email templates:', emailTemplates);
       if(emailTemplates.length > 0) {
+        let templates = null;
+        emailTemplates.forEach(template => {
+          if(templates)
+            templates = templates + ', ' + template.templateName;
+          else
+            templates = template.templateName;
+        });
         this.deleteDialogRef = this.dialog.open(ConfirmDialogComponent, {
           disableClose: true,
           data: {
             title : 'Information',
             action: 'OK',
-            message: 'Merge field {{' + item.propertyName + '}} is used in some of the email templates. Please remove this Merge field from all the email templates to delete it.'
+            message: 'Merge field {{' + item.propertyName + '}} is used in email template ' +  templates + '. Please remove this Merge field from ' +  templates + ' to delete it.'
           }
         });
       } else {
