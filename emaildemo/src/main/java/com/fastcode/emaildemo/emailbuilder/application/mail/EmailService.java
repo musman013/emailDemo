@@ -153,9 +153,9 @@ public class EmailService implements IEmailService{
 			String html = emailTemplateAppService.convertJsonToHtml(replaceVariable(email.getContentJson()));
 			email.setContentHtml(html);
 			if (email.getAttachmentpath() != null && !email.getAttachmentpath().isEmpty() )
-				sendMessageWithAttachment(email.getTo(), email.getSubject(), email.getContentHtml(), email.getAttachmentpath());
+				sendMessageWithAttachment(replaceVariable(email.getTo()), replaceVariable(email.getSubject()), email.getContentHtml(), email.getAttachmentpath());
 			else
-				sendSimpleMessage(email.getTo(), email.getSubject(), email.getContentHtml());
+				sendSimpleMessage(replaceVariable(email.getTo()), replaceVariable(email.getSubject()), email.getContentHtml());
 		}
 	}
 	
