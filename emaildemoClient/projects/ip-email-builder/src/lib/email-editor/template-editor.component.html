@@ -39,7 +39,7 @@
         </mat-form-field>
         <mat-form-field>
           <input formControlName="subject" matInput
-            placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.SUBJECT' | translate}}">
+            placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.SUBJECT' | translate}}" (dblclick)="dblCLick($event)">
           <mat-error *ngIf="!formGroup.get('subject').valid && formGroup.get('subject').touched">
             {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}
           </mat-error>

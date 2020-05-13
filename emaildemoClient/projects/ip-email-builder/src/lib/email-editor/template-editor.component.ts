@@ -64,8 +64,8 @@ export class TemplateEditorComponent implements OnInit {
       subject: ['', Validators.required],
       to: ['', Validators.required],
       attachmentpath:[''],
-      active:[true, Validators.required]    
-        
+      active:[true, Validators.required]
+
      });
       if(param) {
         const id = +param;
@@ -79,19 +79,19 @@ export class TemplateEditorComponent implements OnInit {
    //<p class="ql-align-center">
         this._ngb.Email = new IPDefaultEmail({
           structures: [
-            new Structure('cols_1', 
+            new Structure('cols_1',
             [
-             
+
               [
                 new ImageBlock(
                   'https://secureservercdn.net/198.71.190.232/rjq.996.myftpupload.com/wp-content/uploads/2018/07/Nav-Logo.png',
                   {
                     width: { value:200, unit:'px'},
                     height: { value:50, unit:'px'},
-                   
+
                   }
                 ),
-             
+
                new DividerBlock( null,{
                 disabled: false,
                 message: ''
@@ -114,24 +114,24 @@ export class TemplateEditorComponent implements OnInit {
              /*   new TextBlock(
                   `<h2 class="ql-align-center">${this.translate.instant('EMAIL-EDITOR.MESSAGES.SAMPLE-TEMPLATE2')}</h2>`
                 )*/
-               
-               
-                
+
+
+
               ]
             ])
           ]
         });
       }
- 
+
   }
   setPermissions= ()=> {
-    // this.globalService.getUserPermissions().subscribe(permissions=> { 
+    // this.globalService.getUserPermissions().subscribe(permissions=> {
     //   let perms = permissions;
     this.IsReadPermission = true;
               this.IsDeletePermission = true;
               this.IsUpdatePermission = true;
               this.IsCreatePermission = true;
-    
+
       // if(this.globalPermissionService) {
       //       let entityName = this.entityName.startsWith("I") ? this.entityName.substr(1) : this.entityName;
       //       this.IsCreatePermission = this.globalPermissionService.hasPermissionOnEntity(entityName, "CREATE");
@@ -159,7 +159,7 @@ export class TemplateEditorComponent implements OnInit {
     //this.emailTemplate.contentJson = template;
     this.mailtemplateService.create(this.emailTemplate)
     .subscribe(
-        data => {                  
+        data => {
         //  x = data;
         //   y = JSON.parse(x.contentJson);
            //this.emailTemplate = {...this.emailTemplate,...data};
@@ -169,8 +169,8 @@ export class TemplateEditorComponent implements OnInit {
             //this.onBack();
         },
         error => {
-           
-           
+
+
         });
   }
  looadEmail (structures:any){
@@ -191,14 +191,14 @@ export class TemplateEditorComponent implements OnInit {
           category: templ.category,
           attachmentpath: templ.attachmentpath,
           active: templ.active
-        
+
         });
         this.looadEmail(JSON.parse(templ.contentJson));
-       
+
       },
       error => this.errorMessage = <any>error);
   }
-  
+
   saveEmail = ()=>{
     if (!this._ngb.IsChanged ){
       this._ngb.notify(this.translate.instant('EMAIL-EDITOR.MESSAGES.NO-CHANGES'));
@@ -239,7 +239,7 @@ export class TemplateEditorComponent implements OnInit {
     this.emailTemplate.attachmentpath=  this.formGroup.value.attachmentpath;
     this.emailTemplate.active = this.formGroup.value.active;
     this.emailTemplate.contentJson = template;
-   
+
     if(!this.emailTemplate.id){
       /*this.emailTemplate.subject="subject";
       this.emailTemplate.category="category";
@@ -249,7 +249,7 @@ export class TemplateEditorComponent implements OnInit {
       this.emailTemplate.contentJson = template;*/
       this.emailtemplateService.create(this.emailTemplate)
       .subscribe(
-          data => {                  
+          data => {
             x = data;
              y = JSON.parse(x.contentJson);
              this.emailTemplate = {...this.emailTemplate,...data};
@@ -259,15 +259,15 @@ export class TemplateEditorComponent implements OnInit {
               this.onBack();
           },
           error => {
-             
-             
+
+
           });
     }
     else {
-   
+
     this.emailtemplateService.update(this.emailTemplate, this.emailTemplate.id)
     .subscribe(
-        data => {                  
+        data => {
           x = data;
            y = JSON.parse(x.contentJson);
         /*   this._ngb.sendRequest().then(data=> {
@@ -276,12 +276,17 @@ export class TemplateEditorComponent implements OnInit {
            this.onBack();
         },
         error => {
-           
-           
+
+
         });
       }
 }
 onBack(): void {
   this.router.navigate(['./emailtemplates'],{ relativeTo: this.route.parent });
 }
+
+
+  dblCLick($event){
+    alert($event);
+  }
 }
