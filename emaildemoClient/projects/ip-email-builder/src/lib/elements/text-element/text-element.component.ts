@@ -58,5 +58,8 @@ export class TextElementComponent implements OnInit {
     };
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+
+    console.log("ip-text-element", this);
+  }
 }

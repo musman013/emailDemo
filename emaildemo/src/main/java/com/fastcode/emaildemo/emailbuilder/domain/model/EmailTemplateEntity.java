@@ -76,7 +76,6 @@ public class EmailTemplateEntity implements Serializable {
 	
 	@Basic
 	@Column(name = "To_", nullable = false,length = 256)	
-	@Email
 	public String getTo() {
 		return to;
 	}
@@ -86,7 +85,6 @@ public class EmailTemplateEntity implements Serializable {
 	
 	@Basic
 	@Column(name = "Cc", nullable = true ,length = 256)
-	@Email
 	public String getCc() {
 		return cc;
 	}
@@ -96,7 +94,6 @@ public class EmailTemplateEntity implements Serializable {
 
 	@Basic
 	@Column(name = "Bcc", nullable = true ,length = 256)
-	@Email
 	public String getBcc() {
 		return bcc;
 	}

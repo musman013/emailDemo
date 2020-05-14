@@ -26,15 +26,12 @@ public class CreateEmailTemplateInput {
 	
 	@NotNull(message = "To Should not be null")
 	@Length(max = 256, message = "To must be less than 256 characters")
-	@Email(message= "Invalid Email")
     private String to;
 	
 	@Length(max = 256, message = "CC must be less than 256 characters")
-	@Email(message= "Invalid Email")
     private String cc;
 	
 	@Length(max = 256, message = "Bcc must be less than 256 characters")
-	@Email(message= "Invalid Email")
     private String bcc;
 	
 	@Length(max = 256, message = "Subject must be less than 256 characters")
