@@ -58,8 +58,6 @@
           <table width="100%">
             <tr width="100%">
               <td width="95%">
-
-
                 <input formControlName="subject" matInput id="subject3"
                        placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.SUBJECT' | translate}}"
                        (keyup)="onKeyUp($event, 'subject3-variable')">
@@ -125,18 +123,49 @@
                   {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
               </mat-form-field>
               <mat-form-field>
-                <input formControlName="to" matInput
-                       placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.TO' | translate}}">
-                <mat-error *ngIf="!formGroup.get('to').valid && formGroup.get('to').touched">
-                  {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}
-                </mat-error>
+                <table width="100%">
+                  <tr width="100%">
+                    <td width="95%">
+                      <input formControlName="to" matInput id="to3"
+                             placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.TO' | translate}}"
+                             (keydown)="onKeyUp($event, 'to3-variable')">
+                      <mat-error *ngIf="!formGroup.get('to').valid && formGroup.get('to').touched">
+                        {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
+
+                      <div id="to3-variable" class="dropdown-content">
+                        <div *ngFor="let variable of _ngb.MergeTags"
+                             (click)="insertVariable($event, 'to3', 'to3-variable')"
+                        > {{variable}}</div>
+                      </div>
+                    </td>
+                    <td>
+                      <button color="accent" (click)="showHideVariables('to3-variable');">Merge Fields</button>
+                    </td>
+                  </tr>
+                </table>
               </mat-form-field>
               <mat-form-field>
-                <input formControlName="subject" matInput
-                       placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.SUBJECT' | translate}}">
-                <mat-error *ngIf="!formGroup.get('subject').valid && formGroup.get('subject').touched">
-                  {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}
-                </mat-error>
+                <table width="100%">
+                  <tr width="100%">
+                    <td width="95%">
+                      <input formControlName="subject" matInput id="subject3"
+                             placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.SUBJECT' | translate}}"
+                             (keyup)="onKeyUp($event, 'subject3-variable')">
+                      <mat-error *ngIf="!formGroup.get('subject').valid && formGroup.get('subject').touched">
+                        {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}
+                      </mat-error>
+
+                      <div id="subject3-variable" class="dropdown-content">
+                        <div *ngFor="let variable of _ngb.MergeTags"
+                             (click)="insertVariable($event, 'subject3', 'subject3-variable')"
+                        > {{variable}}</div>
+                      </div>
+                    </td>
+                    <td>
+                      <button color="accent" (click)="showHideVariables('subject3-variable');">Merge Fields</button>
+                    </td>
+                  </tr>
+                </table>
               </mat-form-field>
               <!-- <mat-form-field>
                 <input formControlName="attachmentpath" matInput

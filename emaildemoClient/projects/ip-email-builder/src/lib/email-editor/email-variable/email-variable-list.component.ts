@@ -125,7 +125,7 @@ export class EmailVariableListComponent extends BaseListComponent<IEmailVariable
           data: {
             title : 'Information',
             action: 'OK',
-            message: 'Merge field {{' + item.propertyName + '}} is used in email template ' +  templates + '. Please remove this Merge field from ' +  templates + ' to delete it.'
+            message: 'Merge field {{' + item.propertyName + '}} is used in email '+(emailTemplates.length > 1?'templates':'template')+' ' +  templates + '. Please remove this Merge field from ' +  templates + ' to delete it.'
           }
         });
       } else {

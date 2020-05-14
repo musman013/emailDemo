@@ -299,11 +299,14 @@ export class TemplateEditorComponent implements OnInit {
     const len = $event.target.value.length;
     let pos = $event.target.selectionStart;
     if ('{{' === $event.target.value.substring(pos - 2, pos)) {
-      comboElement.classList.toggle('show');
+      if (!comboElement.classList.contains('show')) {
+        comboElement.classList.add('show');
+      }
     } else {
       if (comboElement.classList.contains('show')) {
         comboElement.classList.remove('show');
       }
+
     }
   }
 
@@ -320,7 +323,7 @@ export class TemplateEditorComponent implements OnInit {
     element.selectionStart = pos + insString.length;
     element.selectionEnd = pos + insString.length;
     this.showHideVariables(comboId);
-
+    return false;
   }
 
   insert = (main_string, ins_string, pos) => {
