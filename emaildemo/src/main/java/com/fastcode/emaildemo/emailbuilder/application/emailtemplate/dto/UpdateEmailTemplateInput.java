@@ -35,6 +35,8 @@ public class UpdateEmailTemplateInput {
     private String subject;
 	private Boolean active;
 	private String attachmentpath;
+	@Length(max = 512, message = "Description Name must be less than 512 characters")
+    private String description;
 
 	public Long getId() {
 		return id;
@@ -104,6 +106,12 @@ public class UpdateEmailTemplateInput {
 
 	public void setAttachmentpath(String attachmentpath){
 		this.attachmentpath = attachmentpath;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
     
 	

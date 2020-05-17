@@ -26,6 +26,7 @@ public class EmailTemplateEntity implements Serializable {
     private String bcc;
     private String subject;
 	private Boolean active;
+	private String description;
 	private String attachmentpath;
     
     @Id
@@ -119,7 +120,15 @@ public class EmailTemplateEntity implements Serializable {
 	public void setActive(Boolean active){
 		this.active = active;
 	}
-
+	
+	@Basic
+	@Column(name = "description", nullable = true, length =512)
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	@Basic
 	@Column(name = "attachmentpath", nullable = true, length =256)
 	public String getAttachmentpath() {
