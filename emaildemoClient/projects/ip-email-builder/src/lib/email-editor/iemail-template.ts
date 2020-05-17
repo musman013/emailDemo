@@ -1,5 +1,5 @@
 export interface IEmailTemplate{
-    id: number;    
+    id: number;
     templateName:string;
     category:string;
     contentHtml:string;
@@ -7,15 +7,16 @@ export interface IEmailTemplate{
     to:string;
     cc:string;
     bcc:string;
-    subject:string;    
+    subject:string;
+    description: string;
 
     creationTime?:string;
     creatorUserId?: string;
     lastModificationTime?:string;
-    lastModifierUserId?: string;   
+    lastModifierUserId?: string;
     active?:boolean;
     attachmentpath?:string;
-   
-    
-    
+
+
+
   }

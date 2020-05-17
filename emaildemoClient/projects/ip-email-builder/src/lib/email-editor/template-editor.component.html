@@ -87,11 +87,13 @@
           </table>
         </mat-form-field>
 
+        <mat-form-field>
+          <textarea formControlName="description" matInput
+                    placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.DESCRIPTION' | translate}}"></textarea>
+          <mat-error *ngIf="!formGroup.get('description').valid && formGroup.get('description').touched">
+            {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
+        </mat-form-field>
 
-        <!-- <mat-form-field>
-          <input formControlName="attachmentpath" matInput
-            placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.ATTACHMENT-PATH' | translate}}">
-        </mat-form-field> -->
         <mat-checkbox formControlName="active">{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.ACTIVE' | translate}}
         </mat-checkbox>
       </form>
@@ -140,10 +142,6 @@
                 </mat-autocomplete>
                 <mat-error *ngIf="!formGroup.get('category').valid && formGroup.get('category').touched">
                   {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
-                <!--                <input formControlName="category" matInput-->
-                <!--                       placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.CATEGORY' | translate}}">-->
-                <!--                <mat-error *ngIf="!formGroup.get('category').valid && formGroup.get('category').touched">-->
-                <!--                  {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>-->
               </mat-form-field>
               <mat-form-field>
                 <table width="100%">
@@ -189,6 +187,12 @@
                     </td>
                   </tr>
                 </table>
+              </mat-form-field>
+              <mat-form-field>
+                <textarea formControlName="description" matInput
+                          placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.DESCRIPTION' | translate}}"></textarea>
+                <mat-error *ngIf="!formGroup.get('description').valid && formGroup.get('description').touched">
+                  {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
               </mat-form-field>
               <!-- <mat-form-field>
                 <input formControlName="attachmentpath" matInput

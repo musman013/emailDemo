@@ -95,6 +95,7 @@ export class TemplateEditorComponent implements OnInit {
       category: ['', Validators.required],
       subject: ['', Validators.required],
       to: ['', Validators.required],
+      description: [''],
       attachmentpath: [''],
       active: [true, Validators.required]
 
@@ -225,6 +226,7 @@ export class TemplateEditorComponent implements OnInit {
           contentJson: templ.contentJson,
           contentHtml: templ.contentHtml,
           category: templ.category,
+          description: templ.description,
           attachmentpath: templ.attachmentpath,
           active: templ.active
 
@@ -259,6 +261,7 @@ export class TemplateEditorComponent implements OnInit {
     this.emailTemplate.to = this.formGroup.value.to;
     this.emailTemplate.subject = this.formGroup.value.subject;
     this.emailTemplate.contentHtml = '';
+    this.emailTemplate.description = this.formGroup.value.description;
     this.emailTemplate.attachmentpath = this.formGroup.value.attachmentpath;
     this.emailTemplate.active = this.formGroup.value.active;
     this.emailTemplate.contentJson = JSON.stringify(this._ngb.Email);
@@ -271,6 +274,7 @@ export class TemplateEditorComponent implements OnInit {
     this.emailTemplate.to = this.formGroup.value.to;
     this.emailTemplate.subject = this.formGroup.value.subject;
     this.emailTemplate.contentHtml = '';
+    this.emailTemplate.description = this.formGroup.value.description;
     this.emailTemplate.attachmentpath = this.formGroup.value.attachmentpath;
     this.emailTemplate.active = this.formGroup.value.active;
     this.emailTemplate.contentJson = template;
@@ -281,7 +285,8 @@ export class TemplateEditorComponent implements OnInit {
       this.emailTemplate.contentHtml="";
       this.emailTemplate.templateName="usertemplate";
       this.emailTemplate.to="gzadik@yahoo.com";
-      this.emailTemplate.contentJson = template;*/
+      this.emailTemplate.contentJson = template;
+      this.emailTemplate.description = "some description";*/
       this.emailtemplateService.create(this.emailTemplate)
         .subscribe(
           data => {

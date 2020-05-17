@@ -36,9 +36,20 @@ public class CreateEmailTemplateInput {
 	
 	@Length(max = 256, message = "Subject must be less than 256 characters")
     private String subject;
+	
+	@Length(max = 512, message = "Description Name must be less than 512 characters")
+    private String description;
 
 	public Boolean getActive() {
 		return active;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public void setActive(Boolean active){

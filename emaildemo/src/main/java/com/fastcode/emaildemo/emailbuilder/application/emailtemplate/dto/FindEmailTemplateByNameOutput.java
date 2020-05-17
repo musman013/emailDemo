@@ -1,5 +1,7 @@
 package com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto;
 
+import org.hibernate.validator.constraints.Length;
+
 public class FindEmailTemplateByNameOutput {
 
 
@@ -14,6 +16,7 @@ public class FindEmailTemplateByNameOutput {
 	private String cc;
 	private String bcc;
 	private String subject;
+    private String description;
 
 	public Boolean getActive() {
 		return active;
@@ -82,6 +85,14 @@ public class FindEmailTemplateByNameOutput {
 	}
 	public void setSubject(String subject) {
 		this.subject = subject;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

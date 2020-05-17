@@ -44,6 +44,7 @@ export var fr: any = {
         "EMAIL-TEMPLATE": {
             "FIELDS": {
                 "TEMPLATE-NAME": "Template Name f",
+                "DESCRIPTION": "Description",
                 "SUBJECT": "Subject f",
                 "CATEGORY": "Category f",
                 "CC": "Cc",

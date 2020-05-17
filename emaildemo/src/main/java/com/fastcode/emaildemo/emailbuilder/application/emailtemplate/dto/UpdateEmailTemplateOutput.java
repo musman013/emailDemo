@@ -1,5 +1,7 @@
 package com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto;
 
+import org.hibernate.validator.constraints.Length;
+
 public class UpdateEmailTemplateOutput {
 
 	private Long id;
@@ -13,6 +15,14 @@ public class UpdateEmailTemplateOutput {
 	private String subject;
 	private Boolean active;
 	private String attachmentpath;
+    public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	private String description;
 
 	public Long getId() {
 		return id;
