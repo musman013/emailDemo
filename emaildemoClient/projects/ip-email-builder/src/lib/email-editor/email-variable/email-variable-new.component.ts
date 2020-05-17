@@ -29,7 +29,7 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable> 
 		public global: Globals,
 		public pickerDialogService: PickerDialogService,
 		public dataService: EmailVariableService,
-		public variableTypedataService: EmailVariablTypeService,	
+		public variableTypedataService: EmailVariablTypeService,
 		public errorService: ErrorService
 	) {
 		super(formBuilder, router, route, dialog, dialogRef, data, global, pickerDialogService, dataService, errorService);
@@ -45,7 +45,6 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable> 
 		this.checkPassedData();
 		this.variableTypedataService.getAll().subscribe(data => {
 			this.emailVariableType = data;
-			console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", this.emailVariableType);
 		});
 	}
 

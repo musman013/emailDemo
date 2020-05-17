@@ -8,12 +8,13 @@ import {
 } from '../classes';
 import {IpEmailBuilderService} from '../ip-email-builder.service';
 //'ip-email-builder';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {IEmailTemplate} from './iemail-template';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatSelect, MatSnackBar} from '@angular/material';
 import {TranslateService} from '@ngx-translate/core';
+import {map, startWith} from 'rxjs/operators';
 
 //import { DividerBlock, IBlockState } from 'ip-email-builder/public_api';
 @Component({
@@ -37,6 +38,12 @@ export class TemplateEditorComponent implements OnInit {
   @ViewChild('subject', {read: ElementRef, static: true})
   subject: ElementRef;
 
+  @ViewChild('category', {read: ElementRef, static: false})
+  category: ElementRef;
+
+  categoryList: string[];
+  categories: Observable<string[]>;
+
   constructor(
     private _ngb: IpEmailBuilderService,
     private route: ActivatedRoute,
@@ -52,7 +59,27 @@ export class TemplateEditorComponent implements OnInit {
     _ngb.MergeTags = new Set(['tag22']); //new Set(['{{firstName}}', '{{lastName}}']);
   }
 
+  private _filter(value: any): string[] {
+    const filterValue = value.toLowerCase();
+    return this.categoryList.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+
+  private setupCategory() {
+    this.emailtemplateService.getAllCategories().subscribe(categories => {
+      this.categoryList = categories;
+
+      this.categories = this.formGroup.get('category').valueChanges.pipe(
+        startWith(''),
+        map(value => this._filter(value))
+      );
+    });
+
+
+  }
+
   ngOnInit() {
+
     const param = this.route.snapshot.paramMap.get('id');
     this.setPermissions();
     this.emailVariableService.getAll(null, 0, 20).subscribe(
@@ -125,7 +152,7 @@ export class TemplateEditorComponent implements OnInit {
         ]
       });
     }
-
+    this.setupCategory();
   }
 
   setPermissions = () => {

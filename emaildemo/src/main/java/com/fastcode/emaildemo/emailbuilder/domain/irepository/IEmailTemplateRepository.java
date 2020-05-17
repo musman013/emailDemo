@@ -1,5 +1,7 @@
 package com.fastcode.emaildemo.emailbuilder.domain.irepository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -13,5 +15,8 @@ public interface IEmailTemplateRepository extends JpaRepository<EmailTemplateEnt
 
 	   @Query("select e from EmailTemplateEntity e where e.templateName = ?1")
 	   EmailTemplateEntity findByEmailName(String value);
+	   
+	   @Query("select distinct e.category from EmailTemplateEntity e")
+	   List<String> findAllDistinctCategories();
 	
 }

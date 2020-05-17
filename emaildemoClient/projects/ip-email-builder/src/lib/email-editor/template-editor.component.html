@@ -26,11 +26,20 @@
             {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input formControlName="category" matInput
-                 placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.CATEGORY' | translate}}">
+          <input type="text"
+                 #category
+                 placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.CATEGORY' | translate}}"
+                 aria-label="Number"
+                 matInput
+                 formControlName="category"
+                 [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of categories | async" [value]="option">
+              {{option}}
+            </mat-option>
+          </mat-autocomplete>
           <mat-error *ngIf="!formGroup.get('category').valid && formGroup.get('category').touched">
-            {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}
-          </mat-error>
+            {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
         </mat-form-field>
         <mat-form-field>
           <table width="100%">
@@ -117,10 +126,24 @@
                   {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
               </mat-form-field>
               <mat-form-field>
-                <input formControlName="category" matInput
-                       placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.CATEGORY' | translate}}">
+                <input type="text"
+                       #category
+                       placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.CATEGORY' | translate}}"
+                       aria-label="Number"
+                       matInput
+                       formControlName="category"
+                       [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of categories | async" [value]="option">
+                    {{option}}
+                  </mat-option>
+                </mat-autocomplete>
                 <mat-error *ngIf="!formGroup.get('category').valid && formGroup.get('category').touched">
                   {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
+                <!--                <input formControlName="category" matInput-->
+                <!--                       placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.CATEGORY' | translate}}">-->
+                <!--                <mat-error *ngIf="!formGroup.get('category').valid && formGroup.get('category').touched">-->
+                <!--                  {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>-->
               </mat-form-field>
               <mat-form-field>
                 <table width="100%">

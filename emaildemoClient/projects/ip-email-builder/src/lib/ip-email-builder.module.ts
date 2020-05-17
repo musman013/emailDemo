@@ -25,7 +25,7 @@ import {
   MatSortModule,
   MatPaginatorModule,
   MatCheckboxModule,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule, MatAutocompleteModule
 } from '@angular/material';
 
 import 'hammerjs';
@@ -75,13 +75,14 @@ import { EmailRoutes } from './email-routing.module';
 //import { ILibraryRootConfg } from './interfaces';
 //import { EmailRoutingModule } from './email-routing.module';
 //import {FastCodeCoreModule,EmailRoutes} from 'fastCodeCore';
-import { FastCodeCoreModule ,ILibraryRootConfg} from 'projects/fast-code-core/src/public_api';//'fastCodeCore';
+import { FastCodeCoreModule ,ILibraryRootConfg} from 'projects/fast-code-core/src/public_api';
+//'fastCodeCore';
 //import {GenericApiService} from 'fastCodeCore/public_api';
 @NgModule({
   imports: [
-   // EmailRoutingModule,
-   FastCodeCoreModule.forRoot({apiUrl:""}),   
-   RouterModule.forChild(EmailRoutes),
+    // EmailRoutingModule,
+    FastCodeCoreModule.forRoot({apiUrl: ''}),
+    RouterModule.forChild(EmailRoutes),
     HttpClientModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
@@ -113,7 +114,8 @@ import { FastCodeCoreModule ,ILibraryRootConfg} from 'projects/fast-code-core/sr
     MatPaginatorModule,
     ReactiveFormsModule,
     MatCardModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatAutocompleteModule
   ],
   declarations: [
     IpEmailBuilderComponent,
@@ -142,10 +144,10 @@ import { FastCodeCoreModule ,ILibraryRootConfg} from 'projects/fast-code-core/sr
     BackRepatComponent,
     ConfirmDialogComponent,
     EmptyBlockComponent,
-    
+
     TemplateEditorComponent,
     EmailTemplateListComponent,TemplateEditorComponent,PickerComponent
-    
+
   ],
   exports: [IpEmailBuilderComponent,
      EmailTemplateListComponent,TemplateEditorComponent,EmailVariableListComponent],
