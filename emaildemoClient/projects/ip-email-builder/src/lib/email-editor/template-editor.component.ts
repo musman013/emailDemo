@@ -286,7 +286,7 @@ export class TemplateEditorComponent implements OnInit {
       this.emailTemplate.templateName="usertemplate";
       this.emailTemplate.to="gzadik@yahoo.com";
       this.emailTemplate.contentJson = template;
-      this.emailTemplate.description = "some description";*/
+        this.emailTemplate.description = "some description";*/
       this.emailtemplateService.create(this.emailTemplate)
         .subscribe(
           data => {
