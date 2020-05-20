@@ -1,37 +1,32 @@
 package com.fastcode.emaildemo.emailbuilder.application.mail;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Pageable;
 
-import com.fastcode.emaildemo.commons.search.SearchCriteria;
-import com.fastcode.emaildemo.commons.search.SearchUtils;
-import com.fastcode.emaildemo.commons.application.OffsetBasedPageRequest;
-import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.EmailTemplateAppService;
-import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.CreateEmailTemplateInput;
-import com.fastcode.emaildemo.emailbuilder.application.emailvariable.EmailVariableAppService;
-import com.fastcode.emaildemo.emailbuilder.application.emailvariable.dto.FindEmailVariableByIdOutput;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.fastcode.emaildemo.domain.model.File;
 
 @Service
-public class EmailService implements IEmailService{
+public class EmailService implements IEmailService {
 
 	@Autowired
 	public JavaMailSender emailSender;
@@ -40,123 +35,58 @@ public class EmailService implements IEmailService{
 	private Environment env;
 
 	@Autowired
-	private EmailTemplateAppService emailTemplateAppService;
-
-	@Autowired
-	private EmailVariableAppService emailVariableAppService;
+	private RestTemplateBuilder restTemplate;
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	@Override
-	public void sendSimpleMessage(String to, String subject, String text)  {
+	public void sendMessage(String to, String cc, String bcc, String subject, String htmlContent, List<File> inlineImages, List<File> attachments) {
+
+		MimeMessage message = emailSender.createMimeMessage();
+
 		try {
 
-			MimeMessage message = emailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
 
-			//Set Email
-			// message.setFrom("testemail@abc.com");
+			String[] toArray = to.split(",", -1);
+			String[] ccArray = cc != null ? cc.split(",", -1) : new String[0];
+			String[] bccArray = bcc != null ? bcc.split(",", -1) : new String[0];
 
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-			helper.setTo(to);
+			helper.setTo(toArray);
+			helper.setCc(ccArray);
+			helper.setBcc(bccArray);
 			helper.setSubject(subject);
-			helper.setText(text,true);
-			
-			
-			emailSender.send(message);
-		
-		}
-		catch (MessagingException ex) {
+
+			// Use the true flag to indicate the text included is HTML
+			helper.setText(htmlContent, true);
+
+			for (File file : inlineImages) {
+				helper.addInline(file.getContentId(), getFileStreamResource(file.getId()));
+			}
+
+			// Now add the real attachments
+			for (File file : inlineImages) {
+				helper.addAttachment(file.getName(), getFileStreamResource(file.getId()));
+			}
+
+		} catch (MessagingException ex) {
 			ex.printStackTrace();
 		}
 
-
+		emailSender.send(message);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	@Override
-	public void sendSimpleMessageUsingTemplate(String to, String subject, SimpleMailMessage template,
-			String... templateArgs) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Transactional(propagation = Propagation.REQUIRED)
-	@Override
-	public void sendMessageWithAttachment(String to, String subject, String text, String pathToAttachment) {
+	private InputStreamResource getFileStreamResource(Long fileId) { // This method will download file using RestTemplate
 		try {
-
-			MimeMessage message = emailSender.createMimeMessage();
-
-			//Set Email
-			// message.setFrom("testemail@abc.com");
-
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-
-			helper.setTo(to);
-			helper.setSubject(subject);
-			helper.setText(text,true);
-			if(pathToAttachment != null) {
-				FileSystemResource file = new FileSystemResource(new File(pathToAttachment));
-				helper.addAttachment(pathToAttachment, file);
-			}
-
-
-			emailSender.send(message);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
+			HttpEntity<String> entity = new HttpEntity<>(headers);
+			ResponseEntity<byte[]> response = restTemplate.build().exchange(env.getProperty("fastCode.docmgmt.URL") + "/" + fileId.toString(), HttpMethod.GET, entity, byte[].class);
+			return new InputStreamResource(new ByteArrayInputStream(response.getBody()));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		catch (MessagingException ex) {
-			ex.printStackTrace();
-		}
-
+		return null;
 	}
-
-	private String replaceVariable(String input){
-		//Sort sort = new Sort(Sort.Direction.fromString(env.getProperty("fastCode.sort.direction.default")), new String[]{env.getProperty("fastCode.sort.property.default")});
-	   // Sort sort=new Sort (Sort.by("name"));
-		Pageable pageable = new OffsetBasedPageRequest(Integer.parseInt(env.getProperty("fastCode.offset.default")), Integer.parseInt(env.getProperty("fastCode.limit.default")));
-		
-	//	Pageable pageable = new OffsetBasedPageRequest(0, 100);
-		HashMap<String, String> map = new HashMap<>();
-
-		List<FindEmailVariableByIdOutput> tags ;
-		try
-		{
-			
-			SearchCriteria searchCriteria = SearchUtils.generateSearchCriteriaObject("");
-			tags = emailVariableAppService.find(searchCriteria, pageable);
-			System.out.println(" tags " + tags);
-			for (FindEmailVariableByIdOutput tag: tags) {
-				map.put("{{" + tag.getPropertyName() + "}}",tag.getDefaultValue());
-			}
-		}
-		catch(Exception ex ){
-			map.put("tag1","tag one");
-			map.put("{{tag2}}","tag two");
-		}
-
-		final String regex ="\\{\\{\\w+\\}\\}";// "\\{\\{\\w+}}"; //"{{\\w+}}";
-
-		final Matcher m = Pattern.compile(regex).matcher(input);
-
-		final List<String> matches = new ArrayList<>();
-		while (m.find()) {
-			matches.add(m.group(0));
-			input = input.replaceAll(Pattern.quote(m.group(0)),map.get(m.group(0)));
-		}
-		return input;
-	}
-
-	public void sendEmail(CreateEmailTemplateInput email) throws IOException
-	{
-		if(email.getActive()!=null && email.getActive()) {
-			// replace merge field with value before sending the email.
-			String html = emailTemplateAppService.convertJsonToHtml(replaceVariable(email.getContentJson()));
-			email.setContentHtml(html);
-			if (email.getAttachmentpath() != null && !email.getAttachmentpath().isEmpty() )
-				sendMessageWithAttachment(replaceVariable(email.getTo()), replaceVariable(email.getSubject()), email.getContentHtml(), email.getAttachmentpath());
-			else
-				sendSimpleMessage(replaceVariable(email.getTo()), replaceVariable(email.getSubject()), email.getContentHtml());
-		}
-	}
+	
+	
 	
 }
