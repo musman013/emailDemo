@@ -4,13 +4,16 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +26,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fastcode.emaildemo.domain.irepository.FileContentStore;
+import com.fastcode.emaildemo.domain.irepository.FileRepository;
 import com.fastcode.emaildemo.domain.model.File;
 
 @Service
@@ -36,6 +41,12 @@ public class EmailService implements IEmailService {
 
 	@Autowired
 	private RestTemplateBuilder restTemplate;
+
+	@Autowired
+	private FileContentStore contentStore;
+
+	@Autowired
+	private FileRepository filesRepo;
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void sendMessage(String to, String cc, String bcc, String subject, String htmlContent, List<File> inlineImages, List<File> attachments) {
@@ -63,7 +74,7 @@ public class EmailService implements IEmailService {
 			}
 
 			// Now add the real attachments
-			for (File file : inlineImages) {
+			for (File file : attachments) {
 				helper.addAttachment(file.getName(), getFileStreamResource(file.getId()));
 			}
 
@@ -74,19 +85,16 @@ public class EmailService implements IEmailService {
 		emailSender.send(message);
 	}
 
-	private InputStreamResource getFileStreamResource(Long fileId) { // This method will download file using RestTemplate
+	private ByteArrayResource getFileStreamResource(Long fileId) { // This method will download file using RestTemplate
 		try {
-			HttpHeaders headers = new HttpHeaders();
-			headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
-			HttpEntity<String> entity = new HttpEntity<>(headers);
-			ResponseEntity<byte[]> response = restTemplate.build().exchange(env.getProperty("fastCode.docmgmt.URL") + "/" + fileId.toString(), HttpMethod.GET, entity, byte[].class);
-			return new InputStreamResource(new ByteArrayInputStream(response.getBody()));
+			Optional<File> f = filesRepo.findById(fileId);
+			// InputStreamResource inputStreamResource = new
+			// InputStreamResource(contentStore.getContent(f.get()));
+			return new ByteArrayResource(IOUtils.toByteArray(contentStore.getContent(f.get())));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	
-	
+
 }

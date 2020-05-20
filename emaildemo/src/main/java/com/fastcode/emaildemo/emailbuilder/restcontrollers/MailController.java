@@ -3,7 +3,9 @@ package com.fastcode.emaildemo.emailbuilder.restcontrollers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +51,12 @@ public class MailController {
 	// content with the entity
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity sendEmail(@RequestBody @Valid CreateEmailInput email) throws IOException {
+		File file = new File();
+		file.setId(1L);
+		file.setName("FileName1");
+		Set<File> a = new HashSet<>();
+		a.add(file);
+		email.setAttachments(a);
 
 		List<File> lImages = new ArrayList<File>();
 		lImages.addAll(email.getInlineImages());
