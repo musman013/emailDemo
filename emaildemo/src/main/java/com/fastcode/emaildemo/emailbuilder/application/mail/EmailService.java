@@ -67,15 +67,15 @@ public class EmailService implements IEmailService {
 			helper.setSubject(subject);
 
 			// Use the true flag to indicate the text included is HTML
-			helper.setText(htmlContent, true);
+			helper.setText(htmlContent + "<H1>Hello</H1><img src='cid:image'>", true);
 
 			for (File file : inlineImages) {
-				helper.addInline(file.getContentId(), getFileStreamResource(file.getId()));
+				helper.addInline("image", getFileStreamResource(file.getId()), "image/jpeg");
 			}
 
 			// Now add the real attachments
 			for (File file : attachments) {
-				helper.addAttachment(file.getName(), getFileStreamResource(file.getId()));
+				helper.addAttachment("image1", getFileStreamResource(file.getId()));
 			}
 
 		} catch (MessagingException ex) {

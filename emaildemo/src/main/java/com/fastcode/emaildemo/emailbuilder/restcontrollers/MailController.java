@@ -57,6 +57,7 @@ public class MailController {
 		Set<File> a = new HashSet<>();
 		a.add(file);
 		email.setAttachments(a);
+		email.setInlineImages(a);
 
 		List<File> lImages = new ArrayList<File>();
 		lImages.addAll(email.getInlineImages());
