@@ -1,0 +1,24 @@
+<div class="row">
+  <div></div>
+  <div class="column left">
+    <label for="name">Name&nbsp;&nbsp;</label>
+    <input
+      id="name"
+      type="text"
+      [(ngModel)]="name">
+  </div>
+
+  <div class="column middle">
+    <label for="file">File&nbsp;&nbsp;</label>
+    <input
+      id="file"
+      type="file"
+      (change)="onFileChange($event)">
+    <div *ngIf="f.file.touched && f.file.invalid" class="alert alert-danger">
+      <div *ngIf="f.file.errors.required">File is required.</div>
+    </div>
+  </div>
+  <div class="column right">
+    <button type="button" class="btn btn-primary  " (click)="submit()">add</button>
+  </div>
+</div>

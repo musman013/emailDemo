@@ -76,6 +76,7 @@ import { EmailRoutes } from './email-routing.module';
 //import { EmailRoutingModule } from './email-routing.module';
 //import {FastCodeCoreModule,EmailRoutes} from 'fastCodeCore';
 import { FastCodeCoreModule ,ILibraryRootConfg} from 'projects/fast-code-core/src/public_api';
+import { EmailAttachmentComponent } from './email-editor/email-attachment/email-attachment.component';
 //'fastCodeCore';
 //import {GenericApiService} from 'fastCodeCore/public_api';
 @NgModule({
@@ -146,7 +147,7 @@ import { FastCodeCoreModule ,ILibraryRootConfg} from 'projects/fast-code-core/sr
     EmptyBlockComponent,
 
     TemplateEditorComponent,
-    EmailTemplateListComponent,TemplateEditorComponent,PickerComponent
+    EmailTemplateListComponent,TemplateEditorComponent,PickerComponent, EmailAttachmentComponent
 
   ],
   exports: [IpEmailBuilderComponent,
