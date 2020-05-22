@@ -1,7 +1,7 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {EmailFileService} from '../email-file.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'lib-email-attachment',
@@ -9,40 +9,39 @@ import {EmailFileService} from '../email-file.service';
   styleUrls: ['./email-attachment.component.css']
 })
 export class EmailAttachmentComponent {
-  myForm = new FormGroup({
-    file: new FormControl('', [Validators.required]),
-    fileSource: new FormControl('', [Validators.required])
-  });
+  @Input() files: Set<File> = new Set();
+  filesMap = new Map();
   name: string = '';
   file: any;
+  @Output() onAttachmentAdd = new EventEmitter<Set<File>>();
 
-  constructor(private http: HttpClient,
-              private emailFileService: EmailFileService) {
-  }
 
-  get f() {
-    return this.myForm.controls;
+  constructor(private http: HttpClient) {
   }
 
   onFileChange(event) {
-
     if (event.target.files.length > 0) {
-      const file = event.target.files[0];
-      this.myForm.patchValue({
-        fileSource: file
-      });
+      for (let key in event.target.files) {
+        if (!isNaN(parseInt(key))) {
+          this.files.add(event.target.files[key]);
+          this.setFileUri(event.target.files[key]);
+        }
+      }
+
+      this.onAttachmentAdd.emit(this.files);
     }
   }
 
-  submit() {
-    const fileMetadata = {
-      name: this.name, summary: this.name
+  setFileUri(file: File) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      this.filesMap.set(file, reader.result);
     };
-    this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
-      console.log(res);
-      this.emailFileService.uploadFile(res.id, this.myForm);
-    });
-
   }
 
+
+  removeFile(file: File) {
+    this.files.delete(file);
+  }
 }

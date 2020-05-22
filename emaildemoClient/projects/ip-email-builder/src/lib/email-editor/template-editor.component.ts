@@ -15,6 +15,8 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatSelect, MatSnackBar} from '@angular/material';
 import {TranslateService} from '@ngx-translate/core';
 import {map, startWith} from 'rxjs/operators';
+import {HttpClient} from '@angular/common/http';
+import {EmailFileService} from './email-file.service';
 
 //import { DividerBlock, IBlockState } from 'ip-email-builder/public_api';
 @Component({
@@ -43,6 +45,7 @@ export class TemplateEditorComponent implements OnInit {
 
   categoryList: string[];
   categories: Observable<string[]>;
+  files: Set<File> = new Set();
 
   constructor(
     private _ngb: IpEmailBuilderService,
@@ -53,7 +56,8 @@ export class TemplateEditorComponent implements OnInit {
     private mailtemplateService: MailTemplateService,
     private emailVariableService: EmailVariableService,
     private formBuilder: FormBuilder,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private emailFileService: EmailFileService
   ) {
     this.isLoading = _ngb.isLoading;
     _ngb.MergeTags = new Set(['tag22']); //new Set(['{{firstName}}', '{{lastName}}']);
@@ -227,10 +231,11 @@ export class TemplateEditorComponent implements OnInit {
           contentHtml: templ.contentHtml,
           category: templ.category,
           description: templ.description,
-          attachmentpath: templ.attachmentpath,
+          attachments: templ.attachments,
           active: templ.active
 
         });
+        this.files = templ.attachments;
         this.looadEmail(JSON.parse(templ.contentJson));
 
       },
@@ -250,7 +255,8 @@ export class TemplateEditorComponent implements OnInit {
       if (!this.editorView) {
         this.editorView = true;
       } else {
-        this.onEmailTemplateSave(JSON.stringify(this._ngb.Email));
+        this.saveAttachmentsAndEmail();
+
       }
       // this.generatingTemplate = false;
     }
@@ -262,11 +268,11 @@ export class TemplateEditorComponent implements OnInit {
     this.emailTemplate.subject = this.formGroup.value.subject;
     this.emailTemplate.contentHtml = '';
     this.emailTemplate.description = this.formGroup.value.description;
-    this.emailTemplate.attachmentpath = this.formGroup.value.attachmentpath;
+    this.emailTemplate.attachments = this.formGroup.value.attachments;
     this.emailTemplate.active = this.formGroup.value.active;
     this.emailTemplate.contentJson = JSON.stringify(this._ngb.Email);
   };
-  onEmailTemplateSave = (template) => {
+  onEmailTemplateSave = (template, attachments, inlineImages) => {
     let x = template;
     let y = JSON.parse(x);
     this.emailTemplate.templateName = this.formGroup.value.templateName;
@@ -275,9 +281,11 @@ export class TemplateEditorComponent implements OnInit {
     this.emailTemplate.subject = this.formGroup.value.subject;
     this.emailTemplate.contentHtml = '';
     this.emailTemplate.description = this.formGroup.value.description;
-    this.emailTemplate.attachmentpath = this.formGroup.value.attachmentpath;
+    this.emailTemplate.attachments = this.formGroup.value.attachments;
     this.emailTemplate.active = this.formGroup.value.active;
     this.emailTemplate.contentJson = template;
+    this.emailTemplate.attachments = attachments;
+    this.emailTemplate.inlineImages = inlineImages;
 
     if (!this.emailTemplate.id) {
       /*this.emailTemplate.subject="subject";
@@ -376,5 +384,48 @@ export class TemplateEditorComponent implements OnInit {
       comboElement.classList.add('show');
     }
     return false;
+  }
+
+  onAttachmentAdd(files: Set<File>) {
+    this.files = files;
+  }
+
+  saveAttachmentsAndEmail() {
+    let attachmentDone = false;
+    let count = 0;
+    let attachments = [];
+    let inlineImages = [];
+    if (this.files.size > 0) {
+      this.files.forEach(file => {
+        const fileMetadata = {
+          name: file.name, summary: file.name
+        };
+        this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
+          console.log(res);
+          this.emailFileService.uploadFile(res.id, file);
+          count++;
+          attachments.push({id: res.id});
+        });
+
+      });
+    }
+    this.waitFor(_ => this.files.size === count)
+      .then(_ => {
+        console.log('the wait is over!');
+        this.onEmailTemplateSave(JSON.stringify(this._ngb.Email), attachments, inlineImages);
+      });
+  }
+
+  waitFor(conditionFunction) {
+
+    const poll = resolve => {
+      if (conditionFunction()) {
+        resolve();
+      } else {
+        setTimeout(_ => poll(resolve), 400);
+      }
+    };
+
+    return new Promise(poll);
   }
 }

@@ -87,9 +87,8 @@
           </table>
         </mat-form-field>
         <div>
-          <lib-email-attachment></lib-email-attachment>
+          <lib-email-attachment [files]="files" (onAttachmentAdd)="onAttachmentAdd($event)"></lib-email-attachment>
         </div>
-
 
         <mat-form-field>
           <textarea formControlName="description" matInput
@@ -192,6 +191,10 @@
                   </tr>
                 </table>
               </mat-form-field>
+              <div>
+                <lib-email-attachment [files]="files"
+                                      (onAttachmentAdd)="onAttachmentAdd($event)"></lib-email-attachment>
+              </div>
               <mat-form-field>
                 <textarea formControlName="description" matInput
                           placeholder="{{'EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.DESCRIPTION' | translate}}"></textarea>

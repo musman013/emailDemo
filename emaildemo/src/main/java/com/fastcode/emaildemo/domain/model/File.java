@@ -43,6 +43,9 @@ public class File {
 	@MimeType
 	private String mimeType;
 
+	@Column(nullable = true)
+	private Long emailTemplateId;
+
 	// Copy Constructor
 	public File(File file) {
 		this.name = file.getName();
@@ -106,6 +109,14 @@ public class File {
 
 	public void setMimeType(String mimeType) {
 		this.mimeType = mimeType;
+	}
+
+	public Long getEmailTemplateId() {
+		return emailTemplateId;
+	}
+
+	public void setEmailTemplateId(Long emailTemplateId) {
+		this.emailTemplateId = emailTemplateId;
 	}
 
 }

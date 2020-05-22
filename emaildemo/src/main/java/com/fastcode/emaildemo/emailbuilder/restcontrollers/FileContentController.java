@@ -22,6 +22,7 @@ import com.fastcode.emaildemo.domain.model.File;
 
 @RestController
 public class FileContentController {
+	
 
     @Autowired
     private FileRepository filesRepo;

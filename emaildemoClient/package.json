@@ -27,6 +27,7 @@
     "@angular/router": "^8.2.0",
     "@angular/upgrade": "^8.2.8",
     "@auth0/angular-jwt": "^3.0.0",
+    "@fortawesome/fontawesome-free": "^5.13.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "class-transformer": "^0.2.3",

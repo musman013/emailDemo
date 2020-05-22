@@ -26,3 +26,23 @@
   clear: both;
 }
 
+.close{
+  width: 10px;
+  height: 10px;
+  cursor: grabbing;
+}
+
+.file{
+  width: 50px;
+}
+
+.text-level{
+  font-size: medium;
+  font: caption;
+  color: #696969;
+}
+
+li{
+  margin: 10px;
+}
+

@@ -1,24 +1,20 @@
-<div class="row">
-  <div></div>
-  <div class="column left">
-    <label for="name">Name&nbsp;&nbsp;</label>
+<div>
+  <div>
+    <span class="text-level">Attachments</span>&nbsp;&nbsp;
     <input
-      id="name"
-      type="text"
-      [(ngModel)]="name">
-  </div>
-
-  <div class="column middle">
-    <label for="file">File&nbsp;&nbsp;</label>
-    <input
+      style="width: 95px"
+      title=""
       id="file"
       type="file"
+      multiple
+      (dragover)="onFileChange($event)"
       (change)="onFileChange($event)">
-    <div *ngIf="f.file.touched && f.file.invalid" class="alert alert-danger">
-      <div *ngIf="f.file.errors.required">File is required.</div>
-    </div>
   </div>
-  <div class="column right">
-    <button type="button" class="btn btn-primary  " (click)="submit()">add</button>
+  <div>
+    <li *ngFor="let file of files">
+      {{file.name}}&nbsp;<img (click)="removeFile(file)" class="close" img src="../../../assets/images/close.png"/>
+    </li>
   </div>
+  <br><br>
+
 </div>

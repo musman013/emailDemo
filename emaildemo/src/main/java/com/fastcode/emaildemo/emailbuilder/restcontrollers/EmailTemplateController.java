@@ -1,6 +1,7 @@
 package com.fastcode.emaildemo.emailbuilder.restcontrollers;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -108,7 +109,8 @@ public class EmailTemplateController {
 	      Pageable Pageable = new OffsetBasedPageRequest(Integer.parseInt(offset), Integer.parseInt(limit), sort);
 	      SearchCriteria searchCriteria = SearchUtils.generateSearchCriteriaObject(search);
 	      
-	  	  return ResponseEntity.ok(emailTemplateAppService.find(searchCriteria,Pageable));
+	  	  List<FindEmailTemplateByIdOutput> find = emailTemplateAppService.find(searchCriteria,Pageable);
+		return ResponseEntity.ok(find);
 	  }
 	
 	
