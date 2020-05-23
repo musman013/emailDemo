@@ -155,8 +155,14 @@
               <ng-container *ngIf="block.type === 'image'">
                 <mat-form-field appearance="outline">
                   <mat-label>{{'EMAIL-BUILDER.CONTENT.DRAG-AND-DROP-CONTENT.IMAGE.LABEL' | translate}}</mat-label>
+                  <input
+                    style="width: 95px"
+                    title=""
+                    id="file"
+                    type="file"
+                    multiple (change)="onFileChange($event, block)">
                   <input matInput [(ngModel)]="block.src" type="url" placeholder="{{'EMAIL-BUILDER.CONTENT.DRAG-AND-DROP-CONTENT.IMAGE.LABEL' | translate}}">
-                </mat-form-field>
+                </mat-form-field>NN
                 <ip-width-height [model]="block.options.width" label="{{'EMAIL-BUILDER.CONTENT.DRAG-AND-DROP-CONTENT.IMAGE.WIDTH-LABEL' | translate}}"></ip-width-height>
                 <ip-width-height [model]="block.options.height" label="{{'EMAIL-BUILDER.CONTENT.DRAG-AND-DROP-CONTENT.IMAGE.HEIGHT-LABEL' | translate}}"></ip-width-height>
                 <div class="group f-large">

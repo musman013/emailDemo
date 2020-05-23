@@ -109,7 +109,7 @@
   </mat-card>
 
   <mat-card>
-    <ip-email-builder (onEmailTemplateSave)='onEmailTemplateSave($event)' style="height: calc(100% - 64px)"
+    <ip-email-builder  style="height: calc(100% - 64px)"
                       *ngIf="editorView">
       <div class="top-actions">
         <button mat-button (click)="sendTestMail()" [disabled]="isLoading | async"

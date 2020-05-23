@@ -17,6 +17,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {map, startWith} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {EmailFileService} from './email-file.service';
+import {environment} from '../environment';
 
 //import { DividerBlock, IBlockState } from 'ip-email-builder/public_api';
 @Component({
@@ -46,6 +47,7 @@ export class TemplateEditorComponent implements OnInit {
   categoryList: string[];
   categories: Observable<string[]>;
   files: Set<File> = new Set();
+  loadedFiles: Set<any>;
 
   constructor(
     private _ngb: IpEmailBuilderService,
@@ -215,6 +217,17 @@ export class TemplateEditorComponent implements OnInit {
   }
 
   looadEmail(structures: any) {
+    structures.structures.forEach(structure => {
+      structure.elements.forEach(element => {
+        element.forEach(block => {
+          if (block.type === 'image') {
+            //inlineImages.push({id: res.id});
+            block.src = environment.apiUrl + '/files/' + block.src;
+          }
+        });
+      });
+    });
+
     this._ngb.Email = new IPDefaultEmail(structures);
   }
 
@@ -235,7 +248,8 @@ export class TemplateEditorComponent implements OnInit {
           active: templ.active
 
         });
-        this.files = templ.attachments;
+        this.files = new Set(templ.attachments);
+        this.loadedFiles = new Set(templ.attachments);
         this.looadEmail(JSON.parse(templ.contentJson));
 
       },
@@ -400,18 +414,47 @@ export class TemplateEditorComponent implements OnInit {
         const fileMetadata = {
           name: file.name, summary: file.name
         };
-        this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
-          console.log(res);
-          this.emailFileService.uploadFile(res.id, file);
-          count++;
-          attachments.push({id: res.id});
+        this.loadedFiles.forEach(e => {
+          if (e.name !== file.name) {
+            this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
+              console.log(res);
+              this.emailFileService.uploadFile(res.id, file);
+              count++;
+              attachments.push({id: res.id});
+            });
+          }
         });
+
 
       });
     }
-    this.waitFor(_ => this.files.size === count)
+    let inlineImageCount = 0;
+    let processedInlineImageCount = 0;
+    this._ngb.Email.structures.forEach(structure => {
+      structure.elements.forEach(element => {
+        element.forEach(block => {
+          if (block.type === 'image') {
+            inlineImageCount++;
+            const fileMetadata = {
+              name: 'inline_image', summary: 'inline_image'
+            };
+            this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
+              this.emailFileService.uploadBlock(res.id, block);
+                block.src = res.id;
+
+              inlineImages.push({id: res.id});
+              processedInlineImageCount++;
+
+            });
+
+          }
+        });
+      });
+    });
+    this.waitFor(_ => this.files.size === count && inlineImageCount === processedInlineImageCount)
       .then(_ => {
         console.log('the wait is over!');
+
         this.onEmailTemplateSave(JSON.stringify(this._ngb.Email), attachments, inlineImages);
       });
   }
