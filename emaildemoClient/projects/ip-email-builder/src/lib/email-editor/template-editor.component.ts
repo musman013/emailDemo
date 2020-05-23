@@ -47,7 +47,9 @@ export class TemplateEditorComponent implements OnInit {
   categoryList: string[];
   categories: Observable<string[]>;
   files: Set<File> = new Set();
-  loadedFiles: Set<any>;
+  loadedFiles: Set<String> = new Set();
+  loadedInlineImages: Set<String> = new Set();
+  private inlineImages = new Set();
 
   constructor(
     private _ngb: IpEmailBuilderService,
@@ -163,27 +165,11 @@ export class TemplateEditorComponent implements OnInit {
   }
 
   setPermissions = () => {
-    // this.globalService.getUserPermissions().subscribe(permissions=> {
-    //   let perms = permissions;
     this.IsReadPermission = true;
     this.IsDeletePermission = true;
     this.IsUpdatePermission = true;
     this.IsCreatePermission = true;
 
-    // if(this.globalPermissionService) {
-    //       let entityName = this.entityName.startsWith("I") ? this.entityName.substr(1) : this.entityName;
-    //       this.IsCreatePermission = this.globalPermissionService.hasPermissionOnEntity(entityName, "CREATE");
-    //       if(this.IsCreatePermission) {
-    //         this.IsReadPermission = true;
-    //         this.IsDeletePermission = true;
-    //         this.IsUpdatePermission = true;
-    //       } else {
-    //         this.IsDeletePermission = this.globalPermissionService.hasPermissionOnEntity(entityName, "DELETE");
-    //         this.IsUpdatePermission = this.globalPermissionService.hasPermissionOnEntity(entityName, "UPDATE");
-    //         this.IsReadPermission = (this.IsDeletePermission || this.IsUpdatePermission)? true: this.globalPermissionService.hasPermissionOnEntity(entityName, "READ");
-    //       }
-    //   }
-    //});
   };
 
   sendTestMail() {
@@ -191,43 +177,54 @@ export class TemplateEditorComponent implements OnInit {
     if (!to) {
       return;
     }
-    // this._ngb.sendTestEmail({ to });
 
     this.loadEmailTemplate();
     this.emailTemplate.to = to;
+    this.emailTemplate.contentJson = this.emailTemplate.contentJson.replace(environment.apiUrl + '/files/', 'cid:IMAGE');
     //this.emailTemplate.contentJson = template;
+    let attachments = [];
+    // this.files.forEach(file =>{
+    //   attachments.push({name: file.name, description: file.name});
+    // });
+
+    let inlinImages = [];
+    this.inlineImages.forEach(file =>{
+      const id = file['src'].replace(environment.apiUrl + '/files/', '');
+      inlinImages.push({name: id, description: file['src'] , summary: 'IMAGE'+id});
+    });
+
+    this.emailTemplate.attachments = attachments;
+    this.emailTemplate.inlineImages = inlinImages;
     this.mailtemplateService.create(this.emailTemplate)
       .subscribe(
         data => {
-          //  x = data;
-          //   y = JSON.parse(x.contentJson);
-          //this.emailTemplate = {...this.emailTemplate,...data};
           var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.MESSAGES.EMAIL-SENT-SUCCESS'), this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'), {
             duration: 1000,
             panelClass: ['snackbar-background']
           });
-          //  snackBarRef.dismiss();
-          // this._ngb.sendRequest();
-          //this.onBack();
         },
         error => {
-
-
         });
   }
 
-  looadEmail(structures: any) {
+  loadEmail(structures: any) {
     structures.structures.forEach(structure => {
       structure.elements.forEach(element => {
         element.forEach(block => {
-          if (block.type === 'image') {
-            //inlineImages.push({id: res.id});
+          if (block.type === 'image' && block.src && block.src != 'undefined') {
+            this.inlineImages.add(block);
+            this.loadedInlineImages.add(block.src);
+            try {
+              block.src = block.src.replace(environment.apiUrl + '/files/', '');
+            } catch (error) {
+              // ignore
+            }
+
             block.src = environment.apiUrl + '/files/' + block.src;
           }
         });
       });
     });
-
     this._ngb.Email = new IPDefaultEmail(structures);
   }
 
@@ -249,8 +246,11 @@ export class TemplateEditorComponent implements OnInit {
 
         });
         this.files = new Set(templ.attachments);
-        this.loadedFiles = new Set(templ.attachments);
-        this.looadEmail(JSON.parse(templ.contentJson));
+        this.loadedFiles = new Set();
+        templ.attachments.forEach(e => {
+          this.loadedFiles.add(e.name);
+        });
+        this.loadEmail(JSON.parse(templ.contentJson));
 
       },
       error => this.errorMessage = <any>error);
@@ -301,28 +301,17 @@ export class TemplateEditorComponent implements OnInit {
     this.emailTemplate.attachments = attachments;
     this.emailTemplate.inlineImages = inlineImages;
 
+
     if (!this.emailTemplate.id) {
-      /*this.emailTemplate.subject="subject";
-      this.emailTemplate.category="category";
-      this.emailTemplate.contentHtml="";
-      this.emailTemplate.templateName="usertemplate";
-      this.emailTemplate.to="gzadik@yahoo.com";
-      this.emailTemplate.contentJson = template;
-        this.emailTemplate.description = "some description";*/
       this.emailtemplateService.create(this.emailTemplate)
         .subscribe(
           data => {
             x = data;
             y = JSON.parse(x.contentJson);
             this.emailTemplate = {...this.emailTemplate, ...data};
-            /*   this._ngb.sendRequest().then(data=> {
-                  var x = data;
-               });*/
             this.onBack();
           },
           error => {
-
-
           });
     } else {
 
@@ -331,14 +320,9 @@ export class TemplateEditorComponent implements OnInit {
           data => {
             x = data;
             y = JSON.parse(x.contentJson);
-            /*   this._ngb.sendRequest().then(data=> {
-                var x = data;
-              });*/
             this.onBack();
           },
           error => {
-
-
           });
     }
   };
@@ -405,58 +389,45 @@ export class TemplateEditorComponent implements OnInit {
   }
 
   saveAttachmentsAndEmail() {
-    let attachmentDone = false;
-    let count = 0;
     let attachments = [];
     let inlineImages = [];
     if (this.files.size > 0) {
       this.files.forEach(file => {
-        const fileMetadata = {
-          name: file.name, summary: file.name
-        };
-        this.loadedFiles.forEach(e => {
-          if (e.name !== file.name) {
-            this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
-              console.log(res);
-              this.emailFileService.uploadFile(res.id, file);
-              count++;
-              attachments.push({id: res.id});
-            });
-          }
-        });
 
-
+        if (file.name && !this.loadedFiles.has(file.name)) {
+          const fileMetadata = {
+            name: file.name, summary: file.name
+          };
+          this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
+            this.emailFileService.uploadFile(res.id, file);
+            attachments.push({id: res.id});
+          });
+        }
       });
     }
-    let inlineImageCount = 0;
-    let processedInlineImageCount = 0;
+
     this._ngb.Email.structures.forEach(structure => {
       structure.elements.forEach(element => {
         element.forEach(block => {
-          if (block.type === 'image') {
-            inlineImageCount++;
-            const fileMetadata = {
-              name: 'inline_image', summary: 'inline_image'
-            };
-            this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
-              this.emailFileService.uploadBlock(res.id, block);
+          if (block && block['file'] && block['file']['name'] && block.type === 'image') {
+            if (!this.loadedInlineImages.has(block.src)) {
+              const fileMetadata = {
+                name: block['file']['name'], summary: block['file']['name']
+              };
+              this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
+                this.emailFileService.uploadBlock(res.id, block);
                 block.src = res.id;
-
-              inlineImages.push({id: res.id});
-              processedInlineImageCount++;
-
-            });
-
+                inlineImages.push({id: res.id});
+              });
+            } else {
+              block.src.replace(environment.apiUrl + '/files/', '');
+            }
           }
         });
       });
     });
-    this.waitFor(_ => this.files.size === count && inlineImageCount === processedInlineImageCount)
-      .then(_ => {
-        console.log('the wait is over!');
 
-        this.onEmailTemplateSave(JSON.stringify(this._ngb.Email), attachments, inlineImages);
-      });
+    setTimeout(() => this.onEmailTemplateSave(JSON.stringify(this._ngb.Email), attachments, inlineImages), 3000);
   }
 
   waitFor(conditionFunction) {

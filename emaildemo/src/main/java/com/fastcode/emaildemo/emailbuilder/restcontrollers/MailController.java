@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fastcode.emaildemo.commons.application.OffsetBasedPageRequest;
 import com.fastcode.emaildemo.commons.search.SearchCriteria;
 import com.fastcode.emaildemo.commons.search.SearchUtils;
+import com.fastcode.emaildemo.domain.irepository.FileRepository;
 import com.fastcode.emaildemo.domain.model.File;
 import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.EmailTemplateAppService;
 import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.CreateEmailInput;
@@ -46,24 +47,19 @@ public class MailController {
 
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private FileRepository filesRepo;
 
-	// Before calling this method, the API consumer should create File and associate
-	// content with the entity
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity sendEmail(@RequestBody @Valid CreateEmailInput email) throws IOException {
-		File file = new File();
-		file.setId(1L);
-		file.setName("FileName1");
-		Set<File> a = new HashSet<>();
-		a.add(file);
-		email.setAttachments(a);
-		email.setInlineImages(a);
+		
 
 		List<File> lImages = new ArrayList<File>();
 		lImages.addAll(email.getInlineImages());
 
 		List<File> lAttachments = new ArrayList<File>();
-		lAttachments.addAll(email.getAttachments());
+		lAttachments.addAll(filesRepo.getFileByEmailTemplateId(email.getId()));
 		email.setEmailBody(emailTemplateAppService.convertJsonToHtml(replaceVariable(email.getContentJson())));
 
 		emailService.sendMessage(email.getTo(), replaceVariable(email.getCc()), replaceVariable(email.getBcc()), replaceVariable(email.getSubject()), email.getEmailBody(), lImages, lAttachments);
@@ -74,13 +70,9 @@ public class MailController {
 
 		if (input == null || input.length() == 0)
 			return input;
-		// Sort sort = new
-		// Sort(Sort.Direction.fromString(env.getProperty("fastCode.sort.direction.default")),
-		// new String[]{env.getProperty("fastCode.sort.property.default")});
-		// Sort sort=new Sort (Sort.by("name"));
+
 		Pageable pageable = new OffsetBasedPageRequest(Integer.parseInt(env.getProperty("fastCode.offset.default")), Integer.parseInt(env.getProperty("fastCode.limit.default")));
 
-		// Pageable pageable = new OffsetBasedPageRequest(0, 100);
 		HashMap<String, String> map = new HashMap<>();
 
 		List<FindEmailVariableByIdOutput> tags;

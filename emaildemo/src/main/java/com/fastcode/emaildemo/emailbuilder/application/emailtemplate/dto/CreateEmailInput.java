@@ -16,6 +16,8 @@ public class CreateEmailInput implements Serializable {
 	private static final long serialVersionUID = 1L;
 	// Not a good idea to validate email addresses because there are too many
 	// variations for an email address
+	@NotNull(message = "Id: should not be null")
+	private Long id;
 	@NotNull(message = "To: should not be null")
 	private String to;
 	private String cc;
@@ -88,6 +90,14 @@ public class CreateEmailInput implements Serializable {
 
 	public void setContentJson(String contentJson) {
 		this.contentJson = contentJson;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 }

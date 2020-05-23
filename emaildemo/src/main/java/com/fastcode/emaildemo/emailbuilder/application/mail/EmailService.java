@@ -1,8 +1,7 @@
 package com.fastcode.emaildemo.emailbuilder.application.mail;
 
-import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,12 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -65,18 +58,32 @@ public class EmailService implements IEmailService {
 			helper.setCc(ccArray);
 			helper.setBcc(bccArray);
 			helper.setSubject(subject);
+			helper.setText(htmlContent , true);
 
 			// Use the true flag to indicate the text included is HTML
-			helper.setText(htmlContent + "<H1>Hello</H1><img src='cid:image'>", true);
+			
 
 			for (File file : inlineImages) {
-				helper.addInline("image", getFileStreamResource(file.getId()), "image/jpeg");
+				try {
+					
+				ByteArrayResource fileStreamResource = getFileStreamResource(Long.valueOf(file.getName()));
+				if (fileStreamResource != null)
+					helper.addInline(file.getSummary(), fileStreamResource, "image/jpeg");
+				}
+				catch (Exception e) {
+					// ignore
+					e.printStackTrace();
+				}
 			}
 
 			// Now add the real attachments
 			for (File file : attachments) {
-				helper.addAttachment("image1", getFileStreamResource(file.getId()));
+				ByteArrayResource fileStreamResource = getFileStreamResource(file.getId());
+				if (fileStreamResource != null)
+					helper.addAttachment(file.getName(), fileStreamResource);
 			}
+			
+			
 
 		} catch (MessagingException ex) {
 			ex.printStackTrace();
@@ -90,7 +97,8 @@ public class EmailService implements IEmailService {
 			Optional<File> f = filesRepo.findById(fileId);
 			// InputStreamResource inputStreamResource = new
 			// InputStreamResource(contentStore.getContent(f.get()));
-			return new ByteArrayResource(IOUtils.toByteArray(contentStore.getContent(f.get())));
+			InputStream content = contentStore.getContent(f.get());
+			return content != null ? new ByteArrayResource(IOUtils.toByteArray(content)) : null;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

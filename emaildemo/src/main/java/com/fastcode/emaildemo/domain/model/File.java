@@ -1,5 +1,6 @@
 package com.fastcode.emaildemo.domain.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -16,7 +17,12 @@ import org.springframework.versions.LockOwner;
 
 @Entity
 @Table(name = "file", schema = "s1")
-public class File {
+public class File implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

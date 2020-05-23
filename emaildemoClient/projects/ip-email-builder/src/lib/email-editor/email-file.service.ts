@@ -23,27 +23,29 @@ export class EmailFileService extends GenericApiService<IEmailTemplate> {
 
   }
 
-  uploadFile(id, file) {
-    const fileData = new FormData();
-    fileData.append('file', file);
-    this.httpclient.put(this.urlPath + '/files/' + id, fileData)
-      .subscribe(res => {
-        if (file.src) {
-          file.src = id;
-        }
-      });
+  uploadFile(id, file: File) {
+    if (file && file.name) {
+      const fileData = new FormData();
+      fileData.append('file', file);
+      this.httpclient.put(this.urlPath + '/files/' + id, fileData)
+        .subscribe(res => {
+        });
+    }
   }
 
 
   uploadBlock(id, block) {
-    const fileData = new FormData();
-    fileData.append('file', block.file);
-    this.httpclient.put(this.urlPath + '/files/' + id, fileData)
-      .subscribe(res => {
-        if (block.src) {
-          block.src = id;
-        }
-      });
+    if (block && block.file && block.file.name) {
+      const fileData = new FormData();
+      fileData.append('file', block.file);
+      this.httpclient.put(this.urlPath + '/files/' + id, fileData)
+        .subscribe(res => {
+          if (block.src) {
+            block.src = id;
+          }
+        });
+    }
   }
+
 
 }
