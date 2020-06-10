@@ -18,6 +18,8 @@ public class UpdateEmailVariableInput {
 	
 	@Length(max = 100, message = "Default_Value must be less than 100 characters")
     private String defaultValue;
+	
+	private String mergeType;
 
 	public Long getId() {
 		return id;
@@ -50,6 +52,15 @@ public class UpdateEmailVariableInput {
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
 	}
+
+	public String getMergeType() {
+		return mergeType;
+	}
+
+	public void setMergeType(String mergeType) {
+		this.mergeType = mergeType;
+	}
+	
 	
 	
 }

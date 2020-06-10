@@ -6,6 +6,7 @@ public class FindEmailVariableByIdOutput {
 	private String propertyName;
 	private String propertyType;
     private String defaultValue;
+    private String mergeType;
     
 	public Long getId() {
 		return id;
@@ -39,6 +40,16 @@ public class FindEmailVariableByIdOutput {
 		this.defaultValue = defaultValue;
 	}
 
+	public String getMergeType() {
+		return mergeType;
+	}
+
+	public void setMergeType(String mergeType) {
+		this.mergeType = mergeType;
+	}
+
+	
+	
 }
 	
 

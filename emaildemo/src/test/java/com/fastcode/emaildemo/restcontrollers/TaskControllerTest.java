@@ -1,8 +1,6 @@
 package com.fastcode.emaildemo.restcontrollers;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -12,14 +10,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.List;
 import java.util.Date;
-import java.util.Map;
-import java.util.HashMap;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityNotFoundException;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -38,16 +35,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fastcode.emaildemo.commons.logging.LoggingHelper;
+import com.fastcode.emaildemo.application.apps.AppsAppService;
 import com.fastcode.emaildemo.application.task.TaskAppService;
-import com.fastcode.emaildemo.application.task.dto.*;
-import com.fastcode.emaildemo.domain.irepository.ITaskRepository;
-import com.fastcode.emaildemo.domain.model.TaskEntity;
+import com.fastcode.emaildemo.application.task.dto.CreateTaskInput;
+import com.fastcode.emaildemo.application.task.dto.FindTaskByIdOutput;
+import com.fastcode.emaildemo.application.task.dto.UpdateTaskInput;
+import com.fastcode.emaildemo.commons.logging.LoggingHelper;
 import com.fastcode.emaildemo.domain.irepository.IAppsRepository;
+import com.fastcode.emaildemo.domain.irepository.ITaskRepository;
 import com.fastcode.emaildemo.domain.model.AppsEntity;
-import com.fastcode.emaildemo.application.apps.AppsAppService;    
+import com.fastcode.emaildemo.domain.model.TaskEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;    
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,

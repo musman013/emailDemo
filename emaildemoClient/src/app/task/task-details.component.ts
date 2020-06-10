@@ -9,6 +9,7 @@ import { ITask } from './itask';
 import { BaseDetailsComponent, Globals, PickerDialogService, ErrorService } from 'projects/fast-code-core/src/public_api';
 
 import { AppsService } from '../apps/apps.service';
+import { DatePipe } from "@angular/common";
 
 
 @Component({
@@ -30,8 +31,9 @@ export class TaskDetailsComponent extends BaseDetailsComponent<ITask> implements
 		public pickerDialogService: PickerDialogService,
 		public errorService: ErrorService,
 		public appsService: AppsService,
+		public datePipe:DatePipe
 	) {
-		super(formBuilder, router, route, dialog, global, pickerDialogService, dataService, errorService);
+		super(formBuilder, router, route, dialog, global, pickerDialogService, dataService, errorService,datePipe);
   }
 
 	ngOnInit() {

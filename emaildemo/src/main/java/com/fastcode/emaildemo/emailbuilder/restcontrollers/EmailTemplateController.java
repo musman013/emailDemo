@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fastcode.emaildemo.commons.search.SearchCriteria;
 import com.fastcode.emaildemo.commons.search.SearchUtils;
+import com.fastcode.emaildemo.domain.irepository.FileHistoryRepository;
+import com.fastcode.emaildemo.domain.irepository.FileRepository;
+import com.fastcode.emaildemo.domain.model.FileHistory;
 import com.fastcode.emaildemo.commons.application.OffsetBasedPageRequest;
 import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.EmailTemplateAppService;
 import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.*;
@@ -45,6 +48,12 @@ public class EmailTemplateController {
 	    
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private FileRepository filesRepo;
+	
+	@Autowired
+	private FileHistoryRepository fileHistoryrepo;
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<CreateEmailTemplateOutput> create(@RequestBody @Valid CreateEmailTemplateInput email) throws IOException {
@@ -113,5 +122,38 @@ public class EmailTemplateController {
 		return ResponseEntity.ok(find);
 	  }
 	
+	@RequestMapping(value = "/reset/{id}", method = RequestMethod.GET)
+	public ResponseEntity<FindEmailTemplateByIdOutput> reset(@PathVariable String id) {
+		
+		
+		FindEmailTemplateByIdOutput updateEmailTemplateInput = emailTemplateAppService.findByResetId(Long.valueOf(id));
+	    if (updateEmailTemplateInput == null) {
+	       logHelper.getLogger().error("Unable to reset. Email with id {} not found.", id);
+	       return new ResponseEntity(new EmptyJsonResponse(), HttpStatus.NOT_FOUND);
+	    }
+	    
+	    resetActualTemplate(updateEmailTemplateInput,id);
+	    return new ResponseEntity(updateEmailTemplateInput, HttpStatus.OK);
+	}
+	
+	public void resetActualTemplate(FindEmailTemplateByIdOutput updateEmailTemplateInput, String id)
+	{
+	    UpdateEmailTemplateInput email = new UpdateEmailTemplateInput();
+	    email.setActive(updateEmailTemplateInput.getActive());
+	    email.setAttachmentpath(updateEmailTemplateInput.getAttachmentpath());
+	    email.setAttachments(updateEmailTemplateInput.getAttachments());
+	    email.setBcc(updateEmailTemplateInput.getBcc());
+	    email.setCategory(updateEmailTemplateInput.getCategory());
+	    email.setCc(updateEmailTemplateInput.getCc());
+	    email.setContentHtml(updateEmailTemplateInput.getContentHtml());
+	    email.setContentJson(updateEmailTemplateInput.getContentJson());
+	    email.setDescription(updateEmailTemplateInput.getDescription());
+	    email.setId(updateEmailTemplateInput.getId());
+	    email.setInlineImages(updateEmailTemplateInput.getInlineImages());
+	    email.setSubject(updateEmailTemplateInput.getSubject());
+	    email.setTemplateName(updateEmailTemplateInput.getTemplateName());
+	    email.setTo(updateEmailTemplateInput.getTo());
+	    emailTemplateAppService.reset(Long.valueOf(id), email);
+	}
 	
 }

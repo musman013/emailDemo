@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 
 import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.*;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailTemplateEntity;
+import com.fastcode.emaildemo.emailbuilder.domain.model.EmailtemplateEntityHistory;
 
 @Mapper(componentModel = "spring")
 public interface EmailTemplateMapper {
@@ -19,4 +20,9 @@ public interface EmailTemplateMapper {
     FindEmailTemplateByIdOutput emailTemplateEntityToFindEmailTemplateByIdOutput(EmailTemplateEntity entity);
 
     FindEmailTemplateByNameOutput emailTemplateEntityToFindEmailTemplateByNameOutput(EmailTemplateEntity entity);
+
+	FindEmailTemplateByIdOutput emailTemplateEntityToFindEmailTemplateByIdOutputforReset(
+			EmailtemplateEntityHistory foundEmail);
+
+	EmailtemplateEntityHistory createEmailTemplateInputToEmailTemplateEntityforReset(CreateEmailTemplateInput email);
 }

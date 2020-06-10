@@ -51,6 +51,13 @@ public class File implements Serializable {
 
 	@Column(nullable = true)
 	private Long emailTemplateId;
+	
+	@Column(nullable = true)
+	private Long emailVariableId;
+	
+	@Column
+	private boolean deleted;
+	
 
 	// Copy Constructor
 	public File(File file) {
@@ -124,5 +131,25 @@ public class File implements Serializable {
 	public void setEmailTemplateId(Long emailTemplateId) {
 		this.emailTemplateId = emailTemplateId;
 	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	public Long getEmailVariableId() {
+		return emailVariableId;
+	}
+
+	public void setEmailVariableId(Long emailVariableId) {
+		this.emailVariableId = emailVariableId;
+	}
+
+
+	
+	
 
 }

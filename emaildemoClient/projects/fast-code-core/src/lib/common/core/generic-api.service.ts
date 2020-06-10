@@ -36,6 +36,13 @@ export class GenericApiService<T> {
     }), catchError(this.handleError));
 
   }
+
+   public getAllWithoutPagination(): Observable<T[]> {
+    return this.http.get<T[]>(this.url+'/list').pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
+
+  }
   
   /**
    * Fetches specific child's object of given parent.
@@ -77,6 +84,10 @@ export class GenericApiService<T> {
       .get<T>(this.url + '/' + id).pipe(catchError(this.handleError));
   }
 
+  public resetTemplateById(id:any): Observable<T> {
+    return this.http
+      .get<T>(this.url + '/reset/' + id).pipe(catchError(this.handleError));
+  }
   /**
    * Calls api to create given item.
    * @param item
@@ -123,5 +134,26 @@ export class GenericApiService<T> {
     }
     console.error(errorMessage);
     return throwError(errorMessage);
+  }
+
+   getAllMasterValue(masterName): Observable<string[]> {
+    let url = this.config.apiUrl+'/master/getMastersByMasterName?name='+masterName ;
+    return this.http.get<string[]>(url).pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
+  }
+
+    
+   createFileMetadata(fileMetadata) {
+     return this.http.post<any>(this.config.apiUrl + '/files', fileMetadata);
+
+  }
+
+  uploadFile(id, file: File) {
+    if (file && file.name) {
+      const fileData = new FormData();
+      fileData.append('file', file);
+      return this.http.put<any>(this.config.apiUrl + '/files/' + id, fileData);
+    }
   }
 }

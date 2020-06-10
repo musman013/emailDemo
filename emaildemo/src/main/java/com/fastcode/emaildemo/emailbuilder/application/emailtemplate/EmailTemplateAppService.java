@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.fastcode.emaildemo.emailbuilder.domain.emailtemplate.IEmailTemplateManager;
+import com.fastcode.emaildemo.emailbuilder.domain.emailtemplate.IEmailTemplateManagerHistory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,15 +25,19 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.*;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailTemplateEntity;
+import com.fastcode.emaildemo.emailbuilder.domain.model.EmailtemplateEntityHistory;
 import com.fastcode.emaildemo.emailbuilder.domain.model.QEmailTemplateEntity;
 import com.fastcode.emaildemo.commons.search.*;
 import com.fastcode.emaildemo.domain.irepository.FileContentStore;
+import com.fastcode.emaildemo.domain.irepository.FileHistoryRepository;
 import com.fastcode.emaildemo.domain.irepository.FileRepository;
 import com.fastcode.emaildemo.domain.model.File;
+import com.fastcode.emaildemo.domain.model.FileHistory;
 import com.fastcode.emaildemo.commons.logging.LoggingHelper;
 import com.querydsl.core.BooleanBuilder;
 import com.fastcode.emaildemo.emailbuilder.emailconverter.dto.request.Request;
@@ -65,25 +71,57 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 
 	@Autowired
 	private FileRepository filesRepo;
+	
+	@Autowired
+	private FileHistoryRepository fileHistoryrepo;
+	
+	@Autowired
+	private IEmailTemplateManagerHistory _emailTemplateManagerHistory;
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public CreateEmailTemplateOutput create(CreateEmailTemplateInput email) {
 
 		EmailTemplateEntity re = emailTemplateMapper.createEmailTemplateInputToEmailTemplateEntity(email);
 		EmailTemplateEntity createdEmail = _emailTemplateManager.create(re);
+		EmailtemplateEntityHistory resetData = emailTemplateMapper.createEmailTemplateInputToEmailTemplateEntityforReset(email);
+		resetData.setId(re.getId());
+		_emailTemplateManagerHistory.create(resetData);
 		if (email.getAttachments() != null && email.getAttachments().size() > 0) {
 			email.getAttachments().forEach(e -> {
 				if (e.getId() != null) {
+					
 					filesRepo.updateFileEmailTemplate(e.getId(), createdEmail.getId());
+					Optional<File> updatedFileOpt=filesRepo.findById(e.getId());
+					if(updatedFileOpt.isPresent())
+					{
+					File updatedFile=updatedFileOpt.get();
+					setFileHistoryContent(updatedFile);
+					}
+					
 				}
 			});
 		}
 
 		CreateEmailTemplateOutput emailTemplateEntityToCreateEmailTemplateOutput = emailTemplateMapper.emailTemplateEntityToCreateEmailTemplateOutput(createdEmail);
-		List<File> fileByEmailTemplateId = filesRepo.getFileByEmailTemplateId(emailTemplateEntityToCreateEmailTemplateOutput.getId());
+		List<File> fileByEmailTemplateId = filesRepo.getFileByEmailTemplateIdAndDeletedFalse(emailTemplateEntityToCreateEmailTemplateOutput.getId());
 
 		emailTemplateEntityToCreateEmailTemplateOutput.setAttachments(fileByEmailTemplateId);
 		return emailTemplateEntityToCreateEmailTemplateOutput;
+	}
+
+	private void setFileHistoryContent(File updatedFile) {
+		FileHistory fh = new FileHistory();
+		fh.setId(updatedFile.getId());
+		fh.setContentId(updatedFile.getContentId());
+		fh.setContentLength(updatedFile.getContentLength());
+		fh.setCreated(updatedFile.getCreated());
+		fh.setEmailTemplateId(updatedFile.getEmailTemplateId());
+		fh.setId(updatedFile.getId());
+		fh.setMimeType(updatedFile.getMimeType());
+		fh.setName(updatedFile.getName());
+		fh.setSummary(updatedFile.getSummary());
+		fileHistoryrepo.save(fh);
+		
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -106,7 +144,7 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 		}
 
 		UpdateEmailTemplateOutput emailTemplateEntityToUpdateEmailTemplateOutput = emailTemplateMapper.emailTemplateEntityToUpdateEmailTemplateOutput(updatedEmail);
-		List<File> fileByEmailTemplateId = filesRepo.getFileByEmailTemplateId(emailTemplateEntityToUpdateEmailTemplateOutput.getId());
+		List<File> fileByEmailTemplateId = filesRepo.getFileByEmailTemplateIdAndDeletedFalse(emailTemplateEntityToUpdateEmailTemplateOutput.getId());
 
 		emailTemplateEntityToUpdateEmailTemplateOutput.setAttachments(fileByEmailTemplateId);
 		return emailTemplateEntityToUpdateEmailTemplateOutput;
@@ -123,7 +161,7 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 		}
 		FindEmailTemplateByIdOutput emailTemplateEntityToFindEmailTemplateByIdOutput = emailTemplateMapper.emailTemplateEntityToFindEmailTemplateByIdOutput(foundEmail);
 
-		List<File> fileByEmailTemplateId = filesRepo.getFileByEmailTemplateId(emailTemplateEntityToFindEmailTemplateByIdOutput.getId());
+		List<File> fileByEmailTemplateId = filesRepo.getFileByEmailTemplateIdAndDeletedFalse(emailTemplateEntityToFindEmailTemplateByIdOutput.getId());
 		emailTemplateEntityToFindEmailTemplateByIdOutput.setAttachments(fileByEmailTemplateId);
 
 		return emailTemplateEntityToFindEmailTemplateByIdOutput;
@@ -349,12 +387,60 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 	public String convertJsonToHtml(String jsonString) throws IOException {
 		String html = " ";
 		ObjectMapper mapper = new ObjectMapper();
+
+		mapper.configure(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
 		Request request = mapper.readValue(jsonString, Request.class);
 		Response response = mjmlOwnService.genrateHtml(request);
 		logHelper.getLogger().error("Error", response.getErrors());
 		html = response.getHtml();
 
 		return html;
+	}
+
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public FindEmailTemplateByIdOutput findByResetId(Long eid) {
+		EmailtemplateEntityHistory foundEmail = _emailTemplateManagerHistory.findById(eid);
+
+		if (foundEmail == null) {
+			logHelper.getLogger().error("There does not exist a email wth a id=%s", eid);
+			return null;
+		}
+		FindEmailTemplateByIdOutput emailTemplateEntityToFindEmailTemplateByIdOutput = emailTemplateMapper.emailTemplateEntityToFindEmailTemplateByIdOutputforReset(foundEmail);
+
+		
+		List<Long> allHistoryFiles = fileHistoryrepo.getFileByEmailTemplateId(emailTemplateEntityToFindEmailTemplateByIdOutput.getId());
+	    
+	    if (allHistoryFiles!=null && !allHistoryFiles.isEmpty()) {    	
+			       filesRepo.setDeleteAdditionalFileEmailTemplate(allHistoryFiles, emailTemplateEntityToFindEmailTemplateByIdOutput.getId());
+
+	    }
+	    
+		List<File> fileByEmailTemplateId = filesRepo.getFileByEmailTemplateIdAndDeletedFalse(emailTemplateEntityToFindEmailTemplateByIdOutput.getId());
+		emailTemplateEntityToFindEmailTemplateByIdOutput.setAttachments(fileByEmailTemplateId);
+
+		return emailTemplateEntityToFindEmailTemplateByIdOutput;
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	public UpdateEmailTemplateOutput reset(Long valueOf, UpdateEmailTemplateInput email) {
+
+		EmailTemplateEntity ue = emailTemplateMapper.updateEmailTemplateInputToEmailTemplateEntity(email);
+		EmailTemplateEntity updatedEmail = _emailTemplateManager.update(ue);
+		if (email.getAttachments() != null && email.getAttachments().size() > 0) {
+			email.getAttachments().forEach(e -> {
+				if (e.getId() != null) {
+					filesRepo.updateFileEmailTemplate(e.getId(), updatedEmail.getId());
+				}
+			});
+		}
+
+		UpdateEmailTemplateOutput emailTemplateEntityToUpdateEmailTemplateOutput = emailTemplateMapper.emailTemplateEntityToUpdateEmailTemplateOutput(updatedEmail);
+		
+		List<File> fileByEmailTemplateId = filesRepo.getFileByEmailTemplateIdAndDeletedFalse(emailTemplateEntityToUpdateEmailTemplateOutput.getId());
+
+		emailTemplateEntityToUpdateEmailTemplateOutput.setAttachments(fileByEmailTemplateId);
+		return emailTemplateEntityToUpdateEmailTemplateOutput;
+
 	}
 
 }

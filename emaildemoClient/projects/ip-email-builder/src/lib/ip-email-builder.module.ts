@@ -25,7 +25,7 @@ import {
   MatSortModule,
   MatPaginatorModule,
   MatCheckboxModule,
-  MatProgressSpinnerModule, MatAutocompleteModule
+  MatProgressSpinnerModule, MatAutocompleteModule, MatDatepickerModule
 } from '@angular/material';
 
 import 'hammerjs';
@@ -77,6 +77,7 @@ import { EmailRoutes } from './email-routing.module';
 //import {FastCodeCoreModule,EmailRoutes} from 'fastCodeCore';
 import { FastCodeCoreModule ,ILibraryRootConfg} from 'projects/fast-code-core/src/public_api';
 import { EmailAttachmentComponent } from './email-editor/email-attachment/email-attachment.component';
+import { InternationalPhoneNumberModule } from 'ngx-international-phone-number';
 //'fastCodeCore';
 //import {GenericApiService} from 'fastCodeCore/public_api';
 @NgModule({
@@ -116,7 +117,9 @@ import { EmailAttachmentComponent } from './email-editor/email-attachment/email-
     ReactiveFormsModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatDatepickerModule,
+    InternationalPhoneNumberModule
   ],
   declarations: [
     IpEmailBuilderComponent,

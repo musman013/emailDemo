@@ -4,8 +4,10 @@
 
 export const environment = {
 	production: false,
-	apiUrl:  '/api', //'https://localhost:5555',
-	authUrl: '/api', //'http://localhost:5555',s
+	apiUrl:  '/api', //'http://localhost:5555',
+	authUrl: '/api', //'http://localhost:5555',
+	// apiUrl:  'http://localhost:5555',
+	// authUrl: 'http://localhost:5555',
 
 };
 

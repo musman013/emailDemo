@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fastcode.emaildemo.commons.search.SearchCriteria;
 import com.fastcode.emaildemo.commons.search.SearchFields;
+import com.fastcode.emaildemo.domain.irepository.FileRepository;
 import com.fastcode.emaildemo.emailbuilder.application.emailvariable.dto.*;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailVariableEntity;
 import com.fastcode.emaildemo.emailbuilder.domain.model.QEmailVariableEntity;
@@ -39,6 +40,9 @@ public class EmailVariableAppService implements IEmailVariableAppService {
 
 	@Autowired
 	private EmailVariableMapper emailVariableMapper;
+	
+	@Autowired
+	private FileRepository filesRepo;
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public CreateEmailVariableOutput create(CreateEmailVariableInput email) {
@@ -46,6 +50,22 @@ public class EmailVariableAppService implements IEmailVariableAppService {
 		EmailVariableEntity re = emailVariableMapper.createEmailVariableInputToEmailVariableEntity(email);
 		EmailVariableEntity createdEmail = _emailVariableManager.create(re);
 
+		if(createdEmail.getPropertyType().equalsIgnoreCase("Image"))
+		{
+			filesRepo.updateFileVariableTemplate(Long.parseLong(createdEmail.getDefaultValue()), createdEmail.getId());
+		}
+		else if(createdEmail.getPropertyType().equalsIgnoreCase("List of Images"))
+		{
+			String[] ids=createdEmail.getDefaultValue().split(",");
+			List<Long> idsLong = new ArrayList<>();
+			for(String id:ids)
+			{
+				idsLong.add(Long.parseLong(id));
+			}
+			filesRepo.updateFileVariableTemplateList(idsLong, createdEmail.getId());
+
+			
+		}
 		return emailVariableMapper.emailVariableEntityToCreateEmailVariableOutput(createdEmail);
 	}
 
@@ -235,5 +255,19 @@ public class EmailVariableAppService implements IEmailVariableAppService {
 			
 		}
 		return builder;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public List<FindEmailVariableByIdOutput> findAll() {
+		List<EmailVariableEntity> foundEmail = _emailVariableManager.findAll();
+
+		Iterator<EmailVariableEntity> emailIterator = foundEmail.iterator();
+		List<FindEmailVariableByIdOutput> output = new ArrayList<>();
+
+		  while (emailIterator.hasNext()) {
+	      output.add(emailVariableMapper.emailVariableEntityToFindEmailVariableByIdOutput(emailIterator.next()));    
+		 }
+
+		return output;
 	}
 }

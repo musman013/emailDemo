@@ -6,6 +6,7 @@ public class CreateEmailVariableOutput {
 	private String propertyName;
 	private String propertyType;
     private String defaultValue;
+    private String mergeType;
     
 	public Long getId() {
 		return id;
@@ -38,4 +39,14 @@ public class CreateEmailVariableOutput {
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
 	}
+
+	public String getMergeType() {
+		return mergeType;
+	}
+
+	public void setMergeType(String mergeType) {
+		this.mergeType = mergeType;
+	}
+	
+	
 }

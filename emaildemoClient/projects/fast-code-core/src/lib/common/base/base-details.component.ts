@@ -18,15 +18,25 @@ import { IGlobalPermissionService } from '../core/iglobal-permission.service';
 import { CanDeactivateGuard } from '../core/can-deactivate.guard';
 import { ErrorService } from '../core/error.service';
 import { ServiceUtils } from '../utils/serviceUtils';
+import { PropertyType } from "projects/ip-email-builder/src/lib/email-editor/email-variable/property-type";
+import { DatePipe } from "@angular/common";
 
 @Component({
 
-  template: ''
+  template: '',
+   providers: [DatePipe]
 
 })
 export class BaseDetailsComponent<E> implements OnInit, CanDeactivateGuard {
-
-  /** 
+    	selectedVariableType: any;
+    selectedDropDownValue: any;
+    listData:string[]=[];
+    fileIds:number[]=[];
+    attatchment: { 
+      myFile?:File;
+      url?:any;
+    }[] = [];
+  /**
    * Guard against browser refresh, close, etc.
    * Checks if user has some unsaved changes 
    * before leaving the page.
@@ -77,7 +87,8 @@ export class BaseDetailsComponent<E> implements OnInit, CanDeactivateGuard {
     public global: Globals,
     public pickerDialogService: PickerDialogService,
     public dataService: GenericApiService<E>,
-    public errorService: ErrorService
+    public errorService: ErrorService,
+    public datePipe: DatePipe
 
   ) {
   }
@@ -130,12 +141,35 @@ export class BaseDetailsComponent<E> implements OnInit, CanDeactivateGuard {
    * service method to update the item.
    */
   onSubmit() {
+    let check=true;
     if (this.itemForm.invalid) {
       return;
     }
 
     this.submitted = true;
     this.loading = true;
+    //
+     switch(this.selectedVariableType)
+		{
+      case PropertyType.DATE:
+		  this.itemForm.controls.defaultValue.setValue(this.datePipe.transform(this.itemForm.controls.defaultValue.value, this.selectedDropDownValue));
+      break;
+      case PropertyType.LIST:
+      if(this.listData && this.listData.length>0)
+        {
+          this.itemForm.controls.defaultValue.setValue(this.listData.join(','));
+        }
+      break;
+      case PropertyType.IMAGE:
+      case PropertyType.CLICKABLE_IMAGE:
+      case PropertyType.LIST_OF_IMAGES:
+      check=false;
+      this.saveAttachments();
+      //need to check this code
+      break;
+    }
+    if(check)
+      {
     this.dataService.update(this.itemForm.getRawValue(), this.idParam)
       .pipe(first())
       .subscribe(
@@ -147,6 +181,7 @@ export class BaseDetailsComponent<E> implements OnInit, CanDeactivateGuard {
           this.errorService.showError("Error Occured while updating");
           this.loading = false;
         });
+      }
   }
 
   /**
@@ -310,5 +345,42 @@ export class BaseDetailsComponent<E> implements OnInit, CanDeactivateGuard {
 
     }
   }
+
+
+
+
+   saveAttachments() {
+    if (this.attatchment && this.attatchment.length > 0) {
+      this.attatchment.forEach(file => {
+
+        if (file.myFile.name ) {
+          const fileMetadata = {
+            name: file.myFile.name, summary: file.myFile.name
+          };
+          this.dataService.createFileMetadata(fileMetadata).subscribe(res => {
+            console.log("response is",res);
+            this.dataService.uploadFile(res.id, file.myFile).subscribe(res2=>{
+              this.fileIds.push(res.id);
+            this.itemForm.controls.defaultValue.setValue(this.fileIds.join(','));
+            });
+          });
+        }
+      });
+    }
+
+        setTimeout(() => this.dataService.update(this.itemForm.getRawValue(), this.idParam)
+      .pipe(first())
+      .subscribe(
+        data => {
+          this.loading = false;
+          this.router.navigate([this.parentUrl], { relativeTo: this.route.parent });
+        },
+        error => {
+          this.errorService.showError("Error Occured while updating");
+          this.loading = false;
+        }), 3000);
+
+  }
+
 
 }

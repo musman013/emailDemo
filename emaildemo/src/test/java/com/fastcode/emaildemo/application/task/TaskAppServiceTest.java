@@ -1,17 +1,17 @@
 package com.fastcode.emaildemo.application.task;
 
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.assertj.core.api.Assertions;
 import org.junit.After;
@@ -20,23 +20,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.fastcode.emaildemo.domain.task.*;
-import com.fastcode.emaildemo.commons.search.*;
-import com.fastcode.emaildemo.application.task.dto.*;
+import com.fastcode.emaildemo.application.task.dto.CreateTaskInput;
+import com.fastcode.emaildemo.application.task.dto.FindTaskByIdOutput;
+import com.fastcode.emaildemo.application.task.dto.UpdateTaskInput;
+import com.fastcode.emaildemo.commons.logging.LoggingHelper;
+import com.fastcode.emaildemo.commons.search.SearchCriteria;
+import com.fastcode.emaildemo.commons.search.SearchFields;
+import com.fastcode.emaildemo.domain.apps.AppsManager;
+import com.fastcode.emaildemo.domain.model.AppsEntity;
 import com.fastcode.emaildemo.domain.model.QTaskEntity;
 import com.fastcode.emaildemo.domain.model.TaskEntity;
-import com.fastcode.emaildemo.domain.model.AppsEntity;
-import com.fastcode.emaildemo.domain.apps.AppsManager;
-import com.fastcode.emaildemo.commons.logging.LoggingHelper;
+import com.fastcode.emaildemo.domain.task.TaskManager;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 

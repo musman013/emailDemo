@@ -1,0 +1,54 @@
+quill-editor {
+  display: block;
+}
+
+.addIcon{
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+
+    &_list {
+      display:none;
+    }
+}
+
+.addIcon:hover {
+  .addIcon_list {
+    display: block;
+    position: absolute;
+    width: auto;
+    background-color: black;
+    text-align: left;
+    top: -200%;
+    left: -71px;
+    padding: 8px;
+    max-height: 150px;
+    overflow-y: scroll;
+    &_item {
+      display: block;
+    line-height: 1.6;
+    color: #fff;
+    }
+  }
+}
+
+
+.addIcon.active {
+  .addIcon_list {
+    display: block;
+    position: absolute;
+    width: auto;
+    background-color: black;
+    text-align: left;
+    top: -150%;
+    left: -71px;
+    padding: 8px;
+    max-height: 150px;
+    overflow-y: scroll;
+    &_item {
+      display: block;
+    line-height: 1.6;
+    color: #fff;
+    }
+  }
+}

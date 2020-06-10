@@ -22,7 +22,8 @@ import {
   MatCardModule, MatTabsModule, MatInputModule, MatDialogModule,
   MatSelectModule, MatCheckboxModule, MatAutocompleteModule,
   MatDatepickerModule, MatNativeDateModule, MatMenuModule, MatSortModule,
-  MatPaginatorModule, MatProgressSpinnerModule, MatSnackBarModule
+  MatPaginatorModule, MatProgressSpinnerModule, MatSnackBarModule,
+  
 } from '@angular/material';
 import {MatChipsModule} from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -42,6 +43,8 @@ import { BottomTabNavComponent } from './common/components/bottom-tab-nav/bottom
 import { environment } from '../environments/environment';
 
 import { TaskListComponent, TaskDetailsComponent, TaskNewComponent } from './task/index';
+
+import { InternationalPhoneNumberModule } from 'ngx-international-phone-number';
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient);

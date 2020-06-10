@@ -5,7 +5,6 @@ import org.mapstruct.Mapper;
 import com.fastcode.emaildemo.emailbuilder.application.emailvariable.dto.*;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailVariableEntity;
 
-
 @Mapper(componentModel = "spring")
 public interface EmailVariableMapper {
 
