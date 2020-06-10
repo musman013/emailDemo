@@ -1,3 +1,13 @@
-<quill-editor [ngStyle]="getTextStyles()" [modules]="getQuillConfig()" [required]="true" bounds="self" theme="bubble"
-  format="html" [(ngModel)]="block.innerText" >
+<quill-editor #myquill id="myQuillId" (focus)="onEditorFocused($event)" [ngStyle]="getTextStyles()" (selectionchange)="getValue($event)"
+  (onEditorCreated)="getEditorInstance($event)" (onContentChanged)="getContent($event)" [modules]="getQuillConfig()" [required]="true" theme="bubble" format="html"
+  [(ngModel)]="block.innerText">
 </quill-editor>
+<button  [ngClass]="{'active' : showActive}" class="addIcon" mat-icon-button color="warn">
+                <mat-icon aria-label="Merge Field">cloud_download</mat-icon>
+
+                  <span id="subject4-variable"  class="dropdown-content addIcon_list">
+                      <span class="addIcon_list_item"  *ngFor="let variable of _ngb.MergeTags" (click)="insertVariable($event)"> {{variable}}</span>
+                  </span>
+</button> 
+
+<!--  -->

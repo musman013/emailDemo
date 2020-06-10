@@ -12,12 +12,13 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {IEmailTemplate} from './iemail-template';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatSelect, MatSnackBar} from '@angular/material';
+import { MatSelect, MatSnackBar, MatDialog } from '@angular/material';
 import {TranslateService} from '@ngx-translate/core';
 import {map, startWith} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {EmailFileService} from './email-file.service';
 import {environment} from '../environment';
+import { ConfirmDialogComponent } from "projects/ip-email-builder/src/lib/components/dialog.component";
 
 //import { DividerBlock, IBlockState } from 'ip-email-builder/public_api';
 @Component({
@@ -26,6 +27,9 @@ import {environment} from '../environment';
   styleUrls: ['./template-editor.component.scss']
 })
 export class TemplateEditorComponent implements OnInit {
+  api : string = '/api/files/';
+  replaceapi : string = "/api/files/";
+  emailTemplateId: string;
   title = 'Create Email Template';
   isLoading: BehaviorSubject<boolean>;
   emailTemplate?: IEmailTemplate;
@@ -61,7 +65,8 @@ export class TemplateEditorComponent implements OnInit {
     private emailVariableService: EmailVariableService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private emailFileService: EmailFileService
+    private emailFileService: EmailFileService,
+    private confirmDialog: MatDialog,
   ) {
     this.isLoading = _ngb.isLoading;
     _ngb.MergeTags = new Set(['tag22']); //new Set(['{{firstName}}', '{{lastName}}']);
@@ -89,8 +94,9 @@ export class TemplateEditorComponent implements OnInit {
   ngOnInit() {
 
     const param = this.route.snapshot.paramMap.get('id');
+    this.emailTemplateId=param;
     this.setPermissions();
-    this.emailVariableService.getAll(null, 0, 20).subscribe(
+    this.emailVariableService.getAllWithoutPagination().subscribe(
       items => {
         let tags = items.map(item => item.propertyName);
         this._ngb.MergeTags = new Set(tags);
@@ -180,7 +186,11 @@ export class TemplateEditorComponent implements OnInit {
 
     this.loadEmailTemplate();
     this.emailTemplate.to = to;
-    this.emailTemplate.contentJson = this.emailTemplate.contentJson.replace(environment.apiUrl + '/files/', 'cid:IMAGE');
+    let contentJson = this.emailTemplate.contentJson.replace(this.replaceapi , "cid:IMAGE");
+    for(let i = 0; i < 20; i++){
+      contentJson = contentJson.replace(this.replaceapi , "cid:IMAGE");
+    }
+    this.emailTemplate.contentJson = contentJson;
     //this.emailTemplate.contentJson = template;
     let attachments = [];
     // this.files.forEach(file =>{
@@ -188,9 +198,9 @@ export class TemplateEditorComponent implements OnInit {
     // });
 
     let inlinImages = [];
-    this.inlineImages.forEach(file =>{
-      const id = file['src'].replace(environment.apiUrl + '/files/', '');
-      inlinImages.push({name: id, description: file['src'] , summary: 'IMAGE'+id});
+    this.inlineImages.forEach(file => {
+      const id = file['src'].replace(this.replaceapi, '');
+      inlinImages.push({name: id, description: file['src'], summary: 'IMAGE' + id});
     });
 
     this.emailTemplate.attachments = attachments;
@@ -215,12 +225,11 @@ export class TemplateEditorComponent implements OnInit {
             this.inlineImages.add(block);
             this.loadedInlineImages.add(block.src);
             try {
-              block.src = block.src.replace(environment.apiUrl + '/files/', '');
+              block.src = block.src.replace(this.replaceapi, '');
             } catch (error) {
               // ignore
             }
-
-            block.src = environment.apiUrl + '/files/' + block.src;
+            block.src = this.api + block.src;
           }
         });
       });
@@ -256,7 +265,64 @@ export class TemplateEditorComponent implements OnInit {
       error => this.errorMessage = <any>error);
   }
 
-  saveEmail = () => {
+
+  resetTemplate()
+{
+
+   this.confirmDialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          message: this.translate.instant('EMAIL-BUILDER.MESSAGES.RESET-TITLE')
+        }
+      })
+      .afterClosed()
+      .subscribe(result => {
+        console.log("reseut",result);
+        if(result ==1)
+          {
+            this.resetEmailTemplate();
+          }
+      });
+
+ 
+} 
+
+
+resetEmailTemplate()
+{
+this.emailtemplateService.resetTemplateById(this.emailTemplateId).subscribe(
+      templ => {
+          var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.MESSAGES.RESET-SUCCESS'), this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'), {
+            duration: 1000,
+            panelClass: ['snackbar-background']
+          });
+
+        this.emailTemplate = templ;
+        this.formGroup.patchValue({
+          id: templ.id,
+          templateName: templ.templateName,
+          subject: templ.subject,
+          to: templ.to,
+          contentJson: templ.contentJson,
+          contentHtml: templ.contentHtml,
+          category: templ.category,
+          description: templ.description,
+          attachments: templ.attachments,
+          active: templ.active
+
+        });
+        this.files = new Set(templ.attachments);
+        this.loadedFiles = new Set();
+        templ.attachments.forEach(e => {
+          this.loadedFiles.add(e.name);
+        });
+        this.loadEmail(JSON.parse(templ.contentJson));
+
+      },
+      error => this.errorMessage = <any>error);
+}
+
+saveEmail = () => {
     if (!this._ngb.IsChanged) {
       this._ngb.notify(this.translate.instant('EMAIL-EDITOR.MESSAGES.NO-CHANGES'));
       // return Promise.reject(`There's no changes to be saved`);
@@ -376,6 +442,7 @@ export class TemplateEditorComponent implements OnInit {
 
   showHideVariables(subject3Variable: string) {
     const comboElement = document.getElementById(subject3Variable) as any;
+    
     if (comboElement.classList.contains('show')) {
       comboElement.classList.remove('show');
     } else {
@@ -418,9 +485,11 @@ export class TemplateEditorComponent implements OnInit {
                 this.emailFileService.uploadBlock(res.id, block);
                 block.src = res.id;
                 inlineImages.push({id: res.id});
+                //additional code
+                //attachments.push({id: res.id});
               });
             } else {
-              block.src.replace(environment.apiUrl + '/files/', '');
+              block.src.replace(this.replaceapi, '');
             }
           }
         });
@@ -441,5 +510,10 @@ export class TemplateEditorComponent implements OnInit {
     };
 
     return new Promise(poll);
+  }
+
+  openEmailTemplate()
+  {
+    this.editorView=false;
   }
 }

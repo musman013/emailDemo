@@ -9,11 +9,15 @@ import { Globals, BaseNewComponent, PickerDialogService, ErrorService } from 'pr
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AppsService } from '../apps/apps.service';
+import { DatePipe } from "@angular/common";
+import { EmailFileService } from "projects/ip-email-builder/src/lib/email-editor/email-file.service";
+import { FastCodeCoreService } from "projects/fast-code-core/src/lib/fast-code-core.service";
 
 @Component({
   selector: 'app-task-new',
   templateUrl: './task-new.component.html',
-  styleUrls: ['./task-new.component.scss']
+  styleUrls: ['./task-new.component.scss'],
+  providers:[DatePipe]
 })
 export class TaskNewComponent extends BaseNewComponent<ITask> implements OnInit {
   
@@ -30,8 +34,8 @@ export class TaskNewComponent extends BaseNewComponent<ITask> implements OnInit 
 		public dataService: TaskService,
 		public errorService: ErrorService,
 		public appsService: AppsService,
-	) {
-		super(formBuilder, router, route, dialog, dialogRef, data, global, pickerDialogService, dataService, errorService);
+		public datePipe: DatePipe) {
+		super(formBuilder, router, route, dialog, dialogRef, data, global, pickerDialogService, dataService, errorService,datePipe);
 	}
  
 	ngOnInit() {

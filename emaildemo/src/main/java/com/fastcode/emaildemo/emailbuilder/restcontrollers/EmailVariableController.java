@@ -108,4 +108,10 @@ public class EmailVariableController {
 		return ResponseEntity.ok(emailVariableAppService.find(searchCriteria, Pageable));
 	}
 
+	
+	@RequestMapping(value="/list",method = RequestMethod.GET)
+	public ResponseEntity list() throws Exception {
+		return ResponseEntity.ok(emailVariableAppService.findAll());
+	}
+
 }

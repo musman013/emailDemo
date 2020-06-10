@@ -42,13 +42,15 @@ public class EmailService implements IEmailService {
 	private FileRepository filesRepo;
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void sendMessage(String to, String cc, String bcc, String subject, String htmlContent, List<File> inlineImages, List<File> attachments) {
+	public void sendMessage(String to, String cc, String bcc, String subject, String htmlContent,
+			List<File> inlineImages, List<File> attachments) {
 
 		MimeMessage message = emailSender.createMimeMessage();
 
 		try {
 
-			MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+			MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+					StandardCharsets.UTF_8.name());
 
 			String[] toArray = to.split(",", -1);
 			String[] ccArray = cc != null ? cc.split(",", -1) : new String[0];
@@ -58,19 +60,17 @@ public class EmailService implements IEmailService {
 			helper.setCc(ccArray);
 			helper.setBcc(bccArray);
 			helper.setSubject(subject);
-			helper.setText(htmlContent , true);
+			helper.setText(htmlContent, true);
 
 			// Use the true flag to indicate the text included is HTML
-			
 
 			for (File file : inlineImages) {
 				try {
-					
-				ByteArrayResource fileStreamResource = getFileStreamResource(Long.valueOf(file.getName()));
-				if (fileStreamResource != null)
-					helper.addInline(file.getSummary(), fileStreamResource, "image/jpeg");
-				}
-				catch (Exception e) {
+
+					ByteArrayResource fileStreamResource = getFileStreamResource(Long.valueOf(file.getName()));
+					if (fileStreamResource != null)
+						helper.addInline(file.getSummary(), fileStreamResource, "image/jpeg");
+				} catch (Exception e) {
 					// ignore
 					e.printStackTrace();
 				}
@@ -82,8 +82,6 @@ public class EmailService implements IEmailService {
 				if (fileStreamResource != null)
 					helper.addAttachment(file.getName(), fileStreamResource);
 			}
-			
-			
 
 		} catch (MessagingException ex) {
 			ex.printStackTrace();
@@ -92,7 +90,7 @@ public class EmailService implements IEmailService {
 		emailSender.send(message);
 	}
 
-	private ByteArrayResource getFileStreamResource(Long fileId) { // This method will download file using RestTemplate
+	public ByteArrayResource getFileStreamResource(Long fileId) { // This method will download file using RestTemplate
 		try {
 			Optional<File> f = filesRepo.findById(fileId);
 			// InputStreamResource inputStreamResource = new
@@ -103,6 +101,14 @@ public class EmailService implements IEmailService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private String appendInlineImagePrifix(String name) {
+		if (name.startsWith("cid:")) {
+			return name;
+		} else {
+			return "cid:" + name;
+		}
 	}
 
 }

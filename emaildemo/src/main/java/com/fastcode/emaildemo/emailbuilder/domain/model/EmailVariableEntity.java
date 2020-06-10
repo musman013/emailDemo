@@ -13,22 +13,25 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "EmailVariable")
-public class EmailVariableEntity implements Serializable {
 	
+public class EmailVariableEntity implements Serializable {
 
     private Long id;
     private String propertyName;
     private String propertyType;
     private String defaultValue;
+    private String mergeType;
+    
 
 
 	public EmailVariableEntity() {
 	}
 
-	public EmailVariableEntity(String propertyName, String propertyType, String defaultValue) {
+	public EmailVariableEntity(String propertyName, String propertyType, String defaultValue,String mergeTye) {
 		this.propertyName = propertyName;
 		this.propertyType = propertyType;
 		this.defaultValue = defaultValue;
+		this.mergeType=mergeTye;
 	}
 	
     @Id
@@ -60,12 +63,23 @@ public class EmailVariableEntity implements Serializable {
 	}
     
 	@Basic
-	@Column(name = "DefaultValue", nullable = true ,length = 100)
+	@Column(name = "DefaultValue", nullable = true ,length = 1000)
 	public String getDefaultValue() {
 		return defaultValue;
 	}
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
 	}
+
+	@Basic
+	@Column(name = "MergeType", nullable = true ,length = 50)
+	public String getMergeType() {
+		return mergeType;
+	}
+
+	public void setMergeType(String mergeType) {
+		this.mergeType = mergeType;
+	}
+	
 	
 }

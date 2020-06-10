@@ -54,6 +54,7 @@ export class IpEmailBuilderComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
   ) {
     this.email = _ngb.Email;
+    console.log(this.email);
     this.cloneEmail = cloneDeep(_ngb.Email);
     this.template = _ngb.Template;
     this.structures = _ngb.getSideStructures();

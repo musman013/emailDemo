@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fastcode.emaildemo.domain.irepository.FileContentStore;
+import com.fastcode.emaildemo.domain.irepository.FileHistoryRepository;
 import com.fastcode.emaildemo.domain.irepository.FileRepository;
 import com.fastcode.emaildemo.domain.model.File;
+import com.fastcode.emaildemo.domain.model.FileHistory;
 
 @RestController
 public class FileContentController {
@@ -29,6 +31,9 @@ public class FileContentController {
     
     @Autowired
     private FileContentStore contentStore;
+    
+    @Autowired
+    private FileHistoryRepository fileHistoryRepo;
 
     @RequestMapping(value = "/files/{fileId}", method = RequestMethod.PUT)
     public ResponseEntity<?> setContent(@PathVariable("fileId") Long id, @RequestParam("file") MultipartFile file)
