@@ -21,7 +21,7 @@ export class GenericApiService<T> {
   /**
    * Fetches list of items based on
    * given criteria.
-   * @param searchFields Search criteria. 
+   * @param searchFields Search criteria.
    * @param offset No. of items to be skipped.
    * @param limit Maximum no. of records.
    * @param sort Field and direction information for sorting.
@@ -43,7 +43,7 @@ export class GenericApiService<T> {
     }), catchError(this.handleError));
 
   }
-  
+
   /**
    * Fetches specific child's object of given parent.
    * @param childSuffix Url suffix for the child to be fetched.
@@ -53,13 +53,13 @@ export class GenericApiService<T> {
     return this.http
       .get<T>(this.url + '/' + id + "/" + childSuffix).pipe(catchError(this.handleError));
   }
-  
+
   /**
    * Fetches list of items against some
    * parent entity.
    * @param parentSuffix Url suffix of the parent entity.
    * @param parentId
-   * @param searchFields Search criteria. 
+   * @param searchFields Search criteria.
    * @param offset No. of items to be skipped.
    * @param limit Maximum no. of records.
    * @param sort Field and direction information for sorting.
@@ -120,7 +120,7 @@ export class GenericApiService<T> {
 
   /**
    * Handles Api error events.
-   * @param err 
+   * @param err
    */
   protected handleError(err: HttpErrorResponse) {
 
@@ -143,7 +143,7 @@ export class GenericApiService<T> {
     }), catchError(this.handleError));
   }
 
-    
+
    createFileMetadata(fileMetadata) {
      return this.http.post<any>(this.config.apiUrl + '/files', fileMetadata);
 
@@ -153,6 +153,7 @@ export class GenericApiService<T> {
     if (file && file.name) {
       const fileData = new FormData();
       fileData.append('file', file);
+
       return this.http.put<any>(this.config.apiUrl + '/files/' + id, fileData);
     }
   }

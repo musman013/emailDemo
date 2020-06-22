@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { TextBlock } from '../../classes/Elements';
-import { createPadding, createFont, createLineHeight } from '../../utils';
-import { IpEmailBuilderService } from '../../ip-email-builder.service';
-import { EmailVariableService } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.service";
+import {Component, Input, OnInit} from '@angular/core';
+import {TextBlock} from '../../classes/Elements';
+import {createPadding, createFont, createLineHeight} from '../../utils';
+import {IpEmailBuilderService} from '../../ip-email-builder.service';
+import {EmailVariableService} from 'projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.service';
 
 @Component({
   selector: 'ip-text-element',
@@ -18,13 +18,13 @@ export class TextElementComponent implements OnInit {
 
 
   constructor(private ngjs: IpEmailBuilderService,
-    private emailVariableService: EmailVariableService, private _ngb: IpEmailBuilderService, ) {
+              private emailVariableService: EmailVariableService, private _ngb: IpEmailBuilderService,) {
     _ngb.MergeTags = new Set(['tag22']);
   }
 
 
   getTextStyles() {
-    const { color, font, lineHeight, padding } = this.block.options;
+    const {color, font, lineHeight, padding} = this.block.options;
 
     return {
       color,
@@ -41,16 +41,16 @@ export class TextElementComponent implements OnInit {
   getQuillConfig() {
     const container: Array<Array<object | string>> = [
       ['bold', 'italic', 'underline', 'strike'],
-      [{ header: 1 }, { header: 2 }],
-      [{ size: ['small', false, 'large', 'huge'] }, { align: [] }],
-      [{ color: [] }, { background: [] }],
-      [{ direction: 'rtl' }, 'link']
+      [{header: 1}, {header: 2}],
+      [{size: ['small', false, 'large', 'huge']}, {align: []}],
+      [{color: []}, {background: []}],
+      [{direction: 'rtl'}, 'link']
     ];
 
     const placeholder = Array.from(this.ngjs.MergeTags);
 
     if (placeholder.length) {
-      container.push([{ placeholder }]);
+      container.push([{placeholder}]);
     }
 
     return {
@@ -59,7 +59,7 @@ export class TextElementComponent implements OnInit {
         handlers: {
           placeholder(selector: string) {
 
-            var selectorTxt = selector ? "{{" + selector + "}}" : selector;
+            var selectorTxt = selector ? '{{' + selector + '}}' : selector;
             const range = this.quill.getSelection();
             const format = this.quill.getFormat();
             const text = this.quill.getText(range.index, range.length);
@@ -73,13 +73,10 @@ export class TextElementComponent implements OnInit {
   }
 
   alterText(data: string) {
-    if(this.showActive)
-      {
-    var selectorTxt = data ?  data + "}}" : data;
-      }
-  else
-    {
-          var selectorTxt = data ? "{{" + data + "}}" : data;
+    if (this.showActive) {
+      var selectorTxt = data ? data + '}}' : data;
+    } else {
+      var selectorTxt = data ? '{{' + data + '}}' : data;
 
     }
     const range = this.quillEditorRef.getSelection(true);
@@ -90,13 +87,12 @@ export class TextElementComponent implements OnInit {
       this.quillEditorRef.insertText(range.index, selectorTxt, format, 'user');
       this.quillEditorRef.setSelection(range.index, selectorTxt.length);
 
-    }
-    else {
+    } else {
       const format = this.quillEditorRef.getFormat();
       this.quillEditorRef.insertText(0, selectorTxt, format, 'user');
       this.quillEditorRef.setSelection(0, selectorTxt.length);
     }
-    this.showActive=false;
+    this.showActive = false;
   }
 
 
@@ -118,30 +114,53 @@ export class TextElementComponent implements OnInit {
     );
 
 
-
   }
 
 
   insertVariable(event) {
     this.alterText(event.target.innerText);
+    console.log(event);
+    this.hideVariables('subject4-variable');
   }
 
 
   getContent(data) {
 
-    if (data && data.text && this.quillEditorRef!=null && this.quillEditorRef.getSelection()!=null) {
-      let pos=this.quillEditorRef.getSelection().index;
+    if (data && data.text && this.quillEditorRef != null && this.quillEditorRef.getSelection() != null) {
+      let pos = this.quillEditorRef.getSelection().index;
 
       if ('{{' == data.text.substring(pos - 2, pos)) {
         //here I need to add the hover class
-        this.showActive=true;
-        }
-      else
-        {
-          this.showActive=false;
-        }
+        this.showActive = true;
+      } else {
+        this.showActive = false;
+      }
 
     }
   }
+
+  showHideVariables(subject3Variable: string) {
+    const comboElement = document.getElementById(subject3Variable) as any;
+
+    if (comboElement.classList.contains('show')) {
+      comboElement.classList.remove('show');
+    } else {
+      comboElement.classList.add('show');
+    }
+    return false;
+  }
+  hideVariables(subject3Variable: string) {
+    const comboElement = document.getElementById(subject3Variable) as any;
+
+    if (comboElement.classList.contains('show')) {
+      comboElement.classList.remove('show');
+    }
+    else{
+      comboElement.classList.add('show');
+      comboElement.classList.remove('show');
+    }
+    return false;
+  }
+
 
 }

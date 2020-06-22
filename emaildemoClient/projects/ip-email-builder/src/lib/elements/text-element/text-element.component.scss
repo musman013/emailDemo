@@ -12,17 +12,44 @@ quill-editor {
     }
 }
 
-.addIcon:hover {
+
+  .addIcon_list {
+    display: none;
+    position: absolute;
+    min-width: 500px;
+    min-height: 250px;
+    background-color: black;
+    text-align: left;
+    top: -456%;
+    left: -454px;
+    padding: 8px;
+    max-height: 550px;
+    overflow-y: scroll;
+    &_item {
+      display: block;
+    line-height: 1.6;
+    color: #fff;
+    }
+  }
+
+.show {
+  display: block;
+}
+
+
+
+.addIcon.active {
   .addIcon_list {
     display: block;
     position: absolute;
-    width: auto;
+    min-width: 500px;
+    min-height: 250px;
     background-color: black;
     text-align: left;
-    top: -200%;
-    left: -71px;
+    top: -456%;
+    left: -454px;
     padding: 8px;
-    max-height: 150px;
+    max-height: 550px;
     overflow-y: scroll;
     &_item {
       display: block;
@@ -32,23 +59,6 @@ quill-editor {
   }
 }
 
-
-.addIcon.active {
-  .addIcon_list {
-    display: block;
-    position: absolute;
-    width: auto;
-    background-color: black;
-    text-align: left;
-    top: -150%;
-    left: -71px;
-    padding: 8px;
-    max-height: 150px;
-    overflow-y: scroll;
-    &_item {
-      display: block;
-    line-height: 1.6;
-    color: #fff;
-    }
-  }
+.merge-field-button{
+  margin-left: -52px;
 }

@@ -1,4 +1,4 @@
-<div class="list-container">
+<div class="list-container" id="list-container">
 
   <div class="top-breadcrumb">
     <h1 class="template-title">{{title}}</h1>
@@ -88,23 +88,29 @@
       </form>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button color="accent" (click)="saveEmail()">{{'EMAIL-EDITOR.SAVE-EMAIL-BUTTON-TEXT' | translate}}</button>
+      <button mat-raised-button color="accent" (click)="saveNextClick()">{{'EMAIL-EDITOR.SAVE-EMAIL-BUTTON-TEXT' | translate}}</button>
 
     </mat-card-actions>
   </mat-card>
-
+  <div>
+    <mat-progress-bar *ngIf="inProgress" mode="buffer"></mat-progress-bar>
+  </div>
   <mat-card>
     <ip-email-builder style="height: calc(100% - 64px)" *ngIf="editorView">
+
       <div class="top-actions">
         <!-- <div id="subject4-variable" class="dropdown-content">
           <div *ngFor="let variable of _ngb.MergeTags" (click)="insertVariable($event, 'subject3', 'subject4-variable')"> {{variable}}</div>
         </div> -->
+
         <button mat-button (click)="openEmailTemplate()" style="margin-right: 5px;" color="primary" >{{'EMAIL-EDITOR.TEMPLATE-ATTRIBUTE-TITLE' | translate}}</button>
 
-         <button mat-button (click)="resetTemplate();" style="margin-right: 5px;" [disabled]="isLoading | async" color="primary">{{'EMAIL-EDITOR.RESET-BUTTON-TEXT' | translate}}</button> 
-        
+         <button mat-button (click)="resetTemplate();" style="margin-right: 5px;" [disabled]="isLoading | async" color="primary">{{'EMAIL-EDITOR.RESET-BUTTON-TEXT' | translate}}</button>
+
          <button mat-button (click)="sendTestMail()" style="margin-right: 5px;" [disabled]="isLoading | async" color="primary">{{'EMAIL-EDITOR.SEND-TEST-EMAIL-BUTTON-TEXT' | translate}}</button>
       </div>
+
+
       <div class="top-content">
         <mat-card>
 

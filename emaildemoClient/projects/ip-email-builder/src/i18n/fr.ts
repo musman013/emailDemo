@@ -70,6 +70,8 @@ export var fr: any = {
         "MESSAGES":{
             "SELECT-RECEIVER-PROMPT": "Where to send?",
             "EMAIL-SENT-SUCCESS": "Your test email has been successfully sent.",
+            "EMAIL-SAVED-SUCCESS": "Email template saved.",
+            "EMAIL-SENDING": "Sending email ....",
             "RESET-SUCCESS":"Email Template reset successfully",
             "SAMPLE-TEMPLATE": "This text and Image are injected from <strong>Root Module</strong>. It's an example of dynamic Email, which allow you to create many awesome things, like Newsletter!",
             "SAMPLE-TEMPLATE2": "It looks like this!",
