@@ -72,6 +72,8 @@ export var en: any = {
         "MESSAGES": {
             "SELECT-RECEIVER-PROMPT": "Where to send?",
             "EMAIL-SENT-SUCCESS": "Your test email has been successfully sent.",
+             "EMAIL-SAVED-SUCCESS": "Email template saved.",
+             "EMAIL-SENDING": "Sending email ....",
             "RESET-SUCCESS":"Email Template reset successfully",
             "SAMPLE-TEMPLATE": "<p>Dear Email Editor,</p><p >  With this email template editor, you can edit your text, and add buttons,images and dividers.The above logo image and dividers are for demo purpose, you can remove or replace them. You can view the list of supported elements by clicking the Drag & Drop Content section of the page</p><p>Thanks,</p><p>John</p>",
             "SAMPLE-TEMPLATE2": "It looks like this!",

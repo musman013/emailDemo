@@ -12,13 +12,13 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {IEmailTemplate} from './iemail-template';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import { MatSelect, MatSnackBar, MatDialog } from '@angular/material';
+import {MatSelect, MatSnackBar, MatDialog} from '@angular/material';
 import {TranslateService} from '@ngx-translate/core';
 import {map, startWith} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {EmailFileService} from './email-file.service';
 import {environment} from '../environment';
-import { ConfirmDialogComponent } from "projects/ip-email-builder/src/lib/components/dialog.component";
+import {ConfirmDialogComponent} from 'projects/ip-email-builder/src/lib/components/dialog.component';
 
 //import { DividerBlock, IBlockState } from 'ip-email-builder/public_api';
 @Component({
@@ -27,8 +27,8 @@ import { ConfirmDialogComponent } from "projects/ip-email-builder/src/lib/compon
   styleUrls: ['./template-editor.component.scss']
 })
 export class TemplateEditorComponent implements OnInit {
-  api : string = '/api/files/';
-  replaceapi : string = "/api/files/";
+  api: string = '/api/files/';
+  replaceapi: string = '/api/files/';
   emailTemplateId: string;
   title = 'Create Email Template';
   isLoading: BehaviorSubject<boolean>;
@@ -92,9 +92,9 @@ export class TemplateEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    //this.inProgress = true;
     const param = this.route.snapshot.paramMap.get('id');
-    this.emailTemplateId=param;
+    this.emailTemplateId = param;
     this.setPermissions();
     this.emailVariableService.getAllWithoutPagination().subscribe(
       items => {
@@ -167,7 +167,9 @@ export class TemplateEditorComponent implements OnInit {
         ]
       });
     }
+    this.inProgress = false;
     this.setupCategory();
+
   }
 
   setPermissions = () => {
@@ -177,18 +179,37 @@ export class TemplateEditorComponent implements OnInit {
     this.IsCreatePermission = true;
 
   };
+  testSend = false;
 
   sendTestMail() {
+    this.testSend = true;
     const to = prompt(this.translate.instant('EMAIL-EDITOR.MESSAGES.SELECT-RECEIVER-PROMPT'));
     if (!to) {
       return;
     }
+    this.inProgress = true;
+    this.saveEmail();
+    this.saveInProgress = true;
+    this.waitFor(_ => this.saveInProgress === false)
+      .then(_ => {
+        console.log('the wait is over!');
+        this.inProgress = true;
+        this.sendTestMailAfterSave(to);
+        this.testSend = false;
+      });
 
+  }
+
+  sendTestMailAfterSave(to) {
     this.loadEmailTemplate();
     this.emailTemplate.to = to;
-    let contentJson = this.emailTemplate.contentJson.replace(this.replaceapi , "cid:IMAGE");
-    for(let i = 0; i < 20; i++){
-      contentJson = contentJson.replace(this.replaceapi , "cid:IMAGE");
+    var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.MESSAGES.EMAIL-SENDING'), this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'), {
+      duration: 1000,
+      panelClass: ['snackbar-background']
+    });
+    let contentJson = this.emailTemplate.contentJson.replace(this.replaceapi, 'cid:IMAGE');
+    for (let i = 0; i < 20; i++) {
+      contentJson = contentJson.replace(this.replaceapi, 'cid:IMAGE');
     }
     this.emailTemplate.contentJson = contentJson;
     //this.emailTemplate.contentJson = template;
@@ -208,6 +229,7 @@ export class TemplateEditorComponent implements OnInit {
     this.mailtemplateService.create(this.emailTemplate)
       .subscribe(
         data => {
+          this.inProgress = false;
           var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.MESSAGES.EMAIL-SENT-SUCCESS'), this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'), {
             duration: 1000,
             panelClass: ['snackbar-background']
@@ -266,10 +288,9 @@ export class TemplateEditorComponent implements OnInit {
   }
 
 
-  resetTemplate()
-{
+  resetTemplate() {
 
-   this.confirmDialog
+    this.confirmDialog
       .open(ConfirmDialogComponent, {
         data: {
           message: this.translate.instant('EMAIL-BUILDER.MESSAGES.RESET-TITLE')
@@ -277,25 +298,23 @@ export class TemplateEditorComponent implements OnInit {
       })
       .afterClosed()
       .subscribe(result => {
-        console.log("reseut",result);
-        if(result ==1)
-          {
-            this.resetEmailTemplate();
-          }
+        console.log('reseut', result);
+        if (result == 1) {
+          this.resetEmailTemplate();
+        }
       });
 
- 
-} 
+
+  }
 
 
-resetEmailTemplate()
-{
-this.emailtemplateService.resetTemplateById(this.emailTemplateId).subscribe(
+  resetEmailTemplate() {
+    this.emailtemplateService.resetTemplateById(this.emailTemplateId).subscribe(
       templ => {
-          var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.MESSAGES.RESET-SUCCESS'), this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'), {
-            duration: 1000,
-            panelClass: ['snackbar-background']
-          });
+        var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.MESSAGES.RESET-SUCCESS'), this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'), {
+          duration: 1000,
+          panelClass: ['snackbar-background']
+        });
 
         this.emailTemplate = templ;
         this.formGroup.patchValue({
@@ -320,9 +339,28 @@ this.emailtemplateService.resetTemplateById(this.emailTemplateId).subscribe(
 
       },
       error => this.errorMessage = <any>error);
-}
+  }
 
-saveEmail = () => {
+  onActivate() {
+    document.getElementById('list-container').scroll(0, 0);
+  }
+
+  isSaveNextClick = false;
+
+  saveNextClick() {
+    this.isSaveNextClick = true;
+    this.inProgress = false;
+    this.saveEmail();
+  }
+
+  saveInProgress = false;
+  saveEmail = () => {
+    this.saveInProgress = true;
+    if (!this.isSaveNextClick) {
+      this.inProgress = true;
+    }
+    this.isSaveNextClick = false;
+    this.onActivate();
     if (!this._ngb.IsChanged) {
       this._ngb.notify(this.translate.instant('EMAIL-EDITOR.MESSAGES.NO-CHANGES'));
       // return Promise.reject(`There's no changes to be saved`);
@@ -375,7 +413,17 @@ saveEmail = () => {
             x = data;
             y = JSON.parse(x.contentJson);
             this.emailTemplate = {...this.emailTemplate, ...data};
-            this.onBack();
+            this.inProgress = false;
+            if (!this.testSend) {
+              var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.MESSAGES.EMAIL-SAVED-SUCCESS'), this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'), {
+                duration: 1000,
+                panelClass: ['snackbar-background']
+              });
+            }
+            this.saveInProgress = false;
+            if (!this.testSend) {
+              this.onBack();
+            }
           },
           error => {
           });
@@ -386,7 +434,17 @@ saveEmail = () => {
           data => {
             x = data;
             y = JSON.parse(x.contentJson);
-            this.onBack();
+            this.inProgress = false;
+            if (!this.testSend) {
+              var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.MESSAGES.EMAIL-SAVED-SUCCESS'), this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'), {
+                duration: 1000,
+                panelClass: ['snackbar-background']
+              });
+            }
+            this.saveInProgress = false;
+            if (!this.testSend) {
+              this.onBack();
+            }
           },
           error => {
           });
@@ -439,10 +497,11 @@ saveEmail = () => {
     }
     return main_string.slice(0, pos) + ins_string + main_string.slice(pos);
   };
+  inProgress: boolean = false;
 
   showHideVariables(subject3Variable: string) {
     const comboElement = document.getElementById(subject3Variable) as any;
-    
+
     if (comboElement.classList.contains('show')) {
       comboElement.classList.remove('show');
     } else {
@@ -466,7 +525,9 @@ saveEmail = () => {
             name: file.name, summary: file.name
           };
           this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
-            this.emailFileService.uploadFile(res.id, file);
+            this.emailFileService.uploadFile(res.id, file).subscribe(res => {
+
+            });
             attachments.push({id: res.id});
           });
         }
@@ -496,7 +557,10 @@ saveEmail = () => {
       });
     });
 
-    setTimeout(() => this.onEmailTemplateSave(JSON.stringify(this._ngb.Email), attachments, inlineImages), 3000);
+    setTimeout(() => {
+      this.onEmailTemplateSave(JSON.stringify(this._ngb.Email), attachments, inlineImages);
+
+    }, 3000);
   }
 
   waitFor(conditionFunction) {
@@ -512,8 +576,7 @@ saveEmail = () => {
     return new Promise(poll);
   }
 
-  openEmailTemplate()
-  {
-    this.editorView=false;
+  openEmailTemplate() {
+    this.editorView = false;
   }
 }
