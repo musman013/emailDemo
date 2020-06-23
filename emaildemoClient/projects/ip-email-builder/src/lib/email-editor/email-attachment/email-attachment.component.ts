@@ -43,5 +43,6 @@ export class EmailAttachmentComponent {
 
   removeFile(file: File) {
     this.files.delete(file);
+    this.onAttachmentAdd.emit(this.files);
   }
 }

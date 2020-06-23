@@ -22,10 +22,15 @@ public interface FileRepository extends JpaRepository<File, Long> {
 	@Query("update  File u set u.deleted = true  where u.id not in (:ids) and u.emailTemplateId = :emailTemplateId ")
 	void setDeleteAdditionalFileEmailTemplate(@Param("ids") List<Long> allHistoryFiles, @Param("emailTemplateId") Long emailTemplateId);
 	
+	@Modifying
+	@Transactional
+	@Query("update  File u set u.deleted = true  where  u.emailTemplateId = :emailTemplateId ")
+	void deletePreviousTemplate( @Param("emailTemplateId") Long emailTemplateId);
+	
 	
 	@Modifying
 	@Transactional
-	@Query("update File u set u.emailTemplateId = :emailTemplateId where u.id = :id")
+	@Query("update File u set u.emailTemplateId = :emailTemplateId , u.deleted = false where u.id = :id")
 	void updateFileEmailTemplate(@Param("id") Long id, @Param("emailTemplateId") Long emailTemplateId);
 
 	
