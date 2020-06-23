@@ -3,14 +3,12 @@
               [modules]="getQuillConfig()" [required]="true" theme="bubble" format="html"
               [(ngModel)]="block.innerText" (click)="hideVariables('subject4-variable')">
 </quill-editor>
-<button [ngClass]="{'active' : showActive}" class="addIcon" mat-icon-button color="warn">
-  <!-- <mat-icon aria-label="Merge Field">cloud_download</mat-icon>-->
-  <button class="merge-field-button" color="accent" (click)="showHideVariables('subject4-variable')">Merge Fields</button>
+<button  [ngClass]="{'active' : showActive}" class="addIcon" color="accent">
+                Merge Fields
 
-  <span id="subject4-variable" class="dropdown-content addIcon_list">
-        <span id="merge-field-menus" class="addIcon_list_item" *ngFor="let variable of _ngb.MergeTags"
-              (click)="insertVariable($event)"> {{variable}}</span>
-  </span>
-</button>
+                  <span id="subject4-variable" *ngIf="showDropDown" class="dropdown-content addIcon_list">
+                      <span class="addIcon_list_item"  *ngFor="let variable of _ngb.MergeTags" (click)="insertVariable($event)"> {{variable}}</span>
+                  </span>
+</button> 
 
 <!--  -->

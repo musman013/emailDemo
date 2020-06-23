@@ -46,3 +46,18 @@ li{
   margin: 10px;
 }
 
+.attatched_file:hover .del_btn {
+  display: inline-block;
+}
+.del_btn{
+  display: none;
+}
+.addIcon{
+  width: 14px;
+  height: 14px;
+  line-height: 0;
+}
+.del_btn mat-icon {
+  font-size: 14px;
+}
+

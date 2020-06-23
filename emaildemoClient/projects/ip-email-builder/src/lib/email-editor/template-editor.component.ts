@@ -519,7 +519,6 @@ export class TemplateEditorComponent implements OnInit {
     let inlineImages = [];
     if (this.files.size > 0) {
       this.files.forEach(file => {
-
         if (file.name && !this.loadedFiles.has(file.name)) {
           const fileMetadata = {
             name: file.name, summary: file.name
@@ -531,6 +530,12 @@ export class TemplateEditorComponent implements OnInit {
             attachments.push({id: res.id});
           });
         }
+        else
+          {
+            let obj={};
+            obj=file;
+            attachments.push({id: obj['id']});
+          }
       });
     }
 

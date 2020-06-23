@@ -135,6 +135,7 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 
 		EmailTemplateEntity ue = emailTemplateMapper.updateEmailTemplateInputToEmailTemplateEntity(email);
 		EmailTemplateEntity updatedEmail = _emailTemplateManager.update(ue);
+		filesRepo.deletePreviousTemplate(updatedEmail.getId());
 		if (email.getAttachments() != null && email.getAttachments().size() > 0) {
 			email.getAttachments().forEach(e -> {
 				if (e.getId() != null) {

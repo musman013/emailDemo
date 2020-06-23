@@ -13,6 +13,7 @@ export class TextElementComponent implements OnInit {
   showActive: boolean;
   errorMessage: any;
   quillEditorRef: any;
+  showDropDown:boolean = true;
   @Input()
   block: TextBlock = new TextBlock('Text from inside a component');
 
@@ -118,9 +119,13 @@ export class TextElementComponent implements OnInit {
 
 
   insertVariable(event) {
+    this.showDropDown = false;
     this.alterText(event.target.innerText);
     console.log(event);
     this.hideVariables('subject4-variable');
+    setTimeout(() => {
+      this.showDropDown = true;
+    }, 500);
   }
 
 
