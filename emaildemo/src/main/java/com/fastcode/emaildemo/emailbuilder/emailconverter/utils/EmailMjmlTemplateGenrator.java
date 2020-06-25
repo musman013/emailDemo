@@ -122,7 +122,7 @@ public class EmailMjmlTemplateGenrator {
 				+ "\n border=\"%2$s\"" + "\n border-radius=\"%3$s\"px" + "\n color=\"%4$s\"" + "\n align=\"%5$s\""
 				+ "\n vertical-align=\"middle\"" + "\n line-height=\"%6$s\"" + "\n href=\"%7$s\"" + "\n target=\"%9$s\""
 				+ "\n padding=\"%10$s\"" + "\n inner-padding=\"%11$s\"" + "\n font-family=\"%12$s\""
-				+ "\n font-size=\"%13$s\"px" + "\n font-style=\"%14$s\"" + "\n font-weight=\"%15$s\">" + "\n %16$s"
+				+ "\n font-size=\"%13$s\"px" + "\n font-style=\"%14$s\"" + "\n font-weight=\"%15$s\">"
 				+ "</mj-button>";
 		template = String.format(template, options.getBackground().getColor(), this.createBorder(options.getBorder()),
 				options.getBorder().getRadius(), options.getColor(), options.getAlign(),

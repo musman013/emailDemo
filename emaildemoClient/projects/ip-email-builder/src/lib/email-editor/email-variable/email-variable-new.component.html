@@ -9,7 +9,7 @@
 			<form [formGroup]="itemForm" #itemNgForm="ngForm" (ngSubmit)="onSubmit()" class="item-form">
 
 				<mat-form-field>
-					<input formControlName="propertyName" matInput placeholder="{{'EMAIL-EDITOR.EMAIL-VARIABLE.FIELDS.PROPERTY-NAME' | translate}}">
+					<input formControlName="propertyName" matInput placeholder="{{'EMAIL-EDITOR.EMAIL-VARIABLE.FIELDS.PROPERTY-NAME' | translate}}" required>
 					<mat-error *ngIf="!itemForm.get('propertyName').valid && itemForm.get('propertyName').touched">
 						{{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
 				</mat-form-field>

@@ -27,6 +27,8 @@ import {ConfirmDialogComponent} from 'projects/ip-email-builder/src/lib/componen
   styleUrls: ['./template-editor.component.scss']
 })
 export class TemplateEditorComponent implements OnInit {
+  submitted: boolean;
+  invalidTemplate: boolean;
   api: string = '/api/files/';
   replaceapi: string = '/api/files/';
   emailTemplateId: string;
@@ -105,8 +107,8 @@ export class TemplateEditorComponent implements OnInit {
     );
     this.formGroup = this.formBuilder.group({
       id: [''],
-      templateName: ['', Validators.required],
-      category: ['', Validators.required],
+      templateName: ['', [Validators.required]],
+      category: [''],
       subject: ['', Validators.required],
       to: ['', Validators.required],
       description: [''],
@@ -350,11 +352,16 @@ export class TemplateEditorComponent implements OnInit {
   saveNextClick() {
     this.isSaveNextClick = true;
     this.inProgress = false;
+    this.submitted=true;
+    if(this.formGroup.valid)
+      {
     this.saveEmail();
+      }
   }
 
   saveInProgress = false;
   saveEmail = () => {
+    
     this.saveInProgress = true;
     if (!this.isSaveNextClick) {
       this.inProgress = true;
@@ -583,5 +590,6 @@ export class TemplateEditorComponent implements OnInit {
 
   openEmailTemplate() {
     this.editorView = false;
+    this.submitted=false;
   }
 }

@@ -114,7 +114,7 @@ public class MailController {
 			map.put("{{tag2}}", "tag two");
 		}
 
-		final String regex = "\\{\\{\\w+\\}\\}";// "\\{\\{\\w+}}"; //"{{\\w+}}";
+		final String regex="\\{\\{([^}]*.?)\\}\\}";
 
 		final Matcher m = Pattern.compile(regex).matcher(input);
 

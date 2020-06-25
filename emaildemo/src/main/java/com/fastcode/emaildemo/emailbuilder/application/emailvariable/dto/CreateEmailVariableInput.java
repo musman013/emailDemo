@@ -13,7 +13,7 @@ public class CreateEmailVariableInput {
 	@Length(max = 50, message = "Property_Type must be less than 50 characters")	
     private String propertyType;
 	
-	@Length(max = 100, message = "Default_Value must be less than 100 characters")
+	@Length(max = 1000, message = "Default_Value must be less than 1000 characters")
     private String defaultValue;
 	
 	private String mergeType;

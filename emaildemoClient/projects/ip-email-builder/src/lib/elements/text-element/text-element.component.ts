@@ -48,11 +48,6 @@ export class TextElementComponent implements OnInit {
       [{direction: 'rtl'}, 'link']
     ];
 
-    const placeholder = Array.from(this.ngjs.MergeTags);
-
-    if (placeholder.length) {
-      container.push([{placeholder}]);
-    }
 
     return {
       toolbar: {

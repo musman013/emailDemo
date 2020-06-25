@@ -65,7 +65,7 @@ export var en: any = {
                 "LAST-MODIFIER-USER-ID": "Modified User"
             }
         },
-        "SAVE-EMAIL-BUTTON-TEXT": "Next: Email Body",
+        "SAVE-EMAIL-BUTTON-TEXT": "Save & Continue",
         "SEND-TEST-EMAIL-BUTTON-TEXT": "Send a test email",
         "RESET-BUTTON-TEXT": "Reset",
         "TEMPLATE-ATTRIBUTE-TITLE": "Edit Email Template Attributes",

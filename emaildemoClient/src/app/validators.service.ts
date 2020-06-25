@@ -79,7 +79,7 @@ export class ValidatorsService {
     }
 
       static websiteValidate(control: AbstractControl) {
-        var reg = /^[w]{3}[.][-a-zA-Z0-9._]{1,256}\.[a-zA-Z]{1,6}/;
+       var reg = /^(http:\/\/|https:\/\/)?(www.)?([a-zA-Z0-9]+).[a-zA-Z0-9]*.[a-z]{3}.?([a-z]+)?$/;
         if (!control.value) {
             return null;
         }

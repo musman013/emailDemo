@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fastcode.emaildemo.emailbuilder.domain.irepository.IEmailVariableRepository;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailVariableEntity;
 import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Sort;
+
 
 @Repository
 public class EmailVariableManager implements IEmailVariableManager {
@@ -51,7 +53,10 @@ public class EmailVariableManager implements IEmailVariableManager {
 
 	@Override
 	public List<EmailVariableEntity> findAll() {
-		return _emailVariableRepository.findAll();
+		Sort sort1 = Sort.by("propertyName");
+		Sort sort2 = Sort.by("mergeType");
+		Sort groupSort = sort1.and(sort2);
+		return _emailVariableRepository.findAll(groupSort);
 	}
 	
 	

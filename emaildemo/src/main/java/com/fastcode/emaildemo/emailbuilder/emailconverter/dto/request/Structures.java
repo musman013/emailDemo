@@ -1,5 +1,8 @@
 package com.fastcode.emaildemo.emailbuilder.emailconverter.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Structures {
 
 	private String columns = "";

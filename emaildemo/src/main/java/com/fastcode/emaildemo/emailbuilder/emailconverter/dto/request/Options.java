@@ -1,5 +1,8 @@
 package com.fastcode.emaildemo.emailbuilder.emailconverter.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Options {
 
 	private Border border = new Border();
@@ -23,6 +26,8 @@ public class Options {
 	private LineHeight lineHeight = new LineHeight();
 
 	private Font font = new Font();
+	
+	private String backgroundColor="";
 
 	public Border getBorder() {
 		return border;
@@ -112,4 +117,13 @@ public class Options {
 		this.background = background;
 	}
 
+	public String getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public void setBackgroundColor(String backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
+
+	
 }
