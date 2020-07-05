@@ -42,7 +42,8 @@
     "Email": {
       "Title":"Email Template Builder",
       "EmailTemplate":"Email Templates",
-      "EmailVariables":"Email Merge Fields"
+      "EmailVariables":"Email Merge Fields",
+      "DataSource":"Data Source"
     }
   }
 }

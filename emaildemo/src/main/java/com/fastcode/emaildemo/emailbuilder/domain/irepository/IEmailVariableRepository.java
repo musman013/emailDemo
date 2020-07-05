@@ -1,5 +1,8 @@
 package com.fastcode.emaildemo.emailbuilder.domain.irepository;
 
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -13,5 +16,8 @@ public interface IEmailVariableRepository extends JpaRepository<EmailVariableEnt
 
 	   @Query("select e from EmailVariableEntity e where e.propertyName = ?1")
 	   EmailVariableEntity findByEmailName(String value);
+
+	   @Query("select e.id from EmailVariableEntity e where e.propertyName in (?1) ")
+	List<Long> findByNameIn(Set<String> allFieldsId);
 	
 }

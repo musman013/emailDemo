@@ -34,7 +34,11 @@ public class EmailVariableEntity implements Serializable {
 		this.mergeType=mergeTye;
 	}
 	
-    @Id
+    public EmailVariableEntity(Long id2) {
+		this.id=id2;
+	}
+
+	@Id
     @Column(name = "Id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {

@@ -1,11 +1,13 @@
 package com.fastcode.emaildemo.emailbuilder.domain.emailvariable;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +59,11 @@ public class EmailVariableManager implements IEmailVariableManager {
 		Sort sort2 = Sort.by("mergeType");
 		Sort groupSort = sort1.and(sort2);
 		return _emailVariableRepository.findAll(groupSort);
+	}
+
+	@Override
+	public List<Long> findByNameIn(Set<String> allFieldsId) {
+		return _emailVariableRepository.findByNameIn(allFieldsId);
 	}
 	
 	

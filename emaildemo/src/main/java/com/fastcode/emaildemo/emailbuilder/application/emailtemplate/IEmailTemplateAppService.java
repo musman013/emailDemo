@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.fastcode.emaildemo.commons.search.SearchCriteria;
+import com.fastcode.emaildemo.emailbuilder.application.datasource.dto.FindDataSourceMetaOutputForMapping;
 import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.*;
 
 @Service
@@ -25,5 +26,7 @@ public interface IEmailTemplateAppService {
     
     List<FindEmailTemplateByIdOutput> find(SearchCriteria search, Pageable pageable) throws Exception;
 
+    List<FindDataSourceMetaOutputForMapping> getMappingForEmail(Long emailTemplateId) ;
 	
+    List<CreateEmailTemplateMappingInput> createMapping(List<CreateEmailTemplateMappingInput> mapping);
 }

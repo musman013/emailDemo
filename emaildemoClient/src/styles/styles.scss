@@ -2,6 +2,9 @@
 @import "theme1.scss";
 // @import "task-styles.scss";
 
+@import "~codemirror/lib/codemirror";
+@import "~codemirror/theme/material";
+
 @import url("../assets/font.css");
 body {
   /* font-family: 'Raleway', sans-serif; */

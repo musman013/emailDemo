@@ -1,5 +1,7 @@
 package com.fastcode.emaildemo.emailbuilder.application.emailtemplate;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 
 import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.*;
@@ -25,4 +27,6 @@ public interface EmailTemplateMapper {
 			EmailtemplateEntityHistory foundEmail);
 
 	EmailtemplateEntityHistory createEmailTemplateInputToEmailTemplateEntityforReset(CreateEmailTemplateInput email);
+
+	
 }

@@ -382,5 +382,29 @@ export class BaseDetailsComponent<E> implements OnInit, CanDeactivateGuard {
 
   }
 
+  onCancel(): void {
+    this.dialogRef.close(null);
+  }
+
+  addNew(component) {
+      this.openDialog(component, null);
+      return;
+  }
+  openDialog(component, data) {
+    this.dialogRef = this.dialog.open(component, {
+      disableClose: true,
+      height: this.isMediumDeviceOrLess ? this.mediumDeviceOrLessDialogSize : this.largerDeviceDialogHeightSize,
+      width: this.isMediumDeviceOrLess ? this.mediumDeviceOrLessDialogSize : this.largerDeviceDialogWidthSize,
+      maxWidth: "none",
+      panelClass: 'fc-modal-dialog',
+      data: data
+    });
+    this.dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // this.getItems();
+      }
+    });
+  }
+
 
 }

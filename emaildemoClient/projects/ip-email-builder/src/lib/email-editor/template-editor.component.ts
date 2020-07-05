@@ -110,7 +110,9 @@ export class TemplateEditorComponent implements OnInit {
       templateName: ['', [Validators.required]],
       category: [''],
       subject: ['', Validators.required],
-      to: ['', Validators.required],
+      to: [''],
+      cc: [''],
+      bcc: [''],
       description: [''],
       attachmentpath: [''],
       active: [true, Validators.required]
@@ -270,6 +272,8 @@ export class TemplateEditorComponent implements OnInit {
           templateName: templ.templateName,
           subject: templ.subject,
           to: templ.to,
+          cc: templ.cc,
+          bcc: templ.bcc,
           contentJson: templ.contentJson,
           contentHtml: templ.contentHtml,
           category: templ.category,
@@ -324,6 +328,8 @@ export class TemplateEditorComponent implements OnInit {
           templateName: templ.templateName,
           subject: templ.subject,
           to: templ.to,
+          cc: templ.cc,
+          bcc:templ.bcc,
           contentJson: templ.contentJson,
           contentHtml: templ.contentHtml,
           category: templ.category,
@@ -361,7 +367,7 @@ export class TemplateEditorComponent implements OnInit {
 
   saveInProgress = false;
   saveEmail = () => {
-    
+
     this.saveInProgress = true;
     if (!this.isSaveNextClick) {
       this.inProgress = true;
@@ -390,6 +396,7 @@ export class TemplateEditorComponent implements OnInit {
     this.emailTemplate.templateName = this.formGroup.value.templateName;
     this.emailTemplate.category = this.formGroup.value.category;
     this.emailTemplate.to = this.formGroup.value.to;
+    this.emailTemplate.cc = this.formGroup.value.cc;
     this.emailTemplate.subject = this.formGroup.value.subject;
     this.emailTemplate.contentHtml = '';
     this.emailTemplate.description = this.formGroup.value.description;
@@ -403,6 +410,8 @@ export class TemplateEditorComponent implements OnInit {
     this.emailTemplate.templateName = this.formGroup.value.templateName;
     this.emailTemplate.category = this.formGroup.value.category;
     this.emailTemplate.to = this.formGroup.value.to;
+    this.emailTemplate.cc = this.formGroup.value.cc;
+    this.emailTemplate.bcc = this.formGroup.value.bcc;
     this.emailTemplate.subject = this.formGroup.value.subject;
     this.emailTemplate.contentHtml = '';
     this.emailTemplate.description = this.formGroup.value.description;
@@ -487,6 +496,18 @@ export class TemplateEditorComponent implements OnInit {
       element.value = element.value.substring(0, pos - 2);
     }
     const updatedValue = this.insert(element.value, insString, pos);
+    if(targetId == 'to3') {
+      this.formGroup.get('to').patchValue(updatedValue)
+    }
+    else if(targetId == 'cc3') {
+      this.formGroup.get('cc').patchValue(updatedValue)
+    }
+    else if(targetId == 'bcc3') {
+      this.formGroup.get('bcc').patchValue(updatedValue)
+    }
+    else if (targetId == 'subject3') {
+      this.formGroup.get('subject').patchValue(updatedValue)
+    }
     this.formGroup.value.subject = updatedValue; //this.formGroup.value.subject + "{{" +value + "}}";
     element.value = updatedValue;
     element.selectionStart = pos + insString.length;

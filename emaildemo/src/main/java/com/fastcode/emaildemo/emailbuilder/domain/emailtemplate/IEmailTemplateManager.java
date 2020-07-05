@@ -1,5 +1,7 @@
 package com.fastcode.emaildemo.emailbuilder.domain.emailtemplate;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailTemplateEntity;
@@ -20,5 +22,7 @@ public interface IEmailTemplateManager {
     public EmailTemplateEntity findByName (String name);
 
     public Page<EmailTemplateEntity> findAll(Predicate predicate,Pageable pageable);
+    
+    public List<EmailTemplateEntity> findAll();
 	
 }

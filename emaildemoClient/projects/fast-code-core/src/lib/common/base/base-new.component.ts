@@ -21,6 +21,7 @@ import { PropertyType } from "projects/ip-email-builder/src/lib/email-editor/ema
 import { DatePipe } from "@angular/common";
 import { FastCodeCoreService } from "projects/fast-code-core/src/lib/fast-code-core.service";
 import { EmailVariableService } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.service";
+import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
 @Component({
 
   template: '',
@@ -59,9 +60,11 @@ export class BaseNewComponent<E> implements OnInit, CanDeactivateGuard {
   globalPermissionService: IGlobalPermissionService;
 
   isMediumDeviceOrLess: boolean;
+  dialogRef: MatDialogRef<any>;
+  deleteDialogRef: MatDialogRef<ConfirmDialogComponent>;
   mediumDeviceOrLessDialogSize: string = "100%";
-  largerDeviceDialogWidthSize: string = "65%";
-  largerDeviceDialogHeightSize: string = "75%";
+  largerDeviceDialogWidthSize: string = "85%";
+  largerDeviceDialogHeightSize: string = "85%";
 
   errorMessage = '';
 
@@ -79,7 +82,6 @@ export class BaseNewComponent<E> implements OnInit, CanDeactivateGuard {
     public router: Router,
     public route: ActivatedRoute,
     public dialog: MatDialog,
-    public dialogRef: MatDialogRef<any>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public global: Globals,
     public pickerDialogService: PickerDialogService,
@@ -168,6 +170,27 @@ export class BaseNewComponent<E> implements OnInit, CanDeactivateGuard {
   }
   onCancel(): void {
     this.dialogRef.close(null);
+  }
+
+  addNew(component) {
+      this.openDialog(component, null);
+      return;
+  }
+
+  openDialog(component, data) {
+    this.dialogRef = this.dialog.open(component, {
+      disableClose: true,
+      height: this.isMediumDeviceOrLess ? this.mediumDeviceOrLessDialogSize : this.largerDeviceDialogHeightSize,
+      width: this.isMediumDeviceOrLess ? this.mediumDeviceOrLessDialogSize : this.largerDeviceDialogWidthSize,
+      maxWidth: "none",
+      panelClass: 'fc-modal-dialog',
+      data: data
+    });
+    this.dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // this.getItems();
+      }
+    });
   }
 
   selectAssociation(association: IAssociationEntry) {

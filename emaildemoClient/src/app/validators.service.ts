@@ -22,6 +22,24 @@ export class ValidatorsService {
         return isValid ? null : message;
     }
 
+     static sqlQuery(control: AbstractControl) {
+        // var reg = /select\s+(.*)\s+from\s+(.*)\s+where\s+?(.*)?/i;
+        var reg = /select\s+(.*)\s+from\s+(.*)/i;
+
+        if (!control.value) {
+            return null;
+        }
+        var isValid = control.value && reg.test(control.value.toString());
+        const message = {
+            'sqlQuery': {
+                'message': 'Please enter valid select Query'
+            }
+        };
+        return isValid ? null : message;
+    }
+
+    
+
       static emailValidation(control: AbstractControl) {
         var reg = /^(?!\.)(?!.*\.$)(?!.*?\.\.).+@.+\..[a-zA-Z]{1,4}$/;
         if (!control.value) {
@@ -79,7 +97,7 @@ export class ValidatorsService {
     }
 
       static websiteValidate(control: AbstractControl) {
-       var reg = /^(http:\/\/|https:\/\/)?(www.)?([a-zA-Z0-9]+).[a-zA-Z0-9]*.[a-z]{3}.?([a-z]+)?$/;
+        var reg = /^(http:\/\/|https:\/\/)?(www.)?([a-zA-Z0-9]+).[a-zA-Z0-9]*.[a-z]{3}.?([a-z]+)?$/;
         if (!control.value) {
             return null;
         }

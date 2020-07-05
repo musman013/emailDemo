@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fastcode.emaildemo.emailbuilder.domain.emailvariable.IEmailVariableManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -259,6 +260,7 @@ public class EmailVariableAppService implements IEmailVariableAppService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<FindEmailVariableByIdOutput> findAll() {
+		
 		List<EmailVariableEntity> foundEmail = _emailVariableManager.findAll();
 
 		Iterator<EmailVariableEntity> emailIterator = foundEmail.iterator();
@@ -269,5 +271,9 @@ public class EmailVariableAppService implements IEmailVariableAppService {
 		 }
 
 		return output;
+	}
+
+	public List<Long> findByNameIn(Set<String> allFieldsId) {
+		return _emailVariableManager.findByNameIn(allFieldsId);
 	}
 }

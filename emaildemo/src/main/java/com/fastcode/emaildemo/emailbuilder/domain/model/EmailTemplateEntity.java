@@ -29,7 +29,12 @@ public class EmailTemplateEntity implements Serializable {
 	private String description;
 	private String attachmentpath;
     
-    @Id
+    public EmailTemplateEntity(Long emailTemplateId) {
+		this.id=emailTemplateId;
+	}
+    public EmailTemplateEntity() {
+	}
+	@Id
     @Column(name = "Id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {

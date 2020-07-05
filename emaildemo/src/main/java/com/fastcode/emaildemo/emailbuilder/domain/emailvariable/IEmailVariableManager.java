@@ -1,6 +1,7 @@
 package com.fastcode.emaildemo.emailbuilder.domain.emailvariable;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +26,9 @@ public interface IEmailVariableManager {
 
     public Page<EmailVariableEntity> findAll(Predicate predicate,Pageable pageable);
 
-	public List<EmailVariableEntity> findAll();
 	
+    public List<EmailVariableEntity> findAll();
+
+	public List<Long> findByNameIn(Set<String> allFieldsId);
 	
 }

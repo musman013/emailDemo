@@ -10,7 +10,9 @@ export var fr: any = {
             "PAUSE": "Pause",
             "BACK": "Back",
             "ACTIONS": "Actions",
-			"DE-LINK": "De-link"
+            "DE-LINK": "De-link",
+            "EXECUTE":"Execute",
+            "MAP":"Merge field and Datasource mapping"
         },
         "ERRORS": {
             "REQUIRED": "Field is required or is Invalid.",
@@ -45,14 +47,25 @@ export var fr: any = {
                 "SELECT-ASSOCIATION": "Select {{table}}"
             }
         },
+        "DATA-SOURCE":{
+            "FIELDS":{
+                "NAME":"Name",
+                "SQL-QUERY":"Sql Query",
+                "EMAIL-TEMPLATE":"Email Template",
+                "CREATION":"Created Date",
+                "COLUMN-NAME":"Column Name",
+                "DATA-TYPE":"Data Type"
+            }
+        },
         "EMAIL-TEMPLATE": {
             "FIELDS": {
-                "TEMPLATE-NAME": "Template Name f",
+                "TEMPLATE-NAME": "Template Name",
                 "DESCRIPTION": "Description",
                 "SUBJECT": "Subject f",
                 "CATEGORY": "Category f",
                 "CC": "Cc",
-                "TO": "Email Receiver",
+                "BCC": "Bcc",
+                "TO": "To",
                 "ATTACHMENT-PATH": "Attachment Path",
                 "ACTIVE": "Active",
                 "CONTENT-HTML": "Content HTML",

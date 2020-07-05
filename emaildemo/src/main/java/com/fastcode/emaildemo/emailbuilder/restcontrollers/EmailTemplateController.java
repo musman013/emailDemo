@@ -21,17 +21,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fastcode.emaildemo.commons.application.OffsetBasedPageRequest;
+import com.fastcode.emaildemo.commons.domain.EmptyJsonResponse;
+import com.fastcode.emaildemo.commons.logging.LoggingHelper;
 import com.fastcode.emaildemo.commons.search.SearchCriteria;
 import com.fastcode.emaildemo.commons.search.SearchUtils;
 import com.fastcode.emaildemo.domain.irepository.FileHistoryRepository;
 import com.fastcode.emaildemo.domain.irepository.FileRepository;
-import com.fastcode.emaildemo.domain.model.FileHistory;
-import com.fastcode.emaildemo.commons.application.OffsetBasedPageRequest;
+import com.fastcode.emaildemo.emailbuilder.application.datasource.dto.FindDataSourceMetaOutputForMapping;
 import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.EmailTemplateAppService;
-import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.*;
+import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.CreateEmailTemplateInput;
+import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.CreateEmailTemplateMappingInput;
+import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.CreateEmailTemplateOutput;
+import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.FindEmailTemplateByIdOutput;
+import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.FindEmailTemplateByNameOutput;
+import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.UpdateEmailTemplateInput;
+import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.UpdateEmailTemplateOutput;
 import com.fastcode.emaildemo.emailbuilder.application.mail.EmailService;
-import com.fastcode.emaildemo.commons.logging.LoggingHelper;
-import com.fastcode.emaildemo.commons.domain.EmptyJsonResponse;
 
 @RestController
 @RequestMapping("/email")
@@ -108,6 +114,11 @@ public class EmailTemplateController {
 	    }
 	      return new ResponseEntity(eo, HttpStatus.OK);
 	}
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public ResponseEntity findAll() {
+
+		return  ResponseEntity.ok(emailTemplateAppService.findAll());
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity find(@RequestParam(value = "search", required=false) String search,@RequestParam(value = "offset", required=false) String offset, @RequestParam(value = "limit", required=false) String limit, Sort sort) throws Exception {
@@ -155,5 +166,23 @@ public class EmailTemplateController {
 	    email.setTo(updateEmailTemplateInput.getTo());
 	    emailTemplateAppService.reset(Long.valueOf(id), email);
 	}
+	
+	
+	@RequestMapping(value = "/mapping/{emailTemplateId}", method = RequestMethod.GET)
+	public ResponseEntity<List<FindDataSourceMetaOutputForMapping>> getMappingForEmail(@PathVariable Long emailTemplateId) {
+
+	    return new ResponseEntity(emailTemplateAppService.getMappingForEmail(emailTemplateId), HttpStatus.OK);
+	}
+	
+	
+	@RequestMapping(value="/mapping/create",method = RequestMethod.POST)
+	public ResponseEntity<CreateEmailTemplateOutput> createMapping(@RequestBody @Valid List<CreateEmailTemplateMappingInput> mapping) throws IOException {
+	
+	        return new ResponseEntity(emailTemplateAppService.createMapping(mapping), HttpStatus.CREATED);
+	    }
+	
+	
+	
+
 	
 }

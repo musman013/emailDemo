@@ -31,8 +31,9 @@ export class EmailTemplateService extends GenericApiService<IEmailTemplate> {
     return this.httpclient.get<string[]>(this.urlPath+'/categories', {}).pipe(map((response: any) => {
       return response;
     }), catchError(this.handleError));
-
   }
+
+  
 
 
 }

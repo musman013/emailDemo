@@ -12,7 +12,9 @@ export var en: any = {
             "ACTIONS": "Actions",
             "DE-LINK": "De-link",
             "OPEN-DETAILS": "Open Details",
-            "ADD": "Add"
+            "ADD": "Add",
+            "EXECUTE":"Execute",
+            "MAP":"Merge field and Datasource mapping"
         },
         "ERRORS": {
             "REQUIRED": "Field is required or is Invalid.",
@@ -47,6 +49,16 @@ export var en: any = {
                 "SELECT-ASSOCIATION": "Select {{table}}"
             }
         },
+         "DATA-SOURCE":{
+            "FIELDS":{
+                "NAME":"Name",
+                "SQL-QUERY":"Sql Query",
+                "EMAIL-TEMPLATE":"Email Template",
+                "CREATION":"Created Date",
+                "COLUMN-NAME":"Column Name",
+                "DATA-TYPE":"Data Type"
+            }
+        },
         "EMAIL-TEMPLATE": {
             "FIELDS": {
                 "TEMPLATE-NAME": "Template Name",
@@ -54,7 +66,8 @@ export var en: any = {
                 "SUBJECT": "Subject",
                 "CATEGORY": "Category",
                 "CC": "Cc",
-                "TO": "Email Receiver",
+                "BCC": "Bcc",
+                "TO": "To",
                 "ATTACHMENT-PATH": "Attachment Path",
                 "ACTIVE": "Active",
                 "CONTENT-HTML": "Content HTML",

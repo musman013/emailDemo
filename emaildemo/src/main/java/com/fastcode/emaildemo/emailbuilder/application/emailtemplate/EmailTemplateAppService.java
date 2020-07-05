@@ -9,27 +9,43 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import com.fastcode.emaildemo.emailbuilder.domain.emailtemplate.IEmailTemplateManager;
 import com.fastcode.emaildemo.emailbuilder.domain.emailtemplate.IEmailTemplateManagerHistory;
+import com.fastcode.emaildemo.emailbuilder.domain.irepository.DataSourceMetaEntityRepo;
+import com.fastcode.emaildemo.emailbuilder.domain.irepository.EmailMergeFieldEntityRepo;
+import com.fastcode.emaildemo.emailbuilder.domain.irepository.IDataSourceRepository;
+import com.fastcode.emaildemo.emailbuilder.domain.irepository.IEmailTemplateMappingRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fastcode.emaildemo.emailbuilder.application.datasource.dto.FindDataSourceMetaOutputForMapping;
 import com.fastcode.emaildemo.emailbuilder.application.emailtemplate.dto.*;
+import com.fastcode.emaildemo.emailbuilder.application.emailvariable.EmailVariableMapper;
+import com.fastcode.emaildemo.emailbuilder.application.emailvariable.dto.FindEmailVariableByIdOutput;
+import com.fastcode.emaildemo.emailbuilder.domain.model.DataSourceEntity;
+import com.fastcode.emaildemo.emailbuilder.domain.model.DataSourceMetaEntity;
+import com.fastcode.emaildemo.emailbuilder.domain.model.EmailMergeFieldEntity;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailTemplateEntity;
+import com.fastcode.emaildemo.emailbuilder.domain.model.EmailTemplateMappingEntity;
+import com.fastcode.emaildemo.emailbuilder.domain.model.EmailVariableEntity;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailtemplateEntityHistory;
 import com.fastcode.emaildemo.emailbuilder.domain.model.QEmailTemplateEntity;
 import com.fastcode.emaildemo.commons.search.*;
@@ -77,6 +93,21 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 	
 	@Autowired
 	private IEmailTemplateManagerHistory _emailTemplateManagerHistory;
+	
+	@Autowired
+	private EmailMergeFieldEntityRepo emailMergeFieldEntityRepo;
+	
+	@Autowired
+	private IDataSourceRepository dataSourceRepository;
+	
+	@Autowired
+	private DataSourceMetaEntityRepo dataSourceMetaEntityRepo;
+	
+	@Autowired
+	private EmailVariableMapper emailVariableMapper;
+	
+	@Autowired
+	private IEmailTemplateMappingRepo emailTemplateMappingRepo;
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public CreateEmailTemplateOutput create(CreateEmailTemplateInput email) {
@@ -127,6 +158,19 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void delete(Long eid) {
 		EmailTemplateEntity existing = _emailTemplateManager.findById(eid);
+		//deleting all reference
+		//deleting last child
+		emailTemplateMappingRepo.updatePreviousMappig(eid);
+		emailMergeFieldEntityRepo.updateEmailMergeField(existing);
+		List<DataSourceEntity> dataSourceMapped=dataSourceRepository.findByEmailTemplateId(eid);
+		if(dataSourceMapped!=null && dataSourceMapped.size()>0)
+		{
+			//deleting second last child
+			dataSourceMetaEntityRepo.deleteAllMetaList(dataSourceMapped);
+			//deleting first child
+			dataSourceRepository.deleteAll(dataSourceMapped);
+		}
+		
 		_emailTemplateManager.delete(existing);
 	}
 
@@ -442,6 +486,111 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 		emailTemplateEntityToUpdateEmailTemplateOutput.setAttachments(fileByEmailTemplateId);
 		return emailTemplateEntityToUpdateEmailTemplateOutput;
 
+	}
+
+	public List<FindEmailTemplateByIdOutput> findAll() {
+		List<EmailTemplateEntity> foundEmail= _emailTemplateManager.findAll();
+		
+		Iterator<EmailTemplateEntity> emailIterator = foundEmail.iterator();
+		List<FindEmailTemplateByIdOutput> output = new ArrayList<>();
+
+		  while (emailIterator.hasNext()) {
+	      output.add(emailTemplateMapper.emailTemplateEntityToFindEmailTemplateByIdOutput(emailIterator.next()));    
+		 }
+
+		return output;
+	}
+
+	public List<FindDataSourceMetaOutputForMapping> getMappingForEmail(Long emailTemplateId) {
+		List<EmailMergeFieldEntity> emailMergeFieldList = emailMergeFieldEntityRepo.findByEmailTemplateId(emailTemplateId);
+		List<DataSourceEntity> dataSourceEntityList = dataSourceRepository.findByEmailTemplateId(emailTemplateId);
+		List<FindDataSourceMetaOutputForMapping> outputList = new ArrayList<>();
+		int totalMergeField=0;
+		if(emailMergeFieldList!=null && emailMergeFieldList.size()>0)
+		{
+			totalMergeField=emailMergeFieldList.size();
+		}
+		int mappedTillNow=0;
+		 mappedTillNow= emailTemplateMappingRepo.getMappedTillNowDataSource(emailTemplateId);
+		
+		for(EmailMergeFieldEntity emailMergeField : emailMergeFieldList)
+		{
+			FindDataSourceMetaOutputForMapping data = new FindDataSourceMetaOutputForMapping();
+			
+			//already mapped list
+			List<DataSourceMetaEntity> alreadyMappedList = emailTemplateMappingRepo.findByEmailTemplateEntityIdAndMergeFieldId(emailTemplateId,emailMergeField.getMergeField().getId());
+			if(alreadyMappedList!=null && alreadyMappedList.size()>0)
+			{
+			data.setAlreadyMappedList(emailVariableMapper.dataSourceEntityToDataSourceMetaList(alreadyMappedList));
+			}
+			data.setTotalMergeField(totalMergeField);
+			data.setMappedMergeField(mappedTillNow);
+			if(emailMergeField.getMergeField().getPropertyType().equals("text"))
+			{
+				List<String> excludedString= new ArrayList<>();
+				excludedString.add("MULTI-LINE");
+				excludedString.add("List");
+				excludedString.add("List of Images");
+				excludedString.add("Clickable Image");
+				excludedString.add("Image");
+				List<DataSourceMetaEntity> metaSourceList=dataSourceMetaEntityRepo.findByMetaColumnDataTypeNotInAndDataSourceEntityIn(excludedString,dataSourceEntityList);
+				data.setMergeField(emailVariableMapper.emailVariableEntityToFindEmailVariableByIdOutput(emailMergeField.getMergeField()));
+				data.setDataSourceMetaList(emailVariableMapper.dataSourceEntityToDataSourceMetaList(metaSourceList));
+				outputList.add(data);	
+				
+			}
+			else if(emailMergeField.getMergeField().getPropertyType().equals("Number"))
+			{
+				String dataType="bigint";
+			List<DataSourceMetaEntity> metaSourceList=dataSourceMetaEntityRepo.findByMetaColumnDataTypeAndDataSourceEntityIn(dataType,dataSourceEntityList);
+			data.setMergeField(emailVariableMapper.emailVariableEntityToFindEmailVariableByIdOutput(emailMergeField.getMergeField()));
+			data.setDataSourceMetaList(emailVariableMapper.dataSourceEntityToDataSourceMetaList(metaSourceList));
+			outputList.add(data);
+			}
+			else if(emailMergeField.getMergeField().getPropertyType().equals("Email"))
+			{
+				String dataType="email";
+			List<DataSourceMetaEntity> metaSourceList=dataSourceMetaEntityRepo.findByMetaColumnDataTypeAndDataSourceEntityIn(dataType,dataSourceEntityList);
+			data.setMergeField(emailVariableMapper.emailVariableEntityToFindEmailVariableByIdOutput(emailMergeField.getMergeField()));
+			data.setDataSourceMetaList(emailVariableMapper.dataSourceEntityToDataSourceMetaList(metaSourceList));
+			outputList.add(data);
+			}
+			else if(emailMergeField.getMergeField().getPropertyType().equals("Multi-line Text"))
+			{
+				String dataType="Multi-line Text";
+				List<DataSourceMetaEntity> metaSourceList=dataSourceMetaEntityRepo.findByMetaColumnDataTypeAndDataSourceEntityIn(dataType,dataSourceEntityList);
+				data.setMergeField(emailVariableMapper.emailVariableEntityToFindEmailVariableByIdOutput(emailMergeField.getMergeField()));
+				data.setDataSourceMetaList(emailVariableMapper.dataSourceEntityToDataSourceMetaList(metaSourceList));
+				outputList.add(data);
+			}
+			else 
+			{
+			List<DataSourceMetaEntity> metaSourceList=dataSourceMetaEntityRepo.findByMetaColumnDataTypeAndDataSourceEntityIn(emailMergeField.getMergeField().getPropertyType(),dataSourceEntityList);
+			data.setMergeField(emailVariableMapper.emailVariableEntityToFindEmailVariableByIdOutput(emailMergeField.getMergeField()));
+			data.setDataSourceMetaList(emailVariableMapper.dataSourceEntityToDataSourceMetaList(metaSourceList));
+			outputList.add(data);
+			}
+			}
+		return outputList;
+	}
+
+	public List<CreateEmailTemplateMappingInput> createMapping(@Valid List<CreateEmailTemplateMappingInput> mappings) {
+			List<EmailTemplateMappingEntity> totalList = new ArrayList<>();
+			if(mappings!=null && mappings.size()>0)
+			{
+			emailTemplateMappingRepo.updatePreviousMappig(mappings.get(0).getEmailTemplateId());
+			}
+			for(CreateEmailTemplateMappingInput mapping : mappings)
+			{
+				EmailTemplateMappingEntity emailMapping = new EmailTemplateMappingEntity();
+				emailMapping.setDataSourceEntiry(new DataSourceEntity(mapping.getDataSourceId()));
+				emailMapping.setDataSourceMetaEntity(new DataSourceMetaEntity(mapping.getDataSourceMetaId()));
+				emailMapping.setEmailTemplateEntity(new EmailTemplateEntity(mapping.getEmailTemplateId()));
+				emailMapping.setMergeField(new EmailVariableEntity(mapping.getMergeFieldId()));
+				totalList.add(emailMapping);
+			}
+		emailTemplateMappingRepo.saveAll(totalList);
+		return mappings;
 	}
 
 }

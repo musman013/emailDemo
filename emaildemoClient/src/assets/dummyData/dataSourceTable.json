@@ -1,0 +1,68 @@
+{
+    "valid":true,
+    "metaData":[
+       {
+          "metaColumnName":"id",
+          "metaColumnDataType":"bigint"
+       },
+       {
+          "metaColumnName":"active",
+          "metaColumnDataType":"boolean"
+       },
+       {
+          "metaColumnName":"attachmentpath",
+          "metaColumnDataType":"character varying"
+       },
+       {
+          "metaColumnName":"bcc",
+          "metaColumnDataType":"character varying"
+       },
+       {
+          "metaColumnName":"category",
+          "metaColumnDataType":"character varying"
+       },
+       {
+          "metaColumnName":"cc",
+          "metaColumnDataType":"character varying"
+       },
+       {
+          "metaColumnName":"content_html",
+          "metaColumnDataType":"character varying"
+       },
+       {
+          "metaColumnName":"content_json",
+          "metaColumnDataType":"character varying"
+       },
+       {
+          "metaColumnName":"subject",
+          "metaColumnDataType":"character varying"
+       },
+       {
+          "metaColumnName":"template_name",
+          "metaColumnDataType":"character varying"
+       },
+       {
+          "metaColumnName":"to_",
+          "metaColumnDataType":"character varying"
+       },
+       {
+          "metaColumnName":"rt",
+          "metaColumnDataType":"character varying"
+       },
+       {
+          "metaColumnName":"email_body",
+          "metaColumnDataType":"character varying"
+       },
+       {
+          "metaColumnName":"description",
+          "metaColumnDataType":"character varying"
+       }
+    ],
+    "dataToPreview":[
+       [
+          "2345",
+          "3456"
+       ]
+    ],
+    "message":""
+ }

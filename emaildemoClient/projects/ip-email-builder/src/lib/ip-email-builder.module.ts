@@ -78,8 +78,18 @@ import { EmailRoutes } from './email-routing.module';
 import { FastCodeCoreModule ,ILibraryRootConfg} from 'projects/fast-code-core/src/public_api';
 import { EmailAttachmentComponent } from './email-editor/email-attachment/email-attachment.component';
 import { InternationalPhoneNumberModule } from 'ngx-international-phone-number';
+import { DataSourceListComponent } from './email-editor/data-source/data-source-list/data-source-list.component';
+import { DataSourceNewComponent } from './email-editor/data-source/data-source-new/data-source-new.component';
+import { DataSourceDetailComponent } from './email-editor/data-source/data-source-detail/data-source-detail.component';
+import { DataSourceTableComponent } from './email-editor/data-source/data-source-table/data-source-table';
+import { WindowRef } from "projects/ip-email-builder/src/lib/email-editor/data-source/data-source-new/WindowRef";
 //'fastCodeCore';
 //import {GenericApiService} from 'fastCodeCore/public_api';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import 'codemirror/addon/search/search.js';
+import 'codemirror/addon/display/placeholder.js';
+import { DataSourceMergeMap } from './email-editor/data-source/data-source-merge-map/data-source-merge-map';
+
 @NgModule({
   imports: [
     // EmailRoutingModule,
@@ -119,7 +129,8 @@ import { InternationalPhoneNumberModule } from 'ngx-international-phone-number';
     MatProgressSpinnerModule,
     MatAutocompleteModule,
     MatDatepickerModule,
-    InternationalPhoneNumberModule
+    InternationalPhoneNumberModule,
+    CodemirrorModule
   ],
   declarations: [
     IpEmailBuilderComponent,
@@ -148,10 +159,10 @@ import { InternationalPhoneNumberModule } from 'ngx-international-phone-number';
     BackRepatComponent,
     ConfirmDialogComponent,
     EmptyBlockComponent,
-
+    DataSourceMergeMap,
     TemplateEditorComponent,
-    EmailTemplateListComponent,TemplateEditorComponent,PickerComponent, EmailAttachmentComponent
-
+    EmailTemplateListComponent,TemplateEditorComponent,PickerComponent, EmailAttachmentComponent, DataSourceListComponent, DataSourceNewComponent, DataSourceDetailComponent,
+    DataSourceTableComponent
   ],
   exports: [IpEmailBuilderComponent,
      EmailTemplateListComponent,TemplateEditorComponent,EmailVariableListComponent],
@@ -164,7 +175,10 @@ import { InternationalPhoneNumberModule } from 'ngx-international-phone-number';
     SocialComponent,
     ConfirmDialogComponent,
     EmptyBlockComponent,
-    PickerComponent
+    PickerComponent,
+    DataSourceNewComponent,
+    DataSourceTableComponent,
+    DataSourceMergeMap
   ]
 })
 export class IpEmailBuilderModule {
@@ -180,7 +194,8 @@ export class IpEmailBuilderModule {
           provide: GENERAL_OPTIONS,
           useValue: { padding: {} }
         },
-        Globals
+        Globals,
+        // WindowRef
       ]
     };
   }

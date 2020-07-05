@@ -6,6 +6,9 @@ import { EmailTemplateService } from './email-template.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BaseListComponent, IListColumn, listColumnType, Globals, PickerDialogService, ErrorService } from 'projects/fast-code-core/src/public_api';
 import { TranslateService } from '@ngx-translate/core';
+import { DataSourceService } from './data-source/Services/data-source.service';
+import { DialogeService } from './data-source/Services/dialoge.service';
+import { DataSourceMergeMap } from './data-source/data-source-merge-map/data-source-merge-map';
 
 @Component({
 	selector: 'app-emailtemplate-list',
@@ -95,10 +98,12 @@ export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate
 		public pickerDialogService: PickerDialogService,
 		public emailService: EmailTemplateService,
 		public errorService: ErrorService,
-		private translate: TranslateService
+		private translate: TranslateService,
+		public _dialoge : DialogeService
 	) {
 		super(router, route, dialog, global, changeDetectorRefs, pickerDialogService, emailService, errorService)
 		//this.globalPermissionService = localGlobalPermissionService;
+
 	}
 
 	ngOnInit() {
@@ -120,6 +125,39 @@ export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate
 	addNew() {
 		this.router.navigate(['./emailtemplate'], { relativeTo: this.route.parent });
 		return;
+	}
+
+	getDataSourceMap(item) {
+		let obj = {};
+		obj['emailTemplateId'] = item.id;
+		let url = `/email/mapping/${item.id}`;
+		this.dataService.get(url).subscribe(res=>{
+			obj['data'] = res;
+			this._dialoge.openDialog(DataSourceMergeMap,obj);
+		});
+	}
+
+	onCancel(): void {
+		this._dialoge.onCancel();
+	}
+
+	deleteData(item) {
+		let url = `/datasource/getAllMappedForEmailTemplate/${item.id}`
+		this.dataService.get(url).subscribe(res=>{
+			console.log(res);
+			if(res.fields == 'NORECORD') {
+				super.delete(item);
+			} else {
+				let data = {
+					confirmationType: 'delete_cancel',
+					message: `This emailTemplate is mapped with ${res.fields} merge field(s).`,
+					cancelText: 'Cancel',
+					showCancel : true
+				}
+				super.delete(item,data);
+				// this._dialog.confirmDialoge(data);
+			}
+		})
 	}
 
 }

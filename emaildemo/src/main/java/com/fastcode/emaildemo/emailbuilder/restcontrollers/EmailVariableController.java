@@ -40,8 +40,8 @@ public class EmailVariableController {
 
 	@Autowired
 	private LoggingHelper logHelper;
-
 	@Autowired
+	
 	private Environment env;
 
 	@RequestMapping(method = RequestMethod.POST)

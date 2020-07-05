@@ -115,7 +115,7 @@ public class MailController {
 		}
 
 		final String regex="\\{\\{([^}]*.?)\\}\\}";
-
+		
 		final Matcher m = Pattern.compile(regex).matcher(input);
 
 		final List<String> matches = new ArrayList<>();

@@ -6,6 +6,7 @@ import { ISearchField } from '../../common/components/list-filters/ISearchCriter
 import { ServiceUtils } from '../utils/serviceUtils';
 
 import { IForRootConf } from '../../IForRootConf';
+import { IEmailTemplate } from "projects/ip-email-builder/src/lib/email-editor/iemail-template";
 
 @Injectable()
 export class GenericApiService<T> {
@@ -67,7 +68,7 @@ export class GenericApiService<T> {
    */
   getAssociations(parentSuffix: string, parentId: any, searchFields?: ISearchField[], offset?: number, limit?: number, sort?: string): Observable<T[]> {
 
-    let url = this.apiUrl + '/' + parentSuffix + '/' + parentId + '/' + this.suffix;
+    let url = this.apiUrl + '/' + parentSuffix + '/' +  + '/' + this.suffix;
     let params = ServiceUtils.buildQueryData(searchFields, offset, limit, sort);
     return this.http.get<T[]>(url, { params }).pipe(map((response: any) => {
       return response;
@@ -113,9 +114,9 @@ export class GenericApiService<T> {
    * Call api to delete item agianst given id.
    * @param id
    */
-  public delete(id: any): Observable<null> {
+  public delete(id: any): Observable<Object> {
     return this.http
-      .delete(this.url + '/' + id).pipe(map(res => null), catchError(this.handleError));
+      .delete(this.url + '/' + id).pipe(map(res => res), catchError(this.handleError));
   }
 
   /**
@@ -156,5 +157,30 @@ export class GenericApiService<T> {
 
       return this.http.put<any>(this.config.apiUrl + '/files/' + id, fileData);
     }
+  }
+
+  public getAllTemplates():Observable<IEmailTemplate[]>{
+  return this.http.get<IEmailTemplate[]>(this.config.apiUrl+'/email/list', {}).pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
+  }
+
+  public previewData(query):Observable<any>{ 
+    let url = this.config.apiUrl+'/datasource/preview/table?query='+encodeURI(query);
+    return this.http.get<any>(url, {}).pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
+  }
+
+  public get(url:string) : Observable<any>{ 
+    return this.http.get<any>(`${this.config.apiUrl}${url}`, {}).pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
+  }
+
+  public post(url:string,data:any) : Observable<any>{ 
+    return this.http.post<any>(`${this.config.apiUrl}${url}`, data).pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
   }
 }

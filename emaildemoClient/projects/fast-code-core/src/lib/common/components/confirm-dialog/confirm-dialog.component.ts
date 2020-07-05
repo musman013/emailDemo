@@ -17,6 +17,8 @@ export class ConfirmDialogComponent implements OnInit {
   public confirmMessage: string;
   public title: string;
   public action: string;
+  public cancelText: string;
+  public showCancel:boolean = false;
 
   ngOnInit() {
     this.setData();
@@ -31,11 +33,18 @@ export class ConfirmDialogComponent implements OnInit {
       this.confirmMessage = this.translate.instant('CONFIRM-DIALOG.DELETE.MESSAGE');
       this.title = this.translate.instant('CONFIRM-DIALOG.DELETE.TITLE');
       this.action = this.translate.instant('FASTCODE-CORE-GENERAL.ACTIONS.DELETE');
-    }
-    else {
+    } else if(this.data.confirmationType == "delete_cancel") {
+      this.confirmMessage = this.data.message ? this.data.message : this.translate.instant('CONFIRM-DIALOG.MESSAGE');
+      this.title = this.translate.instant('CONFIRM-DIALOG.TITLE');
+      this.action = this.translate.instant('FASTCODE-CORE-GENERAL.ACTIONS.CONFIRM');
+      this.cancelText = this.data.cancelText ? this.data.cancelText : '';
+      this.showCancel = this.data.showCancel ? this.data.showCancel: false;
+    } else {
       this.confirmMessage = this.data.message ? this.data.message : this.translate.instant('CONFIRM-DIALOG.MESSAGE');
       this.title = this.data.title ? this.data.title : this.translate.instant('CONFIRM-DIALOG.TITLE');
       this.action = this.data.action ? this.data.action : this.translate.instant('FASTCODE-CORE-GENERAL.ACTIONS.CONFIRM');
+      this.cancelText = this.data.cancelText ? this.data.cancelText : '';
+      this.showCancel = this.data.showCancel ? this.data.showCancel: false;
     }
   }
 }
