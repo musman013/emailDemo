@@ -55,6 +55,8 @@ export class IpEmailBuilderService implements OnInit {
     ['Ubuntu', 'https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700']
   ]);
   private _mergeTags = new Set<string>();
+  private _emailMergeTags = new Set<string>();
+  private _subjectMergeTags = new Set<string>();
 
   /**
    * Private read-only Structures from aside!
@@ -283,6 +285,22 @@ export class IpEmailBuilderService implements OnInit {
 
   set MergeTags(tags: Set<string>) {
     this._mergeTags = tags;
+  }
+
+  get EmailMergeTags() : Set<string> {
+    return this._emailMergeTags;
+  }
+
+  set EmailMergeTags(tags: Set<string>) {
+    this._emailMergeTags = tags;
+  }
+
+  get SubjectMergeTags() : Set<string> {
+    return this._subjectMergeTags;
+  }
+
+  set SubjectMergeTags(tags: Set<string>) {
+    this._subjectMergeTags = tags;
   }
 
   ngOnInit() {}

@@ -44,7 +44,7 @@
                   {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</label>
 
                 <div id="to3-variable" class="dropdown-content">
-                  <div *ngFor="let variable of _ngb.MergeTags" (click)="insertVariable($event, 'to3', 'to3-variable')"> {{variable}}</div>
+                  <div *ngFor="let variable of _ngb.EmailMergeTags" (click)="insertVariable($event, 'to3', 'to3-variable')"> {{variable}}</div>
                 </div>
               </td>
               <td>
@@ -62,7 +62,7 @@
                   {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</label>
 
                 <div id="cc3-variable" class="dropdown-content">
-                  <div *ngFor="let variable of _ngb.MergeTags" (click)="insertVariable($event, 'cc3', 'cc3-variable')"> {{variable}}</div>
+                  <div *ngFor="let variable of _ngb.EmailMergeTags" (click)="insertVariable($event, 'cc3', 'cc3-variable')"> {{variable}}</div>
                 </div>
               </td>
               <td>
@@ -80,7 +80,7 @@
                   {{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</label>
 
                 <div id="bcc3-variable" class="dropdown-content">
-                  <div *ngFor="let variable of _ngb.MergeTags" (click)="insertVariable($event, 'bcc3', 'bcc3-variable')"> {{variable}}</div>
+                  <div *ngFor="let variable of _ngb.EmailMergeTags" (click)="insertVariable($event, 'bcc3', 'bcc3-variable')"> {{variable}}</div>
                 </div>
               </td>
               <td>
@@ -100,7 +100,7 @@
                 </label>
 
                 <div id="subject3-variable" class="dropdown-content">
-                  <div *ngFor="let variable of _ngb.MergeTags" (click)="insertVariable($event, 'subject3', 'subject3-variable')"> {{variable}}</div>
+                  <div *ngFor="let variable of _ngb.SubjectMergeTags" (click)="insertVariable($event, 'subject3', 'subject3-variable')"> {{variable}}</div>
                 </div>
               </td>
               <td>

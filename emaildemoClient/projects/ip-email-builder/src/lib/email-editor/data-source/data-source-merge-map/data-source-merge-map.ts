@@ -52,8 +52,10 @@ export class DataSourceMergeMap implements OnInit{
             obj = event.value;
             return res != event.value;
         })
-        if(element.alreadyMappedList){
-            element.alreadyMappedList.push(obj);
+        if(element.alreadyMappedList && element.alreadyMappedList.length > 0 ){
+            // element.alreadyMappedList.push(obj);
+            element.dataSourceMetaList.push(element.alreadyMappedList[0]);
+            element.alreadyMappedList[0] = obj;
         } else {
             element.alreadyMappedList = [];
             element.alreadyMappedList.push(obj);
@@ -67,25 +69,18 @@ export class DataSourceMergeMap implements OnInit{
             obj = event;
             return res != event;
         })
-        if(element.dataSourceMetaList){
-            element.dataSourceMetaList.push(obj);
-        } else {
-            // element.dataSourceMetaList = [];
-            element.dataSourceMetaList.push(obj);
-        }
+        element.dataSourceMetaList.push(obj);
+        
     }
 
     save() {
         let url = '/email/mapping/create'
         let data=this.getDataToSend();
-        if(data && data.length>0)
-            {
-        this.dataService.post(url, data).subscribe(res=>{
-            this._dialoge.onCancel();
-        })
-            }
-    else
-        {
+        if(data && data.length>0) {
+            this.dataService.post(url, data).subscribe(res=>{
+                this._dialoge.onCancel();
+            })
+        } else {
             alert("No combination exist");
         }
     }

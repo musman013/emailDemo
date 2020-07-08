@@ -6,6 +6,7 @@ import {
   Validators,
   FormArray,
   FormControl,
+  FormGroup,
 } from "@angular/forms";
 import {
   MatDialogRef,
@@ -117,6 +118,28 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
     this.itemForm.get("sqlQuery").valueChanges.subscribe(() => {
       this.previewAvailable = false;
     });
+
+    this.selectionChangeDetection();
+  }
+
+  selectionChangeDetection() {
+    let emailTemplate:FormGroup = this.itemForm.get('emailTemplate') as FormGroup;
+    emailTemplate.valueChanges.subscribe(data=>{
+      console.log(data);
+      if(data.id) {
+        let url = `/datasource/getAlreadyMappedDatasourceForEmailTemplate/${data.id}`;
+        this.dataService.get(url).subscribe(res => {
+          console.log(res);
+          if(res.fields == "NORECORD") {
+            
+          } else {
+            let id:FormControl = emailTemplate.get('id') as FormControl;
+            id.reset();
+            this.errorService.showError(`This email template has already mapped with ${res.fields}`);
+          }
+        })
+      }
+    })
   }
 
   previewData() {

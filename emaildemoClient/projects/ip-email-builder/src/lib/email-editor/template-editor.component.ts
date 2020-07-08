@@ -93,6 +93,7 @@ export class TemplateEditorComponent implements OnInit {
 
   }
 
+
   ngOnInit() {
     //this.inProgress = true;
     const param = this.route.snapshot.paramMap.get('id');
@@ -102,6 +103,20 @@ export class TemplateEditorComponent implements OnInit {
       items => {
         let tags = items.map(item => item.propertyName);
         this._ngb.MergeTags = new Set(tags);
+      },
+      error => this.errorMessage = <any>error
+    );
+    this.emailVariableService.getEmailVeriableByType('Email').subscribe(
+      items => {
+        let tags = items.map(item => item.propertyName);
+        this._ngb.EmailMergeTags = new Set(tags);
+      },
+      error => this.errorMessage = <any>error
+    );
+    this.emailVariableService.getEmailVeriableByType('subject').subscribe(
+      items => {
+        let tags = items.map(item => item.propertyName);
+        this._ngb.SubjectMergeTags = new Set(tags);
       },
       error => this.errorMessage = <any>error
     );
@@ -529,7 +544,6 @@ export class TemplateEditorComponent implements OnInit {
 
   showHideVariables(subject3Variable: string) {
     const comboElement = document.getElementById(subject3Variable) as any;
-
     if (comboElement.classList.contains('show')) {
       comboElement.classList.remove('show');
     } else {

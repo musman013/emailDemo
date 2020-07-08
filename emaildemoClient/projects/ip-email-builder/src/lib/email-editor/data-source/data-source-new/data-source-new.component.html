@@ -23,11 +23,7 @@
 
 					<mat-error *ngIf="!itemForm.get('emailTemplate').valid && itemForm.get('emailTemplate').touched">{{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
 				</mat-form-field>
-				<!-- <mat-form-field> -->
-					<!-- <input formControlName="sqlQuery" matInput placeholder="{{'EMAIL-EDITOR.DATA-SOURCE.FIELDS.SQL-QUERY' | translate}}"> -->
-		<!-- <mat-error *ngIf="!itemForm.get('sqlQuery').valid && itemForm.get('sqlQuery').touched">
-						{{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
-				</mat-form-field> -->
+				
 				<div class="sqlEditor">
 					<ngx-codemirror #myEditor  required 
 					formControlName="sqlQuery"  (keyup)="getChangeContent()" (change) = "getChangeContent()"

@@ -45,6 +45,16 @@ export class GenericApiService<T> {
 
   }
 
+  public getEmailVeriableByType(value : string): Observable<T[]> {
+    return this.http.get<T[]>(this.url+'/getEmailVariableByTypeOrSubject',{
+      params: {
+        type : value
+      }
+    }).pipe(map((response:any)=> {
+      return response;
+    }), catchError(this.handleError));
+  }
+
   /**
    * Fetches specific child's object of given parent.
    * @param childSuffix Url suffix for the child to be fetched.

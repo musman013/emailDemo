@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { FormBuilder, Validators, FormArray, FormControl } from "@angular/forms";
+import { FormBuilder, Validators, FormArray, FormControl, FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import {
   BaseDetailsComponent,
@@ -33,6 +33,7 @@ import { DialogeService } from "../Services/dialoge.service";
   providers: [DatePipe],
 })
 export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource> implements OnInit {
+  emailTemplateId: any;
   readOnlyQuery: boolean;
   metaList: IDataSourceMeta[];
 
@@ -49,6 +50,8 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
   	displayedColumns: string[] = ['columnName','dataType']
 
   @ViewChild('myEditor',{static:false}) myEditor;
+
+  dataSourceId:number;
 
   public previewAvailable:boolean = false;
   constructor(
@@ -90,11 +93,10 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
     this.getItem();
     this.dataService.getAllTemplates().subscribe((data) => {
       this.emailTemplates = data;
-  });
-    	this.itemForm.get('sqlQuery').valueChanges.subscribe(()=>{
-		this.previewAvailable = false;
-  })
-  
+    });
+    this.itemForm.get('sqlQuery').valueChanges.subscribe(()=>{
+		  this.previewAvailable = false;
+    })
   }
 
 
@@ -120,12 +122,35 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
     });
   }
 
+  selectionChangeDetection() {
+    let emailTemplate:FormGroup = this.itemForm.get('emailTemplate') as FormGroup;
+    emailTemplate.valueChanges.subscribe(data=>{
+
+      if(data.id && this.emailTemplateId != data.id) {
+        let url = `/datasource/getAlreadyMappedDatasourceForEmailTemplate/${data.id}`;
+        this.dataService.get(url).subscribe(res => {
+          console.log(res);
+          if(res.fields == "NORECORD") {
+            
+          } else {
+            let id:FormControl = emailTemplate.get('id') as FormControl;
+            id.reset();
+            this.errorService.showError(`This email template has already mapped with ${res.fields}`);
+          }
+        })
+      }
+    })
+  }
+
   onItemFetched(item: IDataSource) {
     this.item = item;
-	this.itemForm.patchValue(this.item);
-  this.metaList = this.item.metaList;
-  console.log("item is ",this.item);
-  this.readOnlyQuery=this.item.readOnlyQuery;
+    this.itemForm.patchValue(this.item);
+    this.metaList = this.item.metaList;
+    console.log("item is ",this.item);
+     this.emailTemplateId=this.item.emailTemplate.id;
+    this.selectionChangeDetection();
+   
+    this.readOnlyQuery=this.item.readOnlyQuery;
 
 	// this.itemForm.valueChanges.subscribe(()=>{
 	// 	this.showSave = true;
