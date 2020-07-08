@@ -81,7 +81,13 @@ public class DataSourceAppService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public CreateDataSourceOutput create(CreateDataSourceInput dataSource) {
-
+		
+		if(_dataSourceManager.existsByEmailTemplateId(dataSource.getEmailTemplate().getId()))
+		{
+			System.out.println("Already Exist");
+			return null;
+		}
+		
 		DataSourceEntity sourceEntity = new DataSourceEntity();
 		sourceEntity.setCreation(dataSource.getCreation());
 		sourceEntity.setEmailTemplate(dataSource.getEmailTemplate());
@@ -327,6 +333,10 @@ public class DataSourceAppService {
 
 	public String getAllMappedForEmailTemplate(Long id) {
 		return _dataSourceManager.getAllMappedForEmailTemplate(id);
+	}
+
+	public String getAlreadyMappedDatasourceForEmailTemplate(Long id) {
+		return _dataSourceManager.getAlreadyMappedDatasourceForEmailTemplate(id);
 	}
 
 }

@@ -24,7 +24,7 @@ import com.fastcode.emaildemo.domain.irepository.FileRepository;
 import com.fastcode.emaildemo.domain.model.File;
 
 @Service
-public class EmailService implements IEmailService {
+public class EmailService2 implements IEmailService {
 
 	@Autowired
 	public JavaMailSender emailSender;

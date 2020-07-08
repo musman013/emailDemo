@@ -22,4 +22,9 @@ public interface IDataSourceRepository extends JpaRepository<DataSourceEntity, L
 
 	List<DataSourceEntity> findByEmailTemplateId(Long emailTemplateId);
 	
+	boolean existsByEmailTemplateId(Long id);
+
+	@Query(value ="select e.name from  DataSourceEntity e where e.emailTemplate.id = ?1")
+	List<String> getDataSourceNameByEmailTemplateId(Long id);
+	
 }

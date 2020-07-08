@@ -113,5 +113,10 @@ public class EmailVariableController {
 	public ResponseEntity list() throws Exception {
 		return ResponseEntity.ok(emailVariableAppService.findAll());
 	}
+	
+	@RequestMapping(value="/getEmailVariableByTypeOrSubject",method = RequestMethod.GET)
+	public ResponseEntity getEmailVariableByType(@RequestParam(value = "type", required = false) String type) throws Exception {
+		return ResponseEntity.ok(emailVariableAppService.getEmailVariableByTypeOrSubject(type));
+	}
 
 }

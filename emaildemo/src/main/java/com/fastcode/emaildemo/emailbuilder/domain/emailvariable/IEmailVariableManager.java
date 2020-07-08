@@ -30,5 +30,9 @@ public interface IEmailVariableManager {
     public List<EmailVariableEntity> findAll();
 
 	public List<Long> findByNameIn(Set<String> allFieldsId);
+
+	public List<EmailVariableEntity> findByPropertyType(String type);
+
+	public List<EmailVariableEntity> findByPropertyTypeIn(List<String> types);
 	
 }

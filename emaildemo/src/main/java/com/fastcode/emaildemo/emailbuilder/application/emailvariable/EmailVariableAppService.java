@@ -261,9 +261,9 @@ public class EmailVariableAppService implements IEmailVariableAppService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<FindEmailVariableByIdOutput> findAll() {
 		
-		List<EmailVariableEntity> foundEmail = _emailVariableManager.findAll();
+		List<EmailVariableEntity> foundVariable = _emailVariableManager.findAll();
 
-		Iterator<EmailVariableEntity> emailIterator = foundEmail.iterator();
+		Iterator<EmailVariableEntity> emailIterator = foundVariable.iterator();
 		List<FindEmailVariableByIdOutput> output = new ArrayList<>();
 
 		  while (emailIterator.hasNext()) {
@@ -275,5 +275,34 @@ public class EmailVariableAppService implements IEmailVariableAppService {
 
 	public List<Long> findByNameIn(Set<String> allFieldsId) {
 		return _emailVariableManager.findByNameIn(allFieldsId);
+	}
+
+	public List<FindEmailVariableByIdOutput> getEmailVariableByTypeOrSubject(String type) {
+		List<EmailVariableEntity> foundVariable =  new ArrayList<>();
+		List<String> types= new ArrayList<>();
+		types.add("text");
+		types.add("Date");
+		types.add("Number");
+		types.add("Email");
+		types.add("Phone");
+		types.add("Percentage");
+		types.add("Currency");
+		if("Email".equalsIgnoreCase(type))
+		{
+			foundVariable=	_emailVariableManager.findByPropertyType(type);
+		}
+		else if("Subject".equalsIgnoreCase(type))
+		{
+			foundVariable=	_emailVariableManager.findByPropertyTypeIn(types);
+		}
+		
+		Iterator<EmailVariableEntity> emailIterator = foundVariable.iterator();
+		List<FindEmailVariableByIdOutput> output = new ArrayList<>();
+
+		  while (emailIterator.hasNext()) {
+	      output.add(emailVariableMapper.emailVariableEntityToFindEmailVariableByIdOutput(emailIterator.next()));    
+		 }
+
+		return output;
 	}
 }

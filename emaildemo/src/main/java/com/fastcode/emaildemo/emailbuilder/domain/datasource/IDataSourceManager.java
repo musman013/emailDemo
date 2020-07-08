@@ -31,4 +31,8 @@ public interface IDataSourceManager {
 	public String getAllMappedMergeField(Long id);
 
 	public String getAllMappedForEmailTemplate(Long id);
+
+	public boolean existsByEmailTemplateId(Long id);
+
+	public String getAlreadyMappedDatasourceForEmailTemplate(Long id);
 }

@@ -65,6 +65,17 @@ public class EmailVariableManager implements IEmailVariableManager {
 	public List<Long> findByNameIn(Set<String> allFieldsId) {
 		return _emailVariableRepository.findByNameIn(allFieldsId);
 	}
+
+	@Override
+	public List<EmailVariableEntity> findByPropertyType(String type) {
+		return _emailVariableRepository.findByPropertyType(type);
+	}
+	
+	
+	@Override
+	public List<EmailVariableEntity> findByPropertyTypeIn(List<String> types) {
+		return _emailVariableRepository.findByPropertyTypeIn(types);
+	}
 	
 	
 

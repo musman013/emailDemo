@@ -563,6 +563,14 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 				data.setDataSourceMetaList(emailVariableMapper.dataSourceEntityToDataSourceMetaList(metaSourceList));
 				outputList.add(data);
 			}
+			else  if(emailMergeField.getMergeField().getPropertyType().equals("List"))
+			{
+				String dataType="character varying";
+				List<DataSourceMetaEntity> metaSourceList=dataSourceMetaEntityRepo.findByMetaColumnDataTypeAndDataSourceEntityIn(dataType,dataSourceEntityList);
+				data.setMergeField(emailVariableMapper.emailVariableEntityToFindEmailVariableByIdOutput(emailMergeField.getMergeField()));
+				data.setDataSourceMetaList(emailVariableMapper.dataSourceEntityToDataSourceMetaList(metaSourceList));
+				outputList.add(data);
+			}
 			else 
 			{
 			List<DataSourceMetaEntity> metaSourceList=dataSourceMetaEntityRepo.findByMetaColumnDataTypeAndDataSourceEntityIn(emailMergeField.getMergeField().getPropertyType(),dataSourceEntityList);

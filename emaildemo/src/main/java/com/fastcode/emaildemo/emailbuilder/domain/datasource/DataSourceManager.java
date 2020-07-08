@@ -41,6 +41,12 @@ public class DataSourceManager implements IDataSourceManager {
 		
 		return _dataSourceRepository.save(email);
 	}
+	
+	@Override
+	public boolean existsByEmailTemplateId(Long id)
+	{
+		return _dataSourceRepository.existsByEmailTemplateId(id);
+	}
 
 	public boolean delete(DataSourceEntity email) {
 		if(!emailTemplateMappingRepo.existsByDataSourceEntiry(email))
@@ -135,6 +141,19 @@ public class DataSourceManager implements IDataSourceManager {
 	@Override
 	public String getAllMappedForEmailTemplate(Long id) {
 		List<String> mappedList= emailMergeFieldEntityRepo.getPropertyNames(id);
+		if(mappedList!=null && mappedList.size()>0)
+		{
+			return String.join(",", mappedList);
+		}
+		else
+		{
+			return "NORECORD";
+		}
+	}
+
+	@Override
+	public String getAlreadyMappedDatasourceForEmailTemplate(Long id) {
+		List<String> mappedList= _dataSourceRepository.getDataSourceNameByEmailTemplateId(id);
 		if(mappedList!=null && mappedList.size()>0)
 		{
 			return String.join(",", mappedList);

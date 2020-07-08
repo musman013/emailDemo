@@ -19,5 +19,9 @@ public interface IEmailVariableRepository extends JpaRepository<EmailVariableEnt
 
 	   @Query("select e.id from EmailVariableEntity e where e.propertyName in (?1) ")
 	List<Long> findByNameIn(Set<String> allFieldsId);
+
+	List<EmailVariableEntity> findByPropertyType(String type);
+
+	List<EmailVariableEntity> findByPropertyTypeIn(List<String> types);
 	
 }

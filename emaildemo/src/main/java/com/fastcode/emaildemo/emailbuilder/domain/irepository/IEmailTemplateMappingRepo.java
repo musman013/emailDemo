@@ -36,4 +36,9 @@ public interface IEmailTemplateMappingRepo extends JpaRepository<EmailTemplateMa
 	@Query(value="select distinct (e.mergeField.propertyName) from EmailTemplateMappingEntity e where e.emailTemplateEntity.id=?1  ")
 	List<String> getAllMappedForEmailTemplate(Long id);
 
+	List<EmailTemplateMappingEntity> findByEmailTemplateEntityId(Long id);
+
+	@Query(value="select e.dataSourceMetaEntity.metaColumn,e.mergeField.propertyName from EmailTemplateMappingEntity e where e.emailTemplateEntity.id=?1  ")
+	List<Object[]> getMappedData(Long id);
+
 }
