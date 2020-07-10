@@ -11,6 +11,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import com.fastcode.emaildemo.emailbuilder.domain.model.DataSourceEntity;
 import com.fastcode.emaildemo.emailbuilder.domain.model.DataSourceMetaEntity;
+import com.fastcode.emaildemo.emailbuilder.domain.model.EmailTemplateEntity;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailTemplateMappingEntity;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailVariableEntity;
 
@@ -40,5 +41,10 @@ public interface IEmailTemplateMappingRepo extends JpaRepository<EmailTemplateMa
 
 	@Query(value="select e.dataSourceMetaEntity.metaColumn,e.mergeField.propertyName from EmailTemplateMappingEntity e where e.emailTemplateEntity.id=?1  ")
 	List<Object[]> getMappedData(Long id);
+
+	@Transactional
+	@Modifying
+	@Query(value="delete from EmailTemplateMappingEntity e where e.emailTemplateEntity=?2 and e.id not in (?1)   ")
+	void deleteAllExceptTheseForEmailTemplate(List<Long> idsNotToBeDeleted, EmailTemplateEntity email);
 
 }

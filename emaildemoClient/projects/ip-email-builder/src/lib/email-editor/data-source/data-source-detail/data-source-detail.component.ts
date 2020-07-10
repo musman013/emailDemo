@@ -101,8 +101,7 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
 
 
 
-  ngAfterViewInit():void
-  {
+  ngAfterViewInit():void {
     console.log('after init',this.myEditor);
      //this.getChangeContent();
   }
@@ -193,26 +192,22 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
   }
 
 
-    getChangeContent()
-  {
-const editor = this.myEditor.codeMirror;
- 
-const doc = editor.getDoc();
-this.searchKeyword(doc,editor,'SELECT');
-this.searchKeyword(doc,editor,'FROM');
-this.searchKeyword(doc,editor,'WHERE');
-
+  getChangeContent() {
+      const editor = this.myEditor.codeMirror;
+      const doc = editor.getDoc();
+      this.searchKeyword(doc,editor,'SELECT');
+      this.searchKeyword(doc,editor,'FROM');
+      this.searchKeyword(doc,editor,'WHERE');
   }
 
-  searchKeyword(doc,editor,key)
-  {
+  searchKeyword(doc,editor,key) {
     var cursor = doc.getSearchCursor(key,null,`caseFold: false`);
-while (cursor.findNext()) {
-        editor.markText(
-          cursor.from(),
-          cursor.to(),
-          { css:"color: red"  }
-        );
+    while (cursor.findNext()) {
+      editor.markText(
+        cursor.from(),
+        cursor.to(),
+        { css:"color: red"  }
+      );
     }
 
   }

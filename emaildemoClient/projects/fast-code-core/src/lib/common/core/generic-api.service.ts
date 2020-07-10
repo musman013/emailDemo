@@ -193,4 +193,14 @@ export class GenericApiService<T> {
       return response;
     }), catchError(this.handleError));
   }
+
+
+  public deleteMapping(url:string) : Observable<any>{ 
+    return this.http.delete<any>(`${this.config.apiUrl}${url}`).pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
+  }
+
+
+
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,11 @@ import com.fastcode.emaildemo.emailbuilder.application.emailvariable.EmailVariab
 import com.fastcode.emaildemo.emailbuilder.application.emailvariable.dto.FindEmailVariableByIdOutput;
 import com.fastcode.emaildemo.emailbuilder.application.emailvariable.dto.FindEmailVariableByNameOutput;
 import com.fastcode.emaildemo.emailbuilder.domain.irepository.EmailMergeFieldEntityRepo;
+import com.fastcode.emaildemo.emailbuilder.domain.irepository.IEmailTemplateMappingRepo;
 import com.fastcode.emaildemo.emailbuilder.domain.irepository.IEmailTemplateRepository;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailMergeFieldEntity;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailTemplateEntity;
+import com.fastcode.emaildemo.emailbuilder.domain.model.EmailTemplateMappingEntity;
 import com.fastcode.emaildemo.emailbuilder.domain.model.EmailVariableEntity;
 import com.querydsl.core.types.Predicate;
 
@@ -38,6 +41,9 @@ public class EmailTemplateManager implements IEmailTemplateManager {
 	@Autowired
 	private EmailMergeFieldEntityRepo emailMergeFieldEntityRepo;
 	
+	@Autowired
+	private IEmailTemplateMappingRepo emailTemplateMappingRepo; 
+	
 	public EmailTemplateEntity create(EmailTemplateEntity email) {
 
 		List<Long> allContentJsonData = findAndCreateEmailMergeFieldEntity(email);
@@ -45,21 +51,42 @@ public class EmailTemplateManager implements IEmailTemplateManager {
 		email = _emailTemplateRepository.save(email);
 		if(allContentJsonData!=null && allContentJsonData.size()>0 )
 		{
-		saveEmailMergeFieldData(email,allContentJsonData);
+		saveEmailMergeFieldData(email,allContentJsonData,false);
 		}
 		return email;
 	}
 
-	private void saveEmailMergeFieldData(EmailTemplateEntity email, List<Long> ids) {
+	private void saveEmailMergeFieldData(EmailTemplateEntity email, List<Long> ids,boolean isUpdate) {
 	List<EmailMergeFieldEntity> emailMergeFieldList = new ArrayList<>();
-		
+	List<EmailTemplateMappingEntity> emailTemplateEntityMapping = new ArrayList<>();
+
 	for(Long id:ids)
 	{
 		EmailMergeFieldEntity emailMergeField = new EmailMergeFieldEntity();
 		emailMergeField.setEmailTemplate(email);
 		emailMergeField.setMergeField(new EmailVariableEntity(id));
 		emailMergeFieldList.add(emailMergeField);
+		
 	}
+
+	// 1,2, 3
+	//3
+	
+	if(isUpdate)
+	{
+		emailTemplateEntityMapping = emailTemplateMappingRepo.findByEmailTemplateEntityId(email.getId());
+		if(emailTemplateEntityMapping!=null && emailTemplateEntityMapping.size()>0)
+		{
+		List<Long> idsNotToBeDeleted= emailTemplateEntityMapping.stream().filter(obj-> ids.contains(obj.getMergeField().getId())).map(obj2->obj2.getId()).collect(Collectors.toList());
+//		if(idsNotToBeDeleted!=null && idsNotToBeDeleted.size()>0)
+//		{
+			emailTemplateMappingRepo.deleteAllExceptTheseForEmailTemplate(idsNotToBeDeleted,email);	
+		//}
+		}
+		
+	}
+	
+	
 	emailMergeFieldEntityRepo.saveAll(emailMergeFieldList);
 	}
 
@@ -74,12 +101,19 @@ public class EmailTemplateManager implements IEmailTemplateManager {
 		
 		List<Long> allContentJsonData = findAndCreateEmailMergeFieldEntity(email);
 		email = _emailTemplateRepository.save(email);
+		
+		//4 3 , 1,2
 		emailMergeFieldEntityRepo.updateEmailMergeField(email);
 		
 		if(allContentJsonData!=null && allContentJsonData.size()>0 )
 		{
-		saveEmailMergeFieldData(email,allContentJsonData);
+		saveEmailMergeFieldData(email,allContentJsonData,true);
 		}
+		else
+		{
+				emailTemplateMappingRepo.updatePreviousMappig(email.getId());	
+		}
+		
 		
 		return email;
 	}

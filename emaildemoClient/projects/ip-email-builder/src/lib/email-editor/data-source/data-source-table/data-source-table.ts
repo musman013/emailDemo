@@ -8,9 +8,10 @@ import { DialogeService } from "../Services/dialoge.service";
 export class DataSourceTableComponent implements OnInit {
   dataToPreview: any[];
   displayedColumns: any[];
+  displayColumnsType:any[];
   title: string = "Preview Table";
   tableSource: any;
-
+  image : any;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public _dialoge : DialogeService,
@@ -22,6 +23,7 @@ export class DataSourceTableComponent implements OnInit {
         this.displayedColumns = this.tableSource.metaData.map(
           (obj) => obj.metaColumn
         );
+
 
         let singleArray = [];
         let singleColumn = false;
@@ -44,7 +46,6 @@ export class DataSourceTableComponent implements OnInit {
           this.tableSource.dataToPreview = singleArray;
         }
       }
-      console.log("table Source",this.tableSource);
   }
 
   ngOnInit() {
@@ -54,4 +55,7 @@ export class DataSourceTableComponent implements OnInit {
   onCancel() {
    this._dialoge.onCancel();
   }
+
+
+  
 }

@@ -88,7 +88,7 @@ ALTER TABLE s1.email_variable_type
 
 INSERT INTO s1.email_variable_type(
 	id, variable_type)
-	VALUES (1, 'text');
+	VALUES (1, 'Text');
 
 INSERT INTO s1.email_variable_type(
 	id, variable_type)

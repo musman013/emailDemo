@@ -3,6 +3,7 @@ package com.fastcode.emaildemo.emailbuilder.application.mail;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.mail.MessagingException;
@@ -43,7 +44,7 @@ public class EmailService implements IEmailService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void sendMessage(String to, String cc, String bcc, String subject, String htmlContent,
-			List<File> inlineImages, List<File> attachments) {
+			List<File> inlineImages, List<File> attachments,Map<Long,byte[]> imageDataSourceMap) {
 
 		MimeMessage message = emailSender.createMimeMessage();
 
@@ -67,7 +68,7 @@ public class EmailService implements IEmailService {
 			for (File file : inlineImages) {
 				try {
 
-					ByteArrayResource fileStreamResource = getFileStreamResource(Long.valueOf(file.getName()));
+					ByteArrayResource fileStreamResource = getFileStreamResource(Long.valueOf(file.getName()),imageDataSourceMap);
 					if (fileStreamResource != null)
 						helper.addInline(file.getSummary(), fileStreamResource, "image/jpeg");
 				} catch (Exception e) {
@@ -78,7 +79,7 @@ public class EmailService implements IEmailService {
 
 			// Now add the real attachments
 			for (File file : attachments) {
-				ByteArrayResource fileStreamResource = getFileStreamResource(file.getId());
+				ByteArrayResource fileStreamResource = getFileStreamResource(file.getId(),imageDataSourceMap);
 				if (fileStreamResource != null)
 					helper.addAttachment(file.getName(), fileStreamResource);
 			}
@@ -90,11 +91,16 @@ public class EmailService implements IEmailService {
 		emailSender.send(message);
 	}
 
-	public ByteArrayResource getFileStreamResource(Long fileId) { // This method will download file using RestTemplate
+	public ByteArrayResource getFileStreamResource(Long fileId, Map<Long, byte[]> imageDataSourceMap) { // This method will download file using RestTemplate
 		try {
+			if(imageDataSourceMap.get(fileId)!=null)
+			{
+				return  new ByteArrayResource(imageDataSourceMap.get(fileId)) ;
+			}
 			Optional<File> f = filesRepo.findById(fileId);
 			// InputStreamResource inputStreamResource = new
 			// InputStreamResource(contentStore.getContent(f.get()));
+			
 			InputStream content = contentStore.getContent(f.get());
 			return content != null ? new ByteArrayResource(IOUtils.toByteArray(content)) : null;
 		} catch (Exception e) {

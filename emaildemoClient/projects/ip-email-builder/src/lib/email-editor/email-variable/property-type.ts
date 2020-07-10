@@ -1,6 +1,6 @@
 export enum PropertyType
 {
-    TEXT='text',
+    TEXT='Text',
     MULTILINE='Multi-line Text',
     DATE='Date',
     NUMBER='Number',

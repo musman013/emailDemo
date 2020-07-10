@@ -1,8 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { DialogeService } from '../Services/dialoge.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { GenericApiService } from 'projects/fast-code-core/src/public_api';
+import { GenericApiService, ErrorService } from 'projects/fast-code-core/src/public_api';
 import { DataSourceService } from '../Services/data-source.service';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
     selector: 'data-source-merge-map',
@@ -17,12 +18,16 @@ export class DataSourceMergeMap implements OnInit{
     tableSource: any;
     totalMergeField:number=0;
     mappedMergeField:number=0;
+    len : number = 0;
+    emailTemplateId:any;
     constructor(
         public _dialoge : DialogeService,
         @Inject(MAT_DIALOG_DATA) public data: any,
-        public dataService: DataSourceService
+        public dataService: DataSourceService,
+        public snackBar : MatSnackBar,
+        
     ) { 
-        console.log(data);
+        this.emailTemplateId=data.emailTemplateId;
         
     }
 
@@ -32,6 +37,9 @@ export class DataSourceMergeMap implements OnInit{
             this.totalMergeField=element.totalMergeField;
             this.mappedMergeField=element.mappedMergeField;
             if(element.alreadyMappedList) {
+                if(this.len == 0) {
+                    this.len = element.alreadyMappedList.length;
+                }
                 element.alreadyMappedList.forEach(ele => {
                     obj.push(ele.id);
                 });
@@ -63,7 +71,6 @@ export class DataSourceMergeMap implements OnInit{
     }
 
     removeAlreadyAddedMap(event,element) {
-        console.log(event);
         let obj = {};
         element.alreadyMappedList = element.alreadyMappedList.filter(res=>{
             obj = event;
@@ -78,10 +85,26 @@ export class DataSourceMergeMap implements OnInit{
         let data=this.getDataToSend();
         if(data && data.length>0) {
             this.dataService.post(url, data).subscribe(res=>{
+                var snackBarRef = this.snackBar.open("Data Source mapped successfully.", null, {
+                    duration: 3000,
+                    panelClass: ['snackbar-background']
+                });
                 this._dialoge.onCancel();
             })
         } else {
-            alert("No combination exist");
+            if(this.len == 0) {
+                alert("No combination exist");
+            } else {
+                let deletionurl = '/email/deletemapping/'+this.emailTemplateId;
+                this.dataService.deleteMapping(deletionurl).subscribe(res=>{
+                    var snackBarRef = this.snackBar.open("Data Source mapped successfully.", null, {
+                        duration: 3000,
+                        panelClass: ['snackbar-background']
+                    });
+                    this._dialoge.onCancel();
+                })
+            }
+    
         }
     }
 

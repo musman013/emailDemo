@@ -525,7 +525,7 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 			}
 			data.setTotalMergeField(totalMergeField);
 			data.setMappedMergeField(mappedTillNow);
-			if(emailMergeField.getMergeField().getPropertyType().equals("text"))
+			if(emailMergeField.getMergeField().getPropertyType().equals("Text"))
 			{
 				List<String> excludedString= new ArrayList<>();
 				excludedString.add("MULTI-LINE");
@@ -533,6 +533,7 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 				excludedString.add("List of Images");
 				excludedString.add("Clickable Image");
 				excludedString.add("Image");
+				excludedString.add("bytea");
 				List<DataSourceMetaEntity> metaSourceList=dataSourceMetaEntityRepo.findByMetaColumnDataTypeNotInAndDataSourceEntityIn(excludedString,dataSourceEntityList);
 				data.setMergeField(emailVariableMapper.emailVariableEntityToFindEmailVariableByIdOutput(emailMergeField.getMergeField()));
 				data.setDataSourceMetaList(emailVariableMapper.dataSourceEntityToDataSourceMetaList(metaSourceList));
@@ -571,6 +572,14 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 				data.setDataSourceMetaList(emailVariableMapper.dataSourceEntityToDataSourceMetaList(metaSourceList));
 				outputList.add(data);
 			}
+			else  if(emailMergeField.getMergeField().getPropertyType().equals("Image"))
+			{
+				String dataType="bytea";
+				List<DataSourceMetaEntity> metaSourceList=dataSourceMetaEntityRepo.findByMetaColumnDataTypeAndDataSourceEntityIn(dataType,dataSourceEntityList);
+				data.setMergeField(emailVariableMapper.emailVariableEntityToFindEmailVariableByIdOutput(emailMergeField.getMergeField()));
+				data.setDataSourceMetaList(emailVariableMapper.dataSourceEntityToDataSourceMetaList(metaSourceList));
+				outputList.add(data);
+			}
 			else 
 			{
 			List<DataSourceMetaEntity> metaSourceList=dataSourceMetaEntityRepo.findByMetaColumnDataTypeAndDataSourceEntityIn(emailMergeField.getMergeField().getPropertyType(),dataSourceEntityList);
@@ -599,6 +608,11 @@ public class EmailTemplateAppService implements IEmailTemplateAppService {
 			}
 		emailTemplateMappingRepo.saveAll(totalList);
 		return mappings;
+	}
+
+	public void deleteMappingForEmail(Long emailTemplateId) {
+		emailTemplateMappingRepo.updatePreviousMappig(emailTemplateId);
+		
 	}
 
 }

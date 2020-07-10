@@ -181,6 +181,12 @@ public class EmailTemplateController {
 	        return new ResponseEntity(emailTemplateAppService.createMapping(mapping), HttpStatus.CREATED);
 	    }
 	
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	@RequestMapping(value = "/deletemapping/{emailTemplateId}", method = RequestMethod.DELETE)
+	public void deleteMappingForEmail(@PathVariable Long emailTemplateId) {
+	    emailTemplateAppService.deleteMappingForEmail(emailTemplateId);
+	}
+	
 	
 	
 
