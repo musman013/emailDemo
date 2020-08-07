@@ -17,17 +17,9 @@ import { IGlobalPermissionService } from '../core/iglobal-permission.service';
 
 import { CanDeactivateGuard } from '../core/can-deactivate.guard';
 import { ErrorService } from '../core/error.service';
-import { PropertyType } from "projects/ip-email-builder/src/lib/email-editor/email-variable/property-type";
-import { DatePipe } from "@angular/common";
-import { FastCodeCoreService } from "projects/fast-code-core/src/lib/fast-code-core.service";
-import { EmailVariableService } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.service";
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
 @Component({
-
-  template: '',
-  providers: [DatePipe]
-
-
+  template: ''
 })
 export class BaseNewComponent<E> implements OnInit, CanDeactivateGuard {
 
@@ -68,15 +60,6 @@ export class BaseNewComponent<E> implements OnInit, CanDeactivateGuard {
 
   errorMessage = '';
 
-  	selectedVariableType: any;
-    selectedDropDownValue: any;
-    listData:string[]=[];
-    fileIds:number[]=[];
-    attatchment: { 
-      myFile?:File;
-      url?:any;
-    }[] = [];
-
   constructor(
     public formBuilder: FormBuilder,
     public router: Router,
@@ -86,8 +69,7 @@ export class BaseNewComponent<E> implements OnInit, CanDeactivateGuard {
     public global: Globals,
     public pickerDialogService: PickerDialogService,
     public dataService: GenericApiService<E>,
-    public errorService: ErrorService,
-    public datePipe: DatePipe,
+    public errorService: ErrorService
     ) { }
 
   setPermissions = () => {
@@ -122,36 +104,13 @@ export class BaseNewComponent<E> implements OnInit, CanDeactivateGuard {
   }
 
   onSubmit() {
-    // stop here if form is invalid
-    let check=true;
-    //doing so for images
     if (this.itemForm.invalid) {
       return;
     }
 
     this.submitted = true;
     this.loading = true;
-    switch(this.selectedVariableType)
-		{
-      case PropertyType.DATE:
-		  this.itemForm.controls.defaultValue.setValue(this.datePipe.transform(this.itemForm.controls.defaultValue.value, this.selectedDropDownValue));
-      break;
-      case PropertyType.LIST:
-      if(this.listData && this.listData.length>0)
-        {
-          this.itemForm.controls.defaultValue.setValue(this.listData.join(','));
-        }
-      break;
-      case PropertyType.IMAGE:
-      case PropertyType.CLICKABLE_IMAGE:
-      case PropertyType.LIST_OF_IMAGES:
-      check=false;
-      this.saveAttachments();
-      //need to check this code
-      break;
-    }
-    if(check)
-      {
+
     this.dataService.create(this.itemForm.getRawValue())
       .pipe(first())
       .subscribe(
@@ -166,31 +125,10 @@ export class BaseNewComponent<E> implements OnInit, CanDeactivateGuard {
           this.dialogRef.close(null)
 
         });
-      }
+      
   }
   onCancel(): void {
     this.dialogRef.close(null);
-  }
-
-  addNew(component) {
-      this.openDialog(component, null);
-      return;
-  }
-
-  openDialog(component, data) {
-    this.dialogRef = this.dialog.open(component, {
-      disableClose: true,
-      height: this.isMediumDeviceOrLess ? this.mediumDeviceOrLessDialogSize : this.largerDeviceDialogHeightSize,
-      width: this.isMediumDeviceOrLess ? this.mediumDeviceOrLessDialogSize : this.largerDeviceDialogWidthSize,
-      maxWidth: "none",
-      panelClass: 'fc-modal-dialog',
-      data: data
-    });
-    this.dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // this.getItems();
-      }
-    });
   }
 
   selectAssociation(association: IAssociationEntry) {
@@ -287,43 +225,6 @@ export class BaseNewComponent<E> implements OnInit, CanDeactivateGuard {
     }
   }
 
-  saveAttachments()
-  {
-    if (this.attatchment && this.attatchment.length > 0) {
-      this.attatchment.forEach(data => {
-
-        if (data.myFile.name ) {
-          const fileMetadata = {
-            name: data.myFile.name, summary: data.myFile.name
-          };
-          this.dataService.createFileMetadata(fileMetadata).subscribe(res => {
-            console.log("response is",res);
-            this.dataService.uploadFile(res.id, data.myFile).subscribe(res2=>{
-              this.fileIds.push(res.id);
-            this.itemForm.controls.defaultValue.setValue(this.fileIds.join(','));
-            });
-            
-
-          });
-        }
-      });
-    }
-
-        setTimeout(() =>this.dataService.create(this.itemForm.getRawValue())
-      .pipe(first())
-      .subscribe(
-        data => {
-          // this.alertService.success('Registration successful', true);
-          // this.router.navigate(['/users']);
-          this.dialogRef.close(data);
-        },
-        error => {
-          this.errorService.showError("Error Occured while updating");
-          this.loading = false;
-          this.dialogRef.close(null)
-
-        }), 3000);
-
-  }
+ 
 
 }

@@ -12,18 +12,18 @@ import { EmailVariableNewComponent } from './email-variable-new.component';
 //import { PickerDialogService } from '../common/components/picker/picker-dialog.service';
 //import { BaseListComponent,Globals,IListColumn, listColumnType,PickerDialogService } from 'fastCodeCore';// from 'fastCodeCore';
 import {
-  BaseListComponent,
-  Globals,
-  IListColumn,
-  listColumnType,
-  PickerDialogService,
-  ErrorService,
-  operatorType, ISearchField, ConfirmDialogComponent
+	BaseListComponent,
+	Globals,
+	IListColumn,
+	listColumnType,
+	PickerDialogService,
+	ErrorService,
+	operatorType, ISearchField, ConfirmDialogComponent, ServiceUtils
 } from 'projects/fast-code-core/src/public_api';// 'fastCodeCore';
 import { GenericApiService } from '../generic-api.service';
 import { IEmailVariableType } from './iemail-variable-type';
 import { EmailVariablTypeService } from './email-variable.type.service';
-import {EmailTemplateService} from '../email-template.service';
+import { EmailTemplateService } from '../email-template.service';
 
 @Component({
 	selector: 'app-email-variable-list',
@@ -81,7 +81,7 @@ export class EmailVariableListComponent extends BaseListComponent<IEmailVariable
 		public variableTypedataService: EmailVariablTypeService,
 		public errorService: ErrorService,
 		private translate: TranslateService,
-    public emailService: EmailTemplateService,
+		public emailService: EmailTemplateService,
 	) {
 		super(router, route, dialog, global, changeDetectorRefs, pickerDialogService, emailvariableService, errorService)
 	}
@@ -101,39 +101,61 @@ export class EmailVariableListComponent extends BaseListComponent<IEmailVariable
 		super.addNew(EmailVariableNewComponent);
 	}
 
-  delete(item: IEmailVariable): void {
-    const search: ISearchField = {
-      fieldName: 'contentJson',
-      searchValue: '{{' + item.propertyName + '}}',
-      operator: operatorType.Contains
-    };
-    const searches = [search];
-    //console.log(item);
-    this.emailService.getAll(searches).subscribe(templates => {
-      const emailTemplates = templates;
-      // console.log('email templates:', emailTemplates);
-      if(emailTemplates.length > 0) {
-        let templates = null;
-        emailTemplates.forEach(template => {
-          if(templates)
-            templates = templates + ', ' + template.templateName;
-          else
-            templates = template.templateName;
-        });
-        this.deleteDialogRef = this.dialog.open(ConfirmDialogComponent, {
-          disableClose: true,
-          data: {
-            title : 'Information',
-            action: 'OK',
-            message: 'Merge field {{' + item.propertyName + '}} is used in email '+(emailTemplates.length > 1?'templates':'template')+' ' +  templates + '. Please remove this Merge field from ' +  templates + ' to delete it.'
-          }
-        });
-      } else {
-        super.delete(item);
-      }
-    });
+	delete(item: IEmailVariable): void {
+		const search: ISearchField = {
+			fieldName: 'contentJson',
+			searchValue: '{{' + item.propertyName + '}}',
+			operator: operatorType.Contains
+		};
+		const searches = [search];
+		//console.log(item);
+		this.emailService.getAll(searches).subscribe(templates => {
+			const emailTemplates = templates;
+			// console.log('email templates:', emailTemplates);
+			if (emailTemplates.length > 0) {
+				let templates = null;
+				emailTemplates.forEach(template => {
+					if (templates)
+						templates = templates + ', ' + template.templateName;
+					else
+						templates = template.templateName;
+				});
+				this.deleteDialogRef = this.dialog.open(ConfirmDialogComponent, {
+					disableClose: true,
+					data: {
+						title: 'Information',
+						action: 'OK',
+						message: 'Merge field {{' + item.propertyName + '}} is used in email ' + (emailTemplates.length > 1 ? 'templates' : 'template') + ' ' + templates + '. Please remove this Merge field from ' + templates + ' to delete it.'
+					}
+				});
+			} else {
+				super.delete(item);
+			}
+		});
+	}
 
-
-  }
+	/**
+	 * Calls service method to delete item.
+	 * @param item Item to be deleted.
+	 */
+	deleteItem(item: IEmailVariable) {
+		let id = ServiceUtils.encodeIdByObject(item, this.primaryKeys);
+		this.dataService.delete(id).subscribe(result => {
+			console.log("result is", result);
+			let check = true;
+			if (result) {
+				alert("Datasource is already binded, Can Not delete");
+			} else {
+				let r = result;
+				const index: number = this.items.findIndex(x => ServiceUtils.encodeIdByObject(x, this.primaryKeys) == id);
+				if (index !== -1) {
+					this.items.splice(index, 1);
+					this.items = [...this.items];
+					this.changeDetectorRefs.detectChanges();
+				}
+			}
+		}, error => {
+		});
+	}
 
 }

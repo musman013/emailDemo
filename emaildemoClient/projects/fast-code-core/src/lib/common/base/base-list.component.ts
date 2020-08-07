@@ -15,7 +15,6 @@ import { IGlobalPermissionService } from '../core/iglobal-permission.service';
 import { ErrorService } from '../core/error.service';
 import { ServiceUtils } from '../utils/serviceUtils';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
-import { DataSourceMergeMap } from 'projects/ip-email-builder/src/lib/email-editor/data-source/data-source-merge-map/data-source-merge-map';
 
 export enum listProcessingType {
   Replace = "Replace",
@@ -110,7 +109,6 @@ export class BaseListComponent<E> implements OnInit {
   ngOnInit() {
     // this.setPermissions();
     this.manageScreenResizing();
-    console.log("parent ng in it")
     this.checkForAssociations(this.route.snapshot.queryParams);
     this.setSort();
   }
@@ -291,9 +289,7 @@ export class BaseListComponent<E> implements OnInit {
    * @param params Map of query params to check if some association column is there.
    */
   checkForAssociations(params) {
-    console.log("param",params)
     this.selectedAssociation = undefined;
-    console.log("assciation",this.associations)
     this.associations.forEach((association, associationIndex) => {
       let matchedColumns = 0;
       let totalCount = association.column.length;
@@ -321,20 +317,14 @@ export class BaseListComponent<E> implements OnInit {
   deleteItem(item: E) {
     let id = ServiceUtils.encodeIdByObject(item, this.primaryKeys);
     this.dataService.delete(id).subscribe(result => {
-      console.log("result is",result);
-      let check = true;
-      if(result){
-          alert("Datasource is already binded, Can Not delete");
-      } else{
-        let r = result;
-        const index: number = this.items.findIndex(x => ServiceUtils.encodeIdByObject(x, this.primaryKeys) == id);
-        if (index !== -1) {
-          this.items.splice(index, 1);
-          this.items = [...this.items];
-          this.changeDetectorRefs.detectChanges();
-        }
+      let r = result;
+      const index: number = this.items.findIndex(x => ServiceUtils.encodeIdByObject(x, this.primaryKeys) == id);
+      if (index !== -1) {
+        this.items.splice(index, 1);
+        this.items = [...this.items];
+        this.changeDetectorRefs.detectChanges();
       }
-    },error=>{
+    }, error => {
     });
   }
 
@@ -342,14 +332,11 @@ export class BaseListComponent<E> implements OnInit {
    * Prompts user to confirm delete action.
    * @param item Item to be deleted.
    */
-  delete(item: E, tempData?:Object): void {
+  delete(item: E): void {
     let data = {
       confirmationType: "delete"
     }
-    if(tempData) {
-      data = {...data,...tempData};
-    }
-    console.log(data);
+
     this.deleteDialogRef = this.dialog.open(ConfirmDialogComponent, {
       disableClose: true,
       data: data

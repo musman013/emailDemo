@@ -9,28 +9,18 @@ import {
   ErrorService,
 } from "projects/fast-code-core/src/public_api"; // 'fastCodeCore';
 import { EmailVariablTypeService } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.type.service";
-import { PropertyType } from "projects/ip-email-builder/src/lib/email-editor/email-variable/property-type";
-import {
-  NativeDateAdapter,
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MAT_DATE_LOCALE,
-} from "@angular/material";
-import { formatDate, DatePipe } from "@angular/common";
 import { ValidatorsService } from "src/app/validators.service";
-import { EmailVariableService } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.service";
 import { IDataSource } from "projects/ip-email-builder/src/lib/email-editor/data-source/Models/IDataSource";
 import { DataSourceService } from "projects/ip-email-builder/src/lib/email-editor/data-source/Services/data-source.service";
 import { IDataSourceMeta } from "projects/ip-email-builder/src/lib/email-editor/data-source/Models/DataSourceMeta";
-import { take } from "rxjs/operators";
 import { DataSourceTableComponent } from "../data-source-table/data-source-table";
 import { DialogeService } from "../Services/dialoge.service";
+import { EmailTemplateService } from "../../email-template.service";
 
 @Component({
   selector: "lib-data-source-detail",
   templateUrl: "./data-source-detail.component.html",
-  styleUrls: ["./data-source-detail.component.scss"],
-  providers: [DatePipe],
+  styleUrls: ["./data-source-detail.component.scss"]
 })
 export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource> implements OnInit {
   emailTemplateId: any;
@@ -64,8 +54,8 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
     public pickerDialogService: PickerDialogService,
     public dataService: DataSourceService,
     public errorService: ErrorService,
-    public datePipe: DatePipe,
-    public _dialoge: DialogeService
+    public _dialoge: DialogeService,
+    public emailTemplateService: EmailTemplateService,
   ) {
     super(
       formBuilder,
@@ -75,8 +65,7 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
       global,
       pickerDialogService,
       dataService,
-      errorService,
-      datePipe
+      errorService
     );
     var u = this.route.parent.toString();
     this.dataService.tableClose$.subscribe(res=>{
@@ -91,7 +80,7 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
     super.ngOnInit();
     this.setForm();
     this.getItem();
-    this.dataService.getAllTemplates().subscribe((data) => {
+    this.emailTemplateService.getAllTemplates().subscribe((data) => {
       this.emailTemplates = data;
     });
     this.itemForm.get('sqlQuery').valueChanges.subscribe(()=>{
@@ -210,6 +199,26 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
       );
     }
 
+  }
+
+  onCancel(): void {
+    this.dialogRef.close(null);
+  }
+
+  openDialog(component, data) {
+    this.dialogRef = this.dialog.open(component, {
+      disableClose: true,
+      height: this.isMediumDeviceOrLess ? this.mediumDeviceOrLessDialogSize : this.largerDeviceDialogHeightSize,
+      width: this.isMediumDeviceOrLess ? this.mediumDeviceOrLessDialogSize : this.largerDeviceDialogWidthSize,
+      maxWidth: "none",
+      panelClass: 'fc-modal-dialog',
+      data: data
+    });
+    this.dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // this.getItems();
+      }
+    });
   }
 
 }

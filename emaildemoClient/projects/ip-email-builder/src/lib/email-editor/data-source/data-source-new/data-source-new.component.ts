@@ -37,6 +37,7 @@ import { EmailVariablTypeService } from "projects/ip-email-builder/src/lib/email
 import { DataSourceTableComponent } from "../data-source-table/data-source-table";
 import { take } from "rxjs/operators";
 import { DialogeService } from "../Services/dialoge.service";
+import { EmailTemplateService } from "../../email-template.service";
 
 // import * as CodeMirror from 'codemirror';
 // import 'codemirror/mode/sql/sql.js';
@@ -74,7 +75,8 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
     public variableTypedataService: EmailVariablTypeService,
     public errorService: ErrorService,
     public datePipe: DatePipe,
-    public _dialoge: DialogeService
+    public _dialoge: DialogeService,
+    public emailTemplateService: EmailTemplateService,
   ) {
     super(
       formBuilder,
@@ -86,8 +88,7 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
       global,
       pickerDialogService,
       dataService,
-      errorService,
-      datePipe
+      errorService
     );
 
     this.dataService.tableClose$.subscribe(res=>{
@@ -111,7 +112,7 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
     });
     super.ngOnInit();
     this.checkPassedData();
-    this.dataService.getAllTemplates().subscribe((data) => {
+    this.emailTemplateService.getAllTemplates().subscribe((data) => {
       this.emailTemplates = data;
     });
 

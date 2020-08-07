@@ -5,9 +5,10 @@ import { HttpClient } from '@angular/common/http';
 //import { ILibraryRootConfg } from '../../interfaces';
 //import { GenericApiService,ILibraryRootConfg } from 'fastCodeCore'; //from 'projects/fast-code-core/src/lib/common/core/generic-api.service';
 import { GenericApiService, ILibraryRootConfg } from 'projects/fast-code-core/src/public_api';// 'fastCodeCore';
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { IP_CONFIG } from '../../../tokens';
 import { IDataSource } from "projects/ip-email-builder/src/lib/email-editor/data-source/Models/IDataSource";
+import { map, catchError } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
@@ -36,6 +37,13 @@ export class DataSourceService extends GenericApiService<IDataSource>{
   
   public changeData(str:string) {
     this.dataToAppend.next(str);
+  }
+
+  public previewData(query):Observable<any>{ 
+    let url = this.url + '/preview/table?query='+encodeURI(query);
+    return this.httpclient.get<any>(url, {}).pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
   }
   
 }

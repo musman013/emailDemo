@@ -28,6 +28,8 @@ import {
 import { formatDate, DatePipe } from "@angular/common";
 import { ValidatorsService } from "src/app/validators.service";
 import { FastCodeCoreService } from "projects/fast-code-core/src/lib/fast-code-core.service";
+import { first } from "rxjs/operators";
+import { EmailFileService } from "../email-file.service";
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: "short", year: "numeric", day: "numeric" } },
@@ -94,6 +96,15 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable>
   title: string = "Add Merge Field";
   entityName: string = "EmailVariable";
   emailVariableType: IEmailVariableType[];
+
+  selectedVariableType: any;
+  selectedDropDownValue: any;
+  listData:string[]=[];
+  fileIds:number[]=[];
+  attatchment: { 
+    myFile?:File;
+    url?:any;
+  }[] = [];
   constructor(
     public formBuilder: FormBuilder,
     public router: Router,
@@ -106,7 +117,8 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable>
     public dataService: EmailVariableService,
     public variableTypedataService: EmailVariablTypeService,
     public errorService: ErrorService,
-    public datePipe: DatePipe
+    public datePipe: DatePipe,
+		public emailFileService: EmailFileService,
   ) {
     super(
       formBuilder,
@@ -118,8 +130,7 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable>
       global,
       pickerDialogService,
       dataService,
-      errorService,
-      datePipe
+      errorService
     );
   }
 
@@ -541,6 +552,54 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable>
     }
   }
 
+  onSubmit() {
+    // stop here if form is invalid
+    let check=true;
+    //doing so for images
+    if (this.itemForm.invalid) {
+      return;
+    }
+
+    this.submitted = true;
+    this.loading = true;
+    switch(this.selectedVariableType)
+		{
+      case PropertyType.DATE:
+		  this.itemForm.controls.defaultValue.setValue(this.datePipe.transform(this.itemForm.controls.defaultValue.value, this.selectedDropDownValue));
+      break;
+      case PropertyType.LIST:
+      if(this.listData && this.listData.length>0)
+        {
+          this.itemForm.controls.defaultValue.setValue(this.listData.join(','));
+        }
+      break;
+      case PropertyType.IMAGE:
+      case PropertyType.CLICKABLE_IMAGE:
+      case PropertyType.LIST_OF_IMAGES:
+      check=false;
+      this.saveAttachments();
+      //need to check this code
+      break;
+    }
+    if(check)
+      {
+    this.dataService.create(this.itemForm.getRawValue())
+      .pipe(first())
+      .subscribe(
+        data => {
+          // this.alertService.success('Registration successful', true);
+          // this.router.navigate(['/users']);
+          this.dialogRef.close(data);
+        },
+        error => {
+          this.errorService.showError("Error Occured while updating");
+          this.loading = false;
+          this.dialogRef.close(null)
+
+        });
+      }
+  }
+
   addNewItem() {
     this.listData.push(this.itemForm.controls.defaultValue.value);
   }
@@ -551,5 +610,44 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable>
 
   removeImage(index) {
     this.attatchment.splice(index, 1);
+  }
+
+  saveAttachments()
+  {
+    if (this.attatchment && this.attatchment.length > 0) {
+      this.attatchment.forEach(data => {
+
+        if (data.myFile.name ) {
+          const fileMetadata = {
+            name: data.myFile.name, summary: data.myFile.name
+          };
+          this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
+            console.log("response is",res);
+            this.emailFileService.uploadFile(res.id, data.myFile).subscribe(res2=>{
+              this.fileIds.push(res.id);
+            this.itemForm.controls.defaultValue.setValue(this.fileIds.join(','));
+            });
+            
+
+          });
+        }
+      });
+    }
+
+        setTimeout(() =>this.dataService.create(this.itemForm.getRawValue())
+      .pipe(first())
+      .subscribe(
+        data => {
+          // this.alertService.success('Registration successful', true);
+          // this.router.navigate(['/users']);
+          this.dialogRef.close(data);
+        },
+        error => {
+          this.errorService.showError("Error Occured while updating");
+          this.loading = false;
+          this.dialogRef.close(null)
+
+        }), 3000);
+
   }
 }

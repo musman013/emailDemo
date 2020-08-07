@@ -4,7 +4,7 @@ import { IEmailTemplate } from './iemail-template';
 import { EmailTemplateService } from './email-template.service';
 
 import { Router, ActivatedRoute } from '@angular/router';
-import { BaseListComponent, IListColumn, listColumnType, Globals, PickerDialogService, ErrorService } from 'projects/fast-code-core/src/public_api';
+import { BaseListComponent, IListColumn, listColumnType, Globals, PickerDialogService, ErrorService, ConfirmDialogComponent, ServiceUtils } from 'projects/fast-code-core/src/public_api';
 import { TranslateService } from '@ngx-translate/core';
 import { DataSourceService } from './data-source/Services/data-source.service';
 import { DialogeService } from './data-source/Services/dialoge.service';
@@ -99,7 +99,7 @@ export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate
 		public emailService: EmailTemplateService,
 		public errorService: ErrorService,
 		private translate: TranslateService,
-		public _dialoge : DialogeService
+		public _dialoge: DialogeService
 	) {
 		super(router, route, dialog, global, changeDetectorRefs, pickerDialogService, emailService, errorService)
 		//this.globalPermissionService = localGlobalPermissionService;
@@ -131,9 +131,9 @@ export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate
 		let obj = {};
 		obj['emailTemplateId'] = item.id;
 		let url = `/email/mapping/${item.id}`;
-		this.dataService.get(url).subscribe(res=>{
+		this.dataService.get(url).subscribe(res => {
 			obj['data'] = res;
-			this._dialoge.openDialog(DataSourceMergeMap,obj);
+			this._dialoge.openDialog(DataSourceMergeMap, obj);
 		});
 	}
 
@@ -143,21 +143,66 @@ export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate
 
 	deleteData(item) {
 		let url = `/datasource/getAllMappedForEmailTemplate/${item.id}`
-		this.dataService.get(url).subscribe(res=>{
+		this.dataService.get(url).subscribe(res => {
 			console.log(res);
-			if(res.fields == 'NORECORD') {
-				super.delete(item);
+			if (res.fields == 'NORECORD') {
+				this.delete(item);
 			} else {
 				let data = {
-					confirmationType: 'delete_cancel',
-					message: `This emailTemplate is mapped with ${res.fields} merge field(s).`,
-					cancelText: 'Cancel',
-					showCancel : true
+					message: `This emailTemplate is mapped with ${res.fields} merge field(s).`
 				}
-				super.delete(item,data);
+				this.delete(item, data);
 				// this._dialog.confirmDialoge(data);
 			}
 		})
+	}
+
+	/**
+	 * Prompts user to confirm delete action.
+	 * @param item Item to be deleted.
+	 */
+	delete(item: IEmailTemplate, tempData?: Object): void {
+		let data = {
+			confirmationType: "delete"
+		}
+		if (tempData) {
+			data = { ...data, ...tempData };
+		}
+		console.log(data);
+		this.deleteDialogRef = this.dialog.open(ConfirmDialogComponent, {
+			disableClose: true,
+			data: data
+		});
+
+		this.deleteDialogRef.afterClosed().subscribe(action => {
+			if (action) {
+				this.deleteItem(item);
+			}
+		});
+	}
+
+	/**
+	 * Calls service method to delete item.
+	 * @param item Item to be deleted.
+	 */
+	deleteItem(item: IEmailTemplate) {
+		let id = ServiceUtils.encodeIdByObject(item, this.primaryKeys);
+		this.dataService.delete(id).subscribe(result => {
+			console.log("result is", result);
+			let check = true;
+			if (result) {
+				alert("Datasource is already binded, Can Not delete");
+			} else {
+				let r = result;
+				const index: number = this.items.findIndex(x => ServiceUtils.encodeIdByObject(x, this.primaryKeys) == id);
+				if (index !== -1) {
+					this.items.splice(index, 1);
+					this.items = [...this.items];
+					this.changeDetectorRefs.detectChanges();
+				}
+			}
+		}, error => {
+		});
 	}
 
 }

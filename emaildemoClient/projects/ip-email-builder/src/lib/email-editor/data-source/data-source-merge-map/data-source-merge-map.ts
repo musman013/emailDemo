@@ -96,7 +96,7 @@ export class DataSourceMergeMap implements OnInit{
                 alert("No combination exist");
             } else {
                 let deletionurl = '/email/deletemapping/'+this.emailTemplateId;
-                this.dataService.deleteMapping(deletionurl).subscribe(res=>{
+                this.dataService.deleteByUrl(deletionurl).subscribe(res=>{
                     var snackBarRef = this.snackBar.open("Data Source mapped successfully.", null, {
                         duration: 3000,
                         panelClass: ['snackbar-background']

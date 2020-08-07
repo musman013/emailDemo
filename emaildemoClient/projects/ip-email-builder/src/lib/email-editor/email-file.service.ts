@@ -47,5 +47,17 @@ export class EmailFileService extends GenericApiService<IEmailTemplate> {
     }
   }
 
+  uploadFile(id, file: File) {
+    if (file && file.name) {
+      const fileData = new FormData();
+      fileData.append('file', file);
+      return this.httpclient.put<any>(this.apiUrl + '/files/' + id, fileData);
+    }
+  }
+
+  createFileMetadata(fileMetadata) {
+    return this.httpclient.post<any>(this.apiUrl + '/files', fileMetadata);
+  }
+
 
 }

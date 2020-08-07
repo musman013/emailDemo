@@ -8,7 +8,8 @@ import { IP_CONFIG } from '../../tokens';
 //import { ILibraryRootConfg } from '../../interfaces';
 //import { GenericApiService,ILibraryRootConfg } from 'fastCodeCore'; //from 'projects/fast-code-core/src/lib/common/core/generic-api.service';
 import { GenericApiService ,ILibraryRootConfg} from 'projects/fast-code-core/src/public_api';// 'fastCodeCore';
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
+import { map, catchError } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
@@ -24,7 +25,20 @@ export class EmailVariableService extends GenericApiService<IEmailVariable> {
     this.dataToAppend.next(str);
   }
 
+  public getEmailVeriableByType(value : string): Observable<IEmailVariable[]> {
+    return this.httpclient.get<IEmailVariable[]>(this.url+'/getEmailVariableByTypeOrSubject',{
+      params: {
+        type : value
+      }
+    }).pipe(map((response:any)=> {
+      return response;
+    }), catchError(this.handleError));
+  }
 
-  
+  public getAllWithoutPagination(): Observable<IEmailVariable[]> {
+    return this.httpclient.get<IEmailVariable[]>(this.url+'/list').pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
+  }
   
 }

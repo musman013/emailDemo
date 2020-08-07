@@ -6,14 +6,13 @@ import { ISearchField } from '../../common/components/list-filters/ISearchCriter
 import { ServiceUtils } from '../utils/serviceUtils';
 
 import { IForRootConf } from '../../IForRootConf';
-import { IEmailTemplate } from "projects/ip-email-builder/src/lib/email-editor/iemail-template";
 
 @Injectable()
 export class GenericApiService<T> {
-  private url = "";
-  private apiUrl = "";
+  protected url = "";
+  protected apiUrl = "";
   public suffix = '';
-  constructor(private http: HttpClient,  private config: IForRootConf, suffix: string) {
+  constructor(private http: HttpClient, private config: IForRootConf, suffix: string) {
     this.apiUrl = this.config.apiUrl;
     this.url = this.config.apiUrl + '/' + suffix;
     this.suffix = suffix;
@@ -36,23 +35,6 @@ export class GenericApiService<T> {
       return response;
     }), catchError(this.handleError));
 
-  }
-
-   public getAllWithoutPagination(): Observable<T[]> {
-    return this.http.get<T[]>(this.url+'/list').pipe(map((response: any) => {
-      return response;
-    }), catchError(this.handleError));
-
-  }
-
-  public getEmailVeriableByType(value : string): Observable<T[]> {
-    return this.http.get<T[]>(this.url+'/getEmailVariableByTypeOrSubject',{
-      params: {
-        type : value
-      }
-    }).pipe(map((response:any)=> {
-      return response;
-    }), catchError(this.handleError));
   }
 
   /**
@@ -78,7 +60,7 @@ export class GenericApiService<T> {
    */
   getAssociations(parentSuffix: string, parentId: any, searchFields?: ISearchField[], offset?: number, limit?: number, sort?: string): Observable<T[]> {
 
-    let url = this.apiUrl + '/' + parentSuffix + '/' +  + '/' + this.suffix;
+    let url = this.apiUrl + '/' + parentSuffix + '/' + parentId + '/' + this.suffix;
     let params = ServiceUtils.buildQueryData(searchFields, offset, limit, sort);
     return this.http.get<T[]>(url, { params }).pipe(map((response: any) => {
       return response;
@@ -95,10 +77,6 @@ export class GenericApiService<T> {
       .get<T>(this.url + '/' + id).pipe(catchError(this.handleError));
   }
 
-  public resetTemplateById(id:any): Observable<T> {
-    return this.http
-      .get<T>(this.url + '/reset/' + id).pipe(catchError(this.handleError));
-  }
   /**
    * Calls api to create given item.
    * @param item
@@ -128,6 +106,26 @@ export class GenericApiService<T> {
     return this.http
       .delete(this.url + '/' + id).pipe(map(res => res), catchError(this.handleError));
   }
+  
+
+  public get(url:string) : Observable<any>{ 
+    return this.http.get<any>(`${this.apiUrl}${url}`, {}).pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
+  }
+
+  public post(url:string,data:any) : Observable<any>{ 
+    return this.http.post<any>(`${this.config.apiUrl}${url}`, data).pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
+  }
+
+
+  public deleteByUrl(url:string) : Observable<any>{ 
+    return this.http.delete<any>(`${this.config.apiUrl}${url}`).pipe(map((response: any) => {
+      return response;
+    }), catchError(this.handleError));
+  }
 
   /**
    * Handles Api error events.
@@ -146,61 +144,5 @@ export class GenericApiService<T> {
     console.error(errorMessage);
     return throwError(errorMessage);
   }
-
-   getAllMasterValue(masterName): Observable<string[]> {
-    let url = this.config.apiUrl+'/master/getMastersByMasterName?name='+masterName ;
-    return this.http.get<string[]>(url).pipe(map((response: any) => {
-      return response;
-    }), catchError(this.handleError));
-  }
-
-
-   createFileMetadata(fileMetadata) {
-     return this.http.post<any>(this.config.apiUrl + '/files', fileMetadata);
-
-  }
-
-  uploadFile(id, file: File) {
-    if (file && file.name) {
-      const fileData = new FormData();
-      fileData.append('file', file);
-
-      return this.http.put<any>(this.config.apiUrl + '/files/' + id, fileData);
-    }
-  }
-
-  public getAllTemplates():Observable<IEmailTemplate[]>{
-  return this.http.get<IEmailTemplate[]>(this.config.apiUrl+'/email/list', {}).pipe(map((response: any) => {
-      return response;
-    }), catchError(this.handleError));
-  }
-
-  public previewData(query):Observable<any>{ 
-    let url = this.config.apiUrl+'/datasource/preview/table?query='+encodeURI(query);
-    return this.http.get<any>(url, {}).pipe(map((response: any) => {
-      return response;
-    }), catchError(this.handleError));
-  }
-
-  public get(url:string) : Observable<any>{ 
-    return this.http.get<any>(`${this.config.apiUrl}${url}`, {}).pipe(map((response: any) => {
-      return response;
-    }), catchError(this.handleError));
-  }
-
-  public post(url:string,data:any) : Observable<any>{ 
-    return this.http.post<any>(`${this.config.apiUrl}${url}`, data).pipe(map((response: any) => {
-      return response;
-    }), catchError(this.handleError));
-  }
-
-
-  public deleteMapping(url:string) : Observable<any>{ 
-    return this.http.delete<any>(`${this.config.apiUrl}${url}`).pipe(map((response: any) => {
-      return response;
-    }), catchError(this.handleError));
-  }
-
-
 
 }
