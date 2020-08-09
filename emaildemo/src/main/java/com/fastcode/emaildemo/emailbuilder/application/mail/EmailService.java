@@ -22,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fastcode.emaildemo.domain.irepository.FileContentStore;
 import com.fastcode.emaildemo.domain.irepository.FileRepository;
+import com.fastcode.emaildemo.domain.model.EmailHistory;
 import com.fastcode.emaildemo.domain.model.File;
+import com.fastcode.emaildemo.emailbuilder.domain.irepository.EmailHistoryRepository;
 
 @Service
 public class EmailService implements IEmailService {
@@ -41,6 +43,9 @@ public class EmailService implements IEmailService {
 
 	@Autowired
 	private FileRepository filesRepo;
+	
+	@Autowired
+	EmailHistoryRepository emailHistoryRepository;
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void sendMessage(String to, String cc, String bcc, String subject, String htmlContent,
@@ -89,6 +94,19 @@ public class EmailService implements IEmailService {
 		}
 
 		emailSender.send(message);
+		saveHistory(to, cc, bcc, subject, htmlContent);
+		
+
+	}
+
+	private void saveHistory(String to, String cc, String bcc, String subject, String htmlContent) {
+		EmailHistory emailHistory = new EmailHistory();
+		emailHistory.setTo(to);
+		emailHistory.setCc(cc);
+		emailHistory.setBcc(bcc);
+		emailHistory.setSubject(subject);
+		emailHistory.setBody(htmlContent);
+		emailHistoryRepository.save(emailHistory);
 	}
 
 	public ByteArrayResource getFileStreamResource(Long fileId, Map<Long, byte[]> imageDataSourceMap) { // This method will download file using RestTemplate
