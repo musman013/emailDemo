@@ -1,14 +1,9 @@
 import {
   Component,
   Input,
-  ViewEncapsulation,
   OnInit,
   Output,
-  EventEmitter,
-  ViewChild,
-  ElementRef,
-  ViewChildren,
-  QueryList
+  EventEmitter
 } from '@angular/core';
 import { IStructure } from '../../interfaces';
 import { DropResult } from 'ngx-smooth-dnd';
@@ -20,7 +15,6 @@ import { ConfirmDialogComponent } from '../dialog.component';
 import { TranslateService } from '@ngx-translate/core';
 import { IpEmailBuilderService } from "projects/ip-email-builder/src/lib/ip-email-builder.service";
 import { EmailVariableService } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.service";
-import { TextElementComponent } from "projects/ip-email-builder/src/lib/elements/text-element/text-element.component";
 
 @Component({
   selector: 'ip-structure',
@@ -42,7 +36,7 @@ export class StructureComponent implements OnInit {
     private translate: TranslateService,
     private _ngb: IpEmailBuilderService,
     private emailVariableService: EmailVariableService, ) {
-    _ngb.MergeTags = new Set(['tag22']);
+    _ngb.MergeTags = new Set([]);
   }
 
 
@@ -101,13 +95,6 @@ export class StructureComponent implements OnInit {
       this.structure.elements = Array.from({ length: columns }, () => []);
     }
 
-    // this.emailVariableService.getAll(null, 0, 20).subscribe(
-    //   items => {
-    //     let tags = items.map(item => item.propertyName);
-    //     this._ngb.MergeTags = new Set(tags);
-    //   },
-    //   error => this.errorMessage = <any>error
-    // );
     this.emailVariableService.getAllWithoutPagination().subscribe(
       items => {
         let tags = items.map(item => item.propertyName);

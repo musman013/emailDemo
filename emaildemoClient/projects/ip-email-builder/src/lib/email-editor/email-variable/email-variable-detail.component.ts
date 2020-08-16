@@ -13,6 +13,7 @@ import { formatDate, DatePipe } from '@angular/common';
 import { ValidatorsService } from "src/app/validators.service";
 import { first } from 'rxjs/operators';
 import { EmailFileService } from '../email-file.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export const PICK_FORMATS = {
 	parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -65,24 +66,53 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 	dropDownLabel: string = '';
 
 	imageSrc: string;
-	placeHolderValue = 'Default Value'
+	placeHolderValue = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.DEFAULT-VALUE-PLACEHOLDER');
 
-
-
-	dropdownValues: string[] = [];
-	numberTypes: string[] = ['Integer', 'Decimal'];
-	listType: string[] = ['Comma Seperated', 'Bullet Verticle List', 'Numbered Vertical List'];
+	dropdownValues: any[] = [];
+	imageDropDown: any[] = [
+		{
+			"label": this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.TYPES.IMAGE-DROPDOWN.HORIZONTAL'),
+			"value": "Horizontal"
+		},
+		{
+			"label": this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.TYPES.IMAGE-DROPDOWN.VERTICAL'),
+			"value": "Verticle"
+		}
+	];
+	numberTypes: any[] = [
+		{
+			"label": this.translate.instant("EMAIL-EDITOR.EMAIL-VARIABLE.TYPES.NUMBER.INTEGER"),
+			"value": "Integer",
+		},
+		{
+			"label": this.translate.instant("EMAIL-EDITOR.EMAIL-VARIABLE.TYPES.NUMBER.DECIMAL"),
+			"value": "Decimal"
+		}
+	];
+	listType: any[] = [
+		{
+			"label": this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.TYPES.LIST.COMMA-SEPARATED'),
+			"value": "Comma Seperated"
+		},
+		{
+			"label": this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.TYPES.LIST.BULLET-VERTICAL'),
+			"value": "Bullet Verticle List",
+		},
+		{
+			"label": this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.TYPES.LIST.NUMBERED-VERTICAL'),
+			"value": "Numbered Vertical List"
+		}
+	];
 	decimalDropDown: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-	imageDropDown: string[] = ['Horizontal', 'Verticle'];
 
 	selectedVariableType: any;
-  selectedDropDownValue: any;
-  listData: string[] = [];
-  fileIds: number[] = [];
-  attatchment: {
-    myFile?: File;
-    url?: any;
-  }[] = [];
+	selectedDropDownValue: any;
+	listData: string[] = [];
+	fileIds: number[] = [];
+	attatchment: {
+		myFile?: File;
+		url?: any;
+	}[] = [];
 
 	constructor(
 		public formBuilder: FormBuilder,
@@ -96,6 +126,7 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 		public errorService: ErrorService,
 		public datePipe: DatePipe,
 		public emailFileService: EmailFileService,
+		public translate: TranslateService,
 
 	) {
 		super(formBuilder, router, route, dialog, global, pickerDialogService, dataService, errorService);
@@ -137,7 +168,6 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 		})
 	}
 
-
 	addOrRemoveValidation(fieldName, validations, addOrRemove) {
 		if (addOrRemove) {
 			this.itemForm.controls[fieldName].setValidators(validations);
@@ -160,22 +190,22 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 
 		switch (this.selectedVariableType) {
 			case PropertyType.TEXT:
-				this.placeHolderValue = 'Default value';
+				this.placeHolderValue = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.DEFAULT-VALUE-PLACEHOLDER');
 				this.addOrRemoveValidation('defaultValue', [Validators.required, Validators.maxLength(256)], true);
 				this.showHideSeperateFields(true, false, false, false, false, false, false, false, false);
 				break;
 			case PropertyType.PERCENTAGE:
-				this.placeHolderValue = 'Default value';
+				this.placeHolderValue = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.DEFAULT-VALUE-PLACEHOLDER');
 				this.addOrRemoveValidation('defaultValue', [Validators.required, ValidatorsService.percentageValidation], true);
 				this.showHideSeperateFields(true, false, false, false, false, false, false, false, false);
 				break;
 			case PropertyType.EMAIL:
-				this.placeHolderValue = 'Default value';
+				this.placeHolderValue = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.DEFAULT-VALUE-PLACEHOLDER');
 				this.addOrRemoveValidation('defaultValue', [Validators.required, ValidatorsService.emailValidation], true);
 				this.showHideSeperateFields(true, false, false, false, false, false, false, false, false);
 				break;
 			case PropertyType.HYPERLINK:
-				this.placeHolderValue = 'Enter Link';
+				this.placeHolderValue = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.MERGE-VALUE.LINK.PLACEHOLDER');
 				this.addOrRemoveValidation('defaultValue', [Validators.required, ValidatorsService.websiteValidate], true);
 				this.showHideSeperateFields(true, false, false, false, false, false, false, false, false);
 				break;
@@ -186,7 +216,7 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 			case PropertyType.DATE:
 				this.addOrRemoveValidation('defaultValue', [Validators.required], true);
 				this.showHideSeperateFields(false, false, true, false, false, false, false, false, false);
-				this.dropDownLabel = 'Select Date Format';
+				this.dropDownLabel = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.MERGE-VALUE.DATE.LABEL');
 				this.getDropDownValue();
 				let obj = {};
 				obj['value'] = this.itemForm.controls.mergeType.value;
@@ -194,16 +224,16 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 				break;
 			case PropertyType.CURRENCY:
 				this.showHideSeperateFields(true, false, true, false, false, false, false, false, false);
-				this.dropDownLabel = 'Select Currency Type';
+				this.dropDownLabel = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.MERGE-VALUE.CURRENCY.LABEL');
 				this.addOrRemoveValidation('defaultValue', [ValidatorsService.decimalPrecisionTwo], true);
 				this.getDropDownValue();
-				this.placeHolderValue = 'Enter Currency';
+				this.placeHolderValue = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.MERGE-VALUE.CURRENCY.PLACEHOLDER');
 				break;
 			case PropertyType.NUMBER:
 				this.showHideSeperateFields(true, false, true, false, false, false, false, false, false);
-				this.dropDownLabel = 'Select Number Type';
+				this.dropDownLabel = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.MERGE-VALUE.NUMBER.LABEL');
 				this.getDropDownValue();
-				this.placeHolderValue = 'Default value';
+				this.placeHolderValue = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.DEFAULT-VALUE-PLACEHOLDER');
 				this.addOrRemoveValidation('defaultValue', [ValidatorsService.integer], true);
 				let obj2 = {};
 				obj2['value'] = this.itemForm.controls.mergeType.value;
@@ -217,23 +247,23 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 				break;
 			case PropertyType.LIST:
 				this.showHideSeperateFields(true, false, true, false, false, false, false, true, false);
-				this.dropDownLabel = 'Select Storage Type';
+				this.dropDownLabel = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.MERGE-VALUE.LIST.LABEL');
 				this.getDropDownValue();
 				this.addOrRemoveValidation('defaultValue', [Validators.required], true);
-				this.placeHolderValue = 'Default value';
+				this.placeHolderValue = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.DEFAULT-VALUE-PLACEHOLDER');
 				break;
 			case PropertyType.CLICKABLE_IMAGE:
-				this.placeHolderValue = 'Enter Link';
+				this.placeHolderValue = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.MERGE-VALUE.LINK.PLACEHOLDER');
 				this.addOrRemoveValidation('mergeType', [ValidatorsService.websiteValidate], true);
 				this.showHideSeperateFields(false, false, false, false, false, false, true, false, true);
 				break;
 			case PropertyType.LIST_OF_IMAGES:
 				this.showHideSeperateFields(false, false, true, false, false, false, true, false, false);
 				this.getDropDownValue();
-				this.dropDownLabel = "Enter Position";
+				this.dropDownLabel = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.MERGE-VALUE.POSITION.LABEL');
 				break;
 			default:
-				console.log("something else sele");
+			//something else sele
 
 		}
 	}
@@ -245,7 +275,7 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 			case PropertyType.CURRENCY:
 
 				this.variableTypedataService.getAllMasterValue(this.selectedVariableType).subscribe(data => {
-					this.dropdownValues = data;
+					this.dropdownValues = data.map((str) => ({ value: str, label: str }));
 				});
 				break;
 			case PropertyType.NUMBER:
@@ -335,7 +365,7 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 				}
 				else {
 					this.itemForm.controls.defaultValue.setValue('');
-					alert("File size should be less than 2 MB")
+					alert(this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.ERRORS.FILE-SIZE-EXCEEDING'));
 					if (this.selectedVariableType == PropertyType.IMAGE) {
 						this.attatchment = [];
 					}
@@ -343,12 +373,11 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 			}
 			else {
 				this.itemForm.controls.defaultValue.setValue('');
-				alert("Please enter image");
+				alert(this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.ERRORS.NO-IMAGE'));
 				if (this.selectedVariableType == PropertyType.IMAGE) {
 					this.attatchment = [];
 				}
 			}
-
 		}
 	}
 
@@ -358,12 +387,10 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 
 	removeListItem(index) {
 		this.listData.splice(index, 1);
-
 	}
 
 	removeImage(index) {
 		this.attatchment.splice(index, 1)
-
 	}
 
 	onSubmit() {
@@ -401,7 +428,7 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 						this.router.navigate([this.parentUrl], { relativeTo: this.route.parent });
 					},
 					error => {
-						this.errorService.showError("Error Occured while updating");
+						this.errorService.showError(this.translate.instant('EMAIL-GENERAL.ERRORS.UPDATE-FAILED'));
 						this.loading = false;
 					});
 		}
@@ -416,7 +443,6 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 						name: file.myFile.name, summary: file.myFile.name
 					};
 					this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
-						console.log("response is", res);
 						this.emailFileService.uploadFile(res.id, file.myFile).subscribe(res2 => {
 							this.fileIds.push(res.id);
 							this.itemForm.controls.defaultValue.setValue(this.fileIds.join(','));
@@ -434,7 +460,7 @@ export class EmailVariableDetailComponent extends BaseDetailsComponent<IEmailVar
 					this.router.navigate([this.parentUrl], { relativeTo: this.route.parent });
 				},
 				error => {
-					this.errorService.showError("Error Occured while updating");
+					this.errorService.showError(this.translate.instant('EMAIL-GENERAL.ERRORS.UPDATE-FAILED'));
 					this.loading = false;
 				}), 3000);
 

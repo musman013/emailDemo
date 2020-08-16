@@ -7,17 +7,17 @@ import {
   EventEmitter,
   Output
 } from '@angular/core';
-import {cloneDeep, isEqual} from 'lodash';
-import {DropResult} from 'ngx-smooth-dnd';
-import {IpEmailBuilderService} from './ip-email-builder.service';
-import {IStructure, IMjmlServerResponse} from './interfaces';
-import {IPDefaultEmail} from './classes/DefaultEmail';
-import {Subject, Subscription, BehaviorSubject} from 'rxjs';
-import {createWidthHeight, createPadding} from './utils';
-import {MatDialog} from '@angular/material';
-import {ConfirmDialogComponent} from './components/dialog.component';
-import {IBlocks} from './classes/Elements';
-import {TranslateService} from '@ngx-translate/core';
+import { cloneDeep, isEqual } from 'lodash';
+import { DropResult } from 'ngx-smooth-dnd';
+import { IpEmailBuilderService } from './ip-email-builder.service';
+import { IStructure } from './interfaces';
+import { IPDefaultEmail } from './classes/DefaultEmail';
+import { Subject, Subscription, BehaviorSubject } from 'rxjs';
+import { createWidthHeight, createPadding } from './utils';
+import { MatDialog } from '@angular/material';
+import { ConfirmDialogComponent } from './components/dialog.component';
+import { IBlocks } from './classes/Elements';
+import { TranslateService } from '@ngx-translate/core';
 
 // https://github.com/kutlugsahin/ngx-smooth-dnd/blob/master/apps/demo/src/pages/cards.ts
 @Component({
@@ -71,7 +71,7 @@ export class IpEmailBuilderComponent implements OnInit, OnDestroy {
     return !isEqual(this.email, this.cloneEmail);
   }
 
-  onSegmentDrop({addedIndex, removedIndex, payload}: DropResult) {
+  onSegmentDrop({ addedIndex, removedIndex, payload }: DropResult) {
     let addItem = payload;
     if (removedIndex !== null) {
       addItem = this.email.structures.splice(removedIndex, 1)[0];
@@ -81,7 +81,7 @@ export class IpEmailBuilderComponent implements OnInit, OnDestroy {
     }
   }
 
-  createArrayFromStructureColumns({columns}): string[] {
+  createArrayFromStructureColumns({ columns }): string[] {
     return new Array(columns).fill('');
   }
 
@@ -98,32 +98,16 @@ export class IpEmailBuilderComponent implements OnInit, OnDestroy {
   }
 
   getEmailWidth(): string {
-    const {width} = this.email.general;
+    const { width } = this.email.general;
     return `1 1 ${createWidthHeight(width)}`;
   }
 
-  /*
-    async saveEmail(): Promise<object> {
-      if (!this._hasChanges()) {
-        this._ngb.notify(`There's no changes to be saved.`);
-        return Promise.reject(`There's no changes to be saved`);
-      } else {
-        // this.generatingTemplate = true;
-        //await this._ngb.sendRequest();
-         this.onEmailTemplateSave.emit(JSON.stringify(this._ngb.Email));
-        // this.generatingTemplate = false;
-      }
-    }
-  */
   saveEmail = () => {
     if (!this._hasChanges()) {
       this._ngb.notify(this.translate.instant('EMAIL-BUILDER.MESSAGES.NO-CHANGES'));
       return Promise.reject(this.translate.instant('EMAIL-BUILDER.MESSAGES.NO-CHANGES'));
     } else {
-      // this.generatingTemplate = true;
-      //await this._ngb.sendRequest();
       this.onEmailTemplateSave.emit(JSON.stringify(this._ngb.Email));
-      // this.generatingTemplate = false;
     }
   };
 
@@ -153,7 +137,7 @@ export class IpEmailBuilderComponent implements OnInit, OnDestroy {
   }
 
   getBuilderContainerStyles() {
-    const {background, padding, direction} = this.email.general;
+    const { background, padding, direction } = this.email.general;
     return {
       direction,
       backgroundImage: `url(${background.url})`,
@@ -167,13 +151,11 @@ export class IpEmailBuilderComponent implements OnInit, OnDestroy {
 
   editStructure(structure) {
     this.selectedTabIndex = 1;
-    // this.currentEditingBlock$.next(null);
     this.currentEditingStructure$.next(structure);
   }
 
   editBlock(block) {
     this.selectedTabIndex = 0;
-    // this.currentEditingStructure$.next(null);
     this.currentEditingBlock$.next(block);
   }
 

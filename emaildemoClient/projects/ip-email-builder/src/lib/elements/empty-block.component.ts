@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'ip-empty-block',
   template: `
-    <p>Drag some blocks here.</p>
+    <p>{{'ELEMENTS.EMPTY-BLOCK.TITLE'}}</p>
   `,
   styles: [
     `

@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import {
 	BaseListComponent,
@@ -8,19 +8,15 @@ import {
 	listColumnType,
 	PickerDialogService,
 	ErrorService,
-	operatorType, ISearchField, ConfirmDialogComponent, ServiceUtils
+	ServiceUtils
 } from "projects/fast-code-core/src/public_api";
 import { Router, ActivatedRoute } from "@angular/router";
 import { EmailTemplateService } from "projects/ip-email-builder/src/lib/email-editor/email-template.service";
 import { EmailVariablTypeService } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.type.service";
-import { EmailVariableService } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.service";
-import { EmailVariableNewComponent } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable-new.component";
-import { IEmailVariable } from "projects/ip-email-builder/src/lib/email-editor/email-variable/iemail-variable";
 import { IDataSource } from "projects/ip-email-builder/src/lib/email-editor/data-source/Models/IDataSource";
 import { DataSourceService } from "projects/ip-email-builder/src/lib/email-editor/data-source/Services/data-source.service";
 import { DataSourceNewComponent } from "projects/ip-email-builder/src/lib/email-editor/data-source/data-source-new/data-source-new.component";
-import { DataSourceTableComponent } from '../data-source-table/data-source-table';
-import { DialogeService } from '../Services/dialoge.service';
+import { DialogService } from '../Services/dialog.service';
 
 @Component({
 	selector: 'lib-data-source-list',
@@ -30,7 +26,7 @@ import { DialogeService } from '../Services/dialoge.service';
 export class DataSourceListComponent extends BaseListComponent<IDataSource> implements OnInit {
 
 
-	title: string = "Data source";
+	title: string = this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.TITLE');
 
 	columns: IListColumn[] = [
 		{
@@ -81,7 +77,7 @@ export class DataSourceListComponent extends BaseListComponent<IDataSource> impl
 		public errorService: ErrorService,
 		private translate: TranslateService,
 		public emailService: EmailTemplateService,
-		public _dialog: DialogeService
+		public _dialog: DialogService
 	) {
 		super(router, route, dialog, global, changeDetectorRefs, pickerDialogService, dataSourceService, errorService);
 
@@ -110,11 +106,11 @@ export class DataSourceListComponent extends BaseListComponent<IDataSource> impl
 				super.delete(item);
 			} else {
 				let data = {
-					message: `This datasource is mapped with ${res.fields} columns.Please remove mappings to delete this datasource.`,
-					title: "Information",
-					action: "OK"
+					message: this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.ERRORS.DELETE-WITH-FIELDS', {fields: res.fields}),
+					title: this.translate.instant('EMAIL-EDITOR.INFORMATION'),
+					action: this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'),
 				}
-				this._dialog.confirmDialoge(data);
+				this._dialog.confirmDialog(data);
 			}
 		})
 
@@ -127,10 +123,8 @@ export class DataSourceListComponent extends BaseListComponent<IDataSource> impl
 	deleteItem(item: IDataSource) {
 		let id = ServiceUtils.encodeIdByObject(item, this.primaryKeys);
 		this.dataService.delete(id).subscribe(result => {
-			console.log("result is", result);
-			let check = true;
 			if (result) {
-				alert("Datasource is already binded, Can Not delete");
+				alert(this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.ERRORS.DELETE'),);
 			} else {
 				let r = result;
 				const index: number = this.items.findIndex(x => ServiceUtils.encodeIdByObject(x, this.primaryKeys) == id);

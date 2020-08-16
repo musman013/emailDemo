@@ -25,8 +25,8 @@
 				<mat-form-field *ngIf="showDropDown">
 					<mat-label>{{dropDownLabel}}</mat-label>
 					<mat-select (selectionChange)="dropDownValueChanged($event)" formControlName="mergeType" required>
-						<mat-option *ngFor="let dropdown of dropdownValues" [value]="dropdown">
-							{{dropdown}}
+						<mat-option *ngFor="let dropdown of dropdownValues" [value]="dropdown.value">
+							{{dropdown.label}}
 						</mat-option>
 					</mat-select>
 					<mat-error *ngIf="!itemForm.get('mergeType').valid && itemForm.get('mergeType').touched">{{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>

@@ -28,7 +28,7 @@
 				</mat-form-field>
 				<mat-form-field formGroupName="emailTemplate">
 					<mat-label>{{'EMAIL-EDITOR.DATA-SOURCE.FIELDS.EMAIL-TEMPLATE' | translate}}</mat-label>
-					<mat-select formControlName="id" required [disabled]="readOnlyQuery" [matTooltip]="readOnlyQuery?'This datasource is binded':''">
+					<mat-select formControlName="id" required [disabled]="readOnlyQuery" [matTooltip]="readOnlyQuery? translate.instant('EMAIL-EDITOR.DATA-SOURCE.LABELS.DATASOURCE-BINDED'):''">
 						<mat-option *ngFor="let type of emailTemplates" [value]="type.id">
 							{{type.templateName}}
 						</mat-option>
@@ -49,7 +49,7 @@
 					  theme: 'eclipse',
 					  mode: 'markdown',
 					  mime: 'text/x-pgsql',
-					  placeholder:'Enter a valid Select SQL Query',
+					  placeholder: translate.instant('EMAIL-EDITOR.DATA-SOURCE.LABELS.SQL-PLACEHOLDER'),
 					readOnly:readOnlyQuery
 					
 					}"></ngx-codemirror>

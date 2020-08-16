@@ -1,9 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-//import {GenericApiService} from '../core/generic-api.service';
-
-//import { ILibraryRootConfg } from '../../interfaces';
-//import { GenericApiService,ILibraryRootConfg } from 'fastCodeCore'; //from 'projects/fast-code-core/src/lib/common/core/generic-api.service';
 import { GenericApiService, ILibraryRootConfg } from 'projects/fast-code-core/src/public_api';// 'fastCodeCore';
 import { BehaviorSubject, Observable } from "rxjs";
 import { IP_CONFIG } from '../../../tokens';

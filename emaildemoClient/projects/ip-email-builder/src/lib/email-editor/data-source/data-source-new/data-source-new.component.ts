@@ -18,30 +18,16 @@ import {
   Globals,
   PickerDialogService,
   ErrorService,
-} from "projects/fast-code-core/src/public_api"; // 'fastCodeCore';
-
-import { PropertyType } from "projects/ip-email-builder/src/lib/email-editor/email-variable/property-type";
-
-import {
-  NativeDateAdapter,
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MAT_DATE_LOCALE,
-} from "@angular/material";
-import { formatDate, DatePipe } from "@angular/common";
+} from "projects/fast-code-core/src/public_api";
+import { DatePipe } from "@angular/common";
 import { ValidatorsService } from "src/app/validators.service";
-import { FastCodeCoreService } from "projects/fast-code-core/src/lib/fast-code-core.service";
 import { DataSourceService } from "projects/ip-email-builder/src/lib/email-editor/data-source/Services/data-source.service";
 import { IDataSource } from "projects/ip-email-builder/src/lib/email-editor/data-source/Models/IDataSource";
 import { EmailVariablTypeService } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.type.service";
 import { DataSourceTableComponent } from "../data-source-table/data-source-table";
-import { take } from "rxjs/operators";
-import { DialogeService } from "../Services/dialoge.service";
+import { DialogService } from "../Services/dialog.service";
 import { EmailTemplateService } from "../../email-template.service";
-
-// import * as CodeMirror from 'codemirror';
-// import 'codemirror/mode/sql/sql.js';
-// import { WindowRef } from './WindowRef';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "lib-data-source-new",
@@ -54,7 +40,7 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
   metaData: any;
   dataToPreview: any;
   emailTemplates: any[] = [];
-  title: string = "Add Data Source";
+  title: string = this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.ADD-TITLE');
   entityName: string = "DataSource";
   public previewAvailable: boolean = false;
   showMessage: boolean;
@@ -75,8 +61,9 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
     public variableTypedataService: EmailVariablTypeService,
     public errorService: ErrorService,
     public datePipe: DatePipe,
-    public _dialoge: DialogeService,
+    public _dialog: DialogService,
     public emailTemplateService: EmailTemplateService,
+    public translate: TranslateService,
   ) {
     super(
       formBuilder,
@@ -136,7 +123,7 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
           } else {
             let id:FormControl = emailTemplate.get('id') as FormControl;
             id.reset();
-            this.errorService.showError(`This email template has already mapped with ${res.fields}`);
+            this.errorService.showError(this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.ERROS.ALREADY-MAPPED', {fields: res.fields}));
           }
         })
       }
@@ -146,7 +133,7 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
   previewData() {
     let sqlQuery = this.itemForm.controls.sqlQuery.value;
     if (sqlQuery == "") {
-      alert("Please enter any query");
+      alert(this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.ERRORS.NO-QUERY'));
       return;
     }
     this.dataService.previewData(sqlQuery).subscribe((data) => {
@@ -154,7 +141,7 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
         this.showMessage = false;
         this.errorMessage = "";
         this.previewAvailable = true;
-        this._dialoge.openDialog(DataSourceTableComponent,data);                                                                                                                                                                                                 
+        this._dialog.openDialog(DataSourceTableComponent,data);                                                                                                                                                                                                 
         this.dataToPreview = data.dataToPreview;
         this.metaData = data.metaData;
         this.addControls();

@@ -7,8 +7,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
   template: `
     <h2 mat-dialog-title>{{data.message}}</h2>
     <mat-dialog-actions fxLayout fxLayoutAlign="space-between center" fxLayoutGap="1rem">
-      <button mat-stroked-button mat-dialog-close="0">No</button>
-      <button mat-stroked-button color="warn" mat-dialog-close="1">Yes</button>
+      <button mat-stroked-button mat-dialog-close="0">{{'COMPONENTS.DIALOG.NO' | translate}}</button>
+      <button mat-stroked-button color="warn" mat-dialog-close="1">{{'COMPONENTS.DIALOG.YES' | translate}}</button>
     </mat-dialog-actions>
   `
 })

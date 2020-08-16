@@ -6,6 +6,7 @@ import {
   createBorder,
   createLineHeight
 } from '../../utils';
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'ip-button',
@@ -14,8 +15,8 @@ import {
 })
 export class ButtonComponent implements OnInit {
   @Input()
-  block: ButtonBlock = new ButtonBlock('Click on me');
-  constructor() {}
+  block: ButtonBlock = new ButtonBlock(this.translate.instant('ELEMENTS.BUTTONS.DEFAULT-TEXT'));
+  constructor(private translate: TranslateService) {}
 
   getButtonStyles() {
     const {

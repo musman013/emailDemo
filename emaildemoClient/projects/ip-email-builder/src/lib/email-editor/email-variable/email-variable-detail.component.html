@@ -7,9 +7,10 @@
 		<div class="fc-row">
 			<div class="fc-col-sm-12">
 				<ul class="breadcrumb">
-					<li><a [routerLink]="['/dashboard']"><i class="material-icons">
-								home
-							</i> &nbsp;Dashboard</a></li>
+					<li><a [routerLink]="['/']">
+						<i class="material-icons">home</i>
+						&nbsp;{{'HOME' | translate}}</a>
+					</li>
 					<li><a routerLink="/email/emailvariables">{{title}}</a></li>
 					<li><a>{{idParam}}</a></li>
 				</ul>
@@ -39,8 +40,8 @@
 				<mat-form-field *ngIf="showDropDown">
 					<mat-label>{{dropDownLabel}}</mat-label>
 					<mat-select (selectionChange)="dropDownValueChanged($event,true)" formControlName="mergeType" required [(ngModel)]="selectedDropDownValue">
-						<mat-option *ngFor="let dropdown of dropdownValues" [value]="dropdown">
-							{{dropdown}}
+						<mat-option *ngFor="let dropdown of dropdownValues" [value]="dropdown.value">
+							{{dropdown.label}}
 						</mat-option>
 					</mat-select>
 					<mat-error *ngIf="!itemForm.get('mergeType').valid && itemForm.get('mergeType').touched">{{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>

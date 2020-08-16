@@ -46,7 +46,7 @@ body {
 [hidden] {
   display: none !important;
 }
-.fc-modal-dialog {
+.fc-modal-dialog, .datasource-preview-dialog {
   mat-dialog-container {
     padding: 0;
 
@@ -169,7 +169,10 @@ body .action-tool-bar {
 }
 
 .cdk-overlay-pane.fc-modal-dialog {
-  // width: auto !important;
+  width: auto !important;
+  height: auto !important;
+}
+.cdk-overlay-pane.datasource-preview-dialog {
   height: auto !important;
 }
 button.mat-menu-item:last-child {

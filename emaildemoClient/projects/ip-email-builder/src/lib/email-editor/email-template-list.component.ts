@@ -6,8 +6,7 @@ import { EmailTemplateService } from './email-template.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BaseListComponent, IListColumn, listColumnType, Globals, PickerDialogService, ErrorService, ConfirmDialogComponent, ServiceUtils } from 'projects/fast-code-core/src/public_api';
 import { TranslateService } from '@ngx-translate/core';
-import { DataSourceService } from './data-source/Services/data-source.service';
-import { DialogeService } from './data-source/Services/dialoge.service';
+import { DialogService } from './data-source/Services/dialog.service';
 import { DataSourceMergeMap } from './data-source/data-source-merge-map/data-source-merge-map';
 
 @Component({
@@ -17,7 +16,7 @@ import { DataSourceMergeMap } from './data-source/data-source-merge-map/data-sou
 })
 export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate> implements OnInit {
 
-	title: string = "Email Templates";
+	title: string = this.translate.instant('EMAIL-EDITOR.EMAIL-TEMPLATE.TITLE');
 	entityName: string = 'Email';
 	columns: IListColumn[] = [
 		{
@@ -41,42 +40,6 @@ export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate
 			filter: true,
 			type: listColumnType.String
 		},
-		/*{
-			column: 'cc',
-			label: this.translate.instant('EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.CC'),
-			sort: true,
-			filter: true,
-			type: listColumnType.String
-		},
-		{
-			column: 'contenthtml',
-			label: this.translate.instant('EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.CONTENT-HTML'),
-			sort: true,
-			filter: true,
-			type: listColumnType.String
-		},
-		{
-			column: 'contentjson',
-			label: this.translate.instant('EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.CONTENT-JSON'),
-			sort: true,
-			filter: true,
-			type: listColumnType.String
-		},
-		{
-			column: 'creationtime',
-			label: this.translate.instant('EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.CREATION-TIME'),
-			sort: false,
-			filter: false,
-			type: listColumnType.Date
-		},
-		{
-			column: 'creatoruserid',
-			label: this.translate.instant('EMAIL-EDITOR.EMAIL-TEMPLATE.FIELDS.CREATOR-USER-ID'),
-			sort: true,
-			filter: true,
-			type: listColumnType.String
-		},*/
-
 		{
 			column: 'actions',
 			label: this.translate.instant('EMAIL-GENERAL.ACTIONS.ACTIONS'),
@@ -99,11 +62,9 @@ export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate
 		public emailService: EmailTemplateService,
 		public errorService: ErrorService,
 		private translate: TranslateService,
-		public _dialoge: DialogeService
+		public _dialog: DialogService
 	) {
 		super(router, route, dialog, global, changeDetectorRefs, pickerDialogService, emailService, errorService)
-		//this.globalPermissionService = localGlobalPermissionService;
-
 	}
 
 	ngOnInit() {
@@ -111,12 +72,14 @@ export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate
 		this.primaryKeys = ["id"];
 		super.ngOnInit();
 	}
+
 	initializePageInfo() {
 		this.hasMoreRecords = true;
 		this.pageSize = 10;
 		this.lastProcessedOffset = -1;
 		this.currentPage = 0;
 	}
+	
 	setAssociation() {
 		this.associations = [
 		];
@@ -133,12 +96,12 @@ export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate
 		let url = `/email/mapping/${item.id}`;
 		this.dataService.get(url).subscribe(res => {
 			obj['data'] = res;
-			this._dialoge.openDialog(DataSourceMergeMap, obj);
+			this._dialog.openDialog(DataSourceMergeMap, obj);
 		});
 	}
 
 	onCancel(): void {
-		this._dialoge.onCancel();
+		this._dialog.onCancel();
 	}
 
 	deleteData(item) {
@@ -149,10 +112,9 @@ export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate
 				this.delete(item);
 			} else {
 				let data = {
-					message: `This emailTemplate is mapped with ${res.fields} merge field(s).`
+					message: this.translate.instant('EMAIL-EDITOR.ERRORS.TEMPLATE-MAPPED')
 				}
 				this.delete(item, data);
-				// this._dialog.confirmDialoge(data);
 			}
 		})
 	}
@@ -188,10 +150,8 @@ export class EmailTemplateListComponent extends BaseListComponent<IEmailTemplate
 	deleteItem(item: IEmailTemplate) {
 		let id = ServiceUtils.encodeIdByObject(item, this.primaryKeys);
 		this.dataService.delete(id).subscribe(result => {
-			console.log("result is", result);
-			let check = true;
 			if (result) {
-				alert("Datasource is already binded, Can Not delete");
+				alert(this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.ERRORS.DELETE'));
 			} else {
 				let r = result;
 				const index: number = this.items.findIndex(x => ServiceUtils.encodeIdByObject(x, this.primaryKeys) == id);

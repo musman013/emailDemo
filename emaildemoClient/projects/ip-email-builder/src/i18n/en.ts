@@ -1,4 +1,5 @@
 export var en: any = {
+    "HOME": "Home",
     "EMAIL-GENERAL": {
         "ACTIONS": {
             "SAVE": "Save",
@@ -8,6 +9,7 @@ export var en: any = {
             "CONFIRM": "Confirm",
             "SELECT": "Select",
             "PAUSE": "Pause",
+            "CREATE": "Create",
             "BACK": "Back",
             "ACTIONS": "Actions",
             "DE-LINK": "De-link",
@@ -21,17 +23,48 @@ export var en: any = {
             "LENGTH-EXCEEDING": "Length cannot be greater than {{length}}.",
             "LENGTH-SHORT": "Length cannot be less than {{length}}.",
             "INVALID-FORMAT": "Invalid format.",
+            "UPDATE-FAILED": "Error Occured while updating",
+            "CREATE-FAILED": "Error Occured while creating"
 
         }
     },
     "COMPONENTS": {
         "STRUCTURE": {
-            "REMOVE-BLOCK-MESSAGE": "Are you sure?"
+            "REMOVE-BLOCK-MESSAGE": "Are you sure?",
+            "CHANGE-BLOCK-SETTINGS": "Change block settings",
+            "CHANGE-BLOCK-ORDER": "Change block order",
+            "DUPLICATE-BLOCK": "Duplicate block",
+            "DELETE-BLOCK": "Delete block"
+        },
+        "DIALOG": {
+            "YES": "Yes",
+            "NO": "No"
+        },
+        "PREVIEW": {
+            "DESKTOP": "Desktop / 100%",
+            "TABLET": "Tablet / 768px",
+            "SMARTPHONE": "Smartphone / 360px",
+        }
+    },
+    "ELEMENTS":{
+        "BUTTON": {
+            "DEFAULT-TEXT": "Click on me"
+        },
+        "TEXT-ELEMENT": {
+            "MERGE-FIELD-BUTTON": "Merge Fields"
+        },
+        "EMPTY-BLOCK": {
+            "TITLE": "Drag some blocks here."
         }
     },
     "EMAIL-EDITOR": {
         "TITLE": "Template Detail",
+        "INFORMATION": "Information",
+        "MERGE-FIELDS": "Merge Fields",
         "EMAIL-VARIABLE": {
+            "TITLE": "Email Merge Fields",
+            "ADD-TITLE": "Add Merge Field",
+            "DEFAULT-VALUE-PLACEHOLDER": "Default Value",
             "FIELDS": {
                 "PROPERTY-NAME": "Property Name",
                 "PROPERTY-TYPE": "Property Type",
@@ -42,14 +75,75 @@ export var en: any = {
                 "SELECT-DATE":"Select Date",
                 "SELECT-DECIMAL":"Select Decimal Precision",
                 "ADD-NEW":"Add New"
-
+            },
+            "TYPES": {
+                "NUMBER":{
+                    "INTEGER": "Integer",
+                    "DECIMAL": "Decimal"
+                },
+                "LIST": {
+                    "COMMA-SEPARATED": "Comma Seperated",
+                    "BULLET-VERTICAL": "Bullet Verticle List",
+                    "NUMBERED-VERTICAL": "Numbered Vertical List"
+                },
+                "IMAGE-DROPDOWN": {
+                    "HORIZONTAL": "Horizontal",
+                    "VERTICAL": "Vertical",
+                }
+            },
+            "MERGE-VALUE":{
+                "DATE":{
+                    "LABEL": "Select Date Format"
+                },
+                "CURRENCY":{
+                    "LABEL": "Select Currency Type",
+                    "PLACEHOLDER": "Enter Currency"
+                },
+                "NUMBER":{
+                    "LABEL": "Select Number Type"
+                },
+                "STORAGE":{
+                    "LABEL": "Select Storage Type"
+                },
+                "POSITION":{
+                    "LABEL": "Enter Position"
+                },
+                "LINK":{
+                    "PLACEHOLDER": "Enter Link",
+                },
+                "LIST":{
+                    "LABEL": "Select Storage Type"
+                },
+                "CLICKABLE-IMAGE":{
+                    "LABEL": "Select Storage Type"
+                },
             },
             "MESSAGES": {
                 "NO-ASSOCIATION-SELECTED": "No {{table}} selected",
                 "SELECT-ASSOCIATION": "Select {{table}}"
+            },
+            "ERRORS": {
+                "DELETE-WITH-TEMPLATE": "'Merge field {{propertyName}} is used in email template(s) {{templates}}. Please remove this Merge field from {{templates}} to delete it.",
+                "FILE-SIZE-EXCEEDING": "File size should be less than 2 MB",
+                "NO-IMAGE": "Please enter image"
             }
         },
-         "DATA-SOURCE":{
+        "DATA-SOURCE":{
+            "TITLE": "DataSource",
+            "ADD-TITLE": "Add DataSource",
+            "IMAGE": "image",
+            "PREVIEW-TABLE": "Preview Table",
+            "ERRORS":{
+                "ALREADY-MAPPED": "This email template has already mapped with {{fields}}",
+                "NO-QUERY": "Please enter any query",
+                "DELETE-WITH-FIELDS": "This datasource is mapped with {{fields}} columns.Please remove mappings to delete this datasource.",
+                "DELETE": "Datasource is already binded, can not delete",
+                "NO-COMBINATION": "No combination exist"
+            },
+            "LABELS": {
+                "DATASOURCE-BINDED": "This datasource is binded",
+                "SQL-PLACEHOLDER": "Enter a valid Select SQL Query"
+            },
             "FIELDS":{
                 "NAME":"Name",
                 "SQL-QUERY":"Sql Query",
@@ -57,9 +151,24 @@ export var en: any = {
                 "CREATION":"Created Date",
                 "COLUMN-NAME":"Column Name",
                 "DATA-TYPE":"Data Type"
+            },
+            "MERGE-MAP": {
+                "TOTAL-MERGE-FIELD": "Total Merge Fields",
+                "MAPPED-MERGE-FIELD": "Mapped Merge Fields",
+                "NOT-AVAILABLE": "Not Available",
+                "SAVE-MAP": "Save Map",
+                "TITLE": "Merge Field & DataSource Mapping",
+                "MAPPED-SUCCESSFULLY": "Data Source mapped successfully.",
+                "FIELDS": {
+                    "MERGE-FIELD": "Merge Field",
+                    "DATASOURCE-FIELD": "Datasource Field",
+                    "MAPPING": "Mapping",
+                }
             }
         },
         "EMAIL-TEMPLATE": {
+            "ADD-TITLE": "Create Email Template",
+            "TITLE": "Email Templates",
             "FIELDS": {
                 "TEMPLATE-NAME": "Template Name",
                 "DESCRIPTION": "Description",
@@ -91,6 +200,9 @@ export var en: any = {
             "SAMPLE-TEMPLATE": "<p>Dear Email Editor,</p><p >  With this email template editor, you can edit your text, and add buttons,images and dividers.The above logo image and dividers are for demo purpose, you can remove or replace them. You can view the list of supported elements by clicking the Drag & Drop Content section of the page</p><p>Thanks,</p><p>John</p>",
             "SAMPLE-TEMPLATE2": "It looks like this!",
             "NO-CHANGES": "There's no changes to be saved."
+        },
+        "ERRORS": {
+            "TEMPLATE-MAPPED": "This email template is mapped with {{fields}} merge field(s)."
         }
     },
     "GROUPS": {
@@ -120,6 +232,11 @@ export var en: any = {
                 "BORDER-WIDTH": "Border Width",
                 "STYLE": "Style",
                 "RADIUS": "Radius"
+            },
+            "STYLES": {
+                "SOLID": "Solid",
+                "DASHED": 'Dashed',
+                "DOTTED": 'Dotted'
             }
         },
         "COLOR": {
@@ -190,7 +307,9 @@ export var en: any = {
         "WIDTH-HEIGHT": {
             "LABEL": "",
             "FIELDS": {
-                "UNIT": "Unit"
+                "UNIT": "Unit",
+                "LABEL": "Label",
+                "AUTO": "Auto"
             },
             "UNITS": {
                 "PERCENTS": "Percents",

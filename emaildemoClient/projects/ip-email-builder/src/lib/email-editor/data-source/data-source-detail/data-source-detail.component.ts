@@ -14,8 +14,9 @@ import { IDataSource } from "projects/ip-email-builder/src/lib/email-editor/data
 import { DataSourceService } from "projects/ip-email-builder/src/lib/email-editor/data-source/Services/data-source.service";
 import { IDataSourceMeta } from "projects/ip-email-builder/src/lib/email-editor/data-source/Models/DataSourceMeta";
 import { DataSourceTableComponent } from "../data-source-table/data-source-table";
-import { DialogeService } from "../Services/dialoge.service";
+import { DialogService } from "../Services/dialog.service";
 import { EmailTemplateService } from "../../email-template.service";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "lib-data-source-detail",
@@ -27,23 +28,23 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
   readOnlyQuery: boolean;
   metaList: IDataSourceMeta[];
 
-  title: string = "DataSource";
+  title: string = this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.TITLE');
   parentUrl: string = "./datasources";
   entityName: string = "DataSource";
   metaData: any;
   dataToPreview: any;
   emailTemplates: any[] = [];
-  showSave:boolean = false;
+  showSave: boolean = false;
 
-    showMessage:boolean;
-  errorMessage:any;
-  	displayedColumns: string[] = ['columnName','dataType']
+  showMessage: boolean;
+  errorMessage: any;
+  displayedColumns: string[] = ['columnName', 'dataType']
 
-  @ViewChild('myEditor',{static:false}) myEditor;
+  @ViewChild('myEditor', { static: false }) myEditor;
 
-  dataSourceId:number;
+  dataSourceId: number;
 
-  public previewAvailable:boolean = false;
+  public previewAvailable: boolean = false;
   constructor(
     public formBuilder: FormBuilder,
     public router: Router,
@@ -54,8 +55,9 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
     public pickerDialogService: PickerDialogService,
     public dataService: DataSourceService,
     public errorService: ErrorService,
-    public _dialoge: DialogeService,
+    public _dialog: DialogService,
     public emailTemplateService: EmailTemplateService,
+    public translate: TranslateService,
   ) {
     super(
       formBuilder,
@@ -68,8 +70,8 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
       errorService
     );
     var u = this.route.parent.toString();
-    this.dataService.tableClose$.subscribe(res=>{
-      if(res) {
+    this.dataService.tableClose$.subscribe(res => {
+      if (res) {
         this.onCancel();
         this.dataService.changetableClose(false);
       }
@@ -83,47 +85,47 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
     this.emailTemplateService.getAllTemplates().subscribe((data) => {
       this.emailTemplates = data;
     });
-    this.itemForm.get('sqlQuery').valueChanges.subscribe(()=>{
-		  this.previewAvailable = false;
+    this.itemForm.get('sqlQuery').valueChanges.subscribe(() => {
+      this.previewAvailable = false;
     })
   }
 
 
 
-  ngAfterViewInit():void {
-    console.log('after init',this.myEditor);
-     //this.getChangeContent();
+  ngAfterViewInit(): void {
+    console.log('after init', this.myEditor);
+    //this.getChangeContent();
   }
 
   setForm() {
     this.itemForm = this.formBuilder.group({
-      id:[""],
-		name: ["", [Validators.required]],
-		emailTemplate: this.formBuilder.group({
-		  id: ["", Validators.required],
-		  templateName: [""],
-		}),
-	    sqlQuery: ["", [Validators.required, ValidatorsService.sqlQuery]],
-		  creation: [""],
+      id: [""],
+      name: ["", [Validators.required]],
+      emailTemplate: this.formBuilder.group({
+        id: ["", Validators.required],
+        templateName: [""],
+      }),
+      sqlQuery: ["", [Validators.required, ValidatorsService.sqlQuery]],
+      creation: [""],
       dataSourceMetaList: this.formBuilder.array([]),
-      readOnlyQuery:[""]
+      readOnlyQuery: [""]
     });
   }
 
   selectionChangeDetection() {
-    let emailTemplate:FormGroup = this.itemForm.get('emailTemplate') as FormGroup;
-    emailTemplate.valueChanges.subscribe(data=>{
+    let emailTemplate: FormGroup = this.itemForm.get('emailTemplate') as FormGroup;
+    emailTemplate.valueChanges.subscribe(data => {
 
-      if(data.id && this.emailTemplateId != data.id) {
+      if (data.id && this.emailTemplateId != data.id) {
         let url = `/datasource/getAlreadyMappedDatasourceForEmailTemplate/${data.id}`;
         this.dataService.get(url).subscribe(res => {
           console.log(res);
-          if(res.fields == "NORECORD") {
-            
+          if (res.fields == "NORECORD") {
+
           } else {
-            let id:FormControl = emailTemplate.get('id') as FormControl;
+            let id: FormControl = emailTemplate.get('id') as FormControl;
             id.reset();
-            this.errorService.showError(`This email template has already mapped with ${res.fields}`);
+            this.errorService.showError(this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.ERROS.ALREADY-MAPPED', {fields: res.fields}));
           }
         })
       }
@@ -134,68 +136,68 @@ export class DataSourceDetailComponent extends BaseDetailsComponent<IDataSource>
     this.item = item;
     this.itemForm.patchValue(this.item);
     this.metaList = this.item.metaList;
-    console.log("item is ",this.item);
-     this.emailTemplateId=this.item.emailTemplate.id;
+    console.log("item is ", this.item);
+    this.emailTemplateId = this.item.emailTemplate.id;
     this.selectionChangeDetection();
-   
-    this.readOnlyQuery=this.item.readOnlyQuery;
 
-	// this.itemForm.valueChanges.subscribe(()=>{
-	// 	this.showSave = true;
-	// })
+    this.readOnlyQuery = this.item.readOnlyQuery;
+
+    // this.itemForm.valueChanges.subscribe(()=>{
+    // 	this.showSave = true;
+    // })
   }
 
   previewData() {
-	let sqlQuery = this.itemForm.controls.sqlQuery.value;
-	if(sqlQuery == "") {
-		alert("Please enter any query");
-		return;
-	}
-	this.dataService.previewData(sqlQuery).subscribe((data) => {	
-		if (data && data.valid) {
-       this.showMessage=false;
-      this.errorMessage='';
-      this.previewAvailable = true;
-      this._dialoge.openDialog(DataSourceTableComponent,data)
-			this.metaData = data.metaData;
-      this.addControls();
-      this.showSave=true;
-		} else {
-      //alert(data.message);
-      this.showMessage=true;
-      this.errorMessage=data.message;
-		}
-	});
+    let sqlQuery = this.itemForm.controls.sqlQuery.value;
+    if (sqlQuery == "") {
+      alert(this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.ERRORS.NO-QUERY'));
+      return;
+    }
+    this.dataService.previewData(sqlQuery).subscribe((data) => {
+      if (data && data.valid) {
+        this.showMessage = false;
+        this.errorMessage = '';
+        this.previewAvailable = true;
+        this._dialog.openDialog(DataSourceTableComponent, data)
+        this.metaData = data.metaData;
+        this.addControls();
+        this.showSave = true;
+      } else {
+        //alert(data.message);
+        this.showMessage = true;
+        this.errorMessage = data.message;
+      }
+    });
   }
 
   addControls() {
-  const arr = this.itemForm.get('dataSourceMetaList') as FormArray;
-  arr.clear();
-	this.metaData.forEach(element => {
-		let temp = this.formBuilder.group({
-			metaColumn: new FormControl(element.metaColumn),
-			metaColumnDataType: new FormControl(element.metaColumnDataType)
-		})
-    arr.push(temp);
-	});
+    const arr = this.itemForm.get('dataSourceMetaList') as FormArray;
+    arr.clear();
+    this.metaData.forEach(element => {
+      let temp = this.formBuilder.group({
+        metaColumn: new FormControl(element.metaColumn),
+        metaColumnDataType: new FormControl(element.metaColumnDataType)
+      })
+      arr.push(temp);
+    });
   }
 
 
   getChangeContent() {
-      const editor = this.myEditor.codeMirror;
-      const doc = editor.getDoc();
-      this.searchKeyword(doc,editor,'SELECT');
-      this.searchKeyword(doc,editor,'FROM');
-      this.searchKeyword(doc,editor,'WHERE');
+    const editor = this.myEditor.codeMirror;
+    const doc = editor.getDoc();
+    this.searchKeyword(doc, editor, 'SELECT');
+    this.searchKeyword(doc, editor, 'FROM');
+    this.searchKeyword(doc, editor, 'WHERE');
   }
 
-  searchKeyword(doc,editor,key) {
-    var cursor = doc.getSearchCursor(key,null,`caseFold: false`);
+  searchKeyword(doc, editor, key) {
+    var cursor = doc.getSearchCursor(key, null, `caseFold: false`);
     while (cursor.findNext()) {
       editor.markText(
         cursor.from(),
         cursor.to(),
-        { css:"color: red"  }
+        { css: "color: red" }
       );
     }
 

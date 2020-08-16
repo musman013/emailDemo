@@ -1,16 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
 import { IEmailVariable } from './iemail-variable';
 import { EmailVariableService } from './email-variable.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { EmailVariableNewComponent } from './email-variable-new.component';
-//import {BaseListComponent} from '../base/base-list.component';
-//import { Globals } from '../globals';
-//import { IListColumn, listColumnType } from '../common/ilistColumn';
-//import { PickerDialogService } from '../common/components/picker/picker-dialog.service';
-//import { BaseListComponent,Globals,IListColumn, listColumnType,PickerDialogService } from 'fastCodeCore';// from 'fastCodeCore';
 import {
 	BaseListComponent,
 	Globals,
@@ -20,8 +15,6 @@ import {
 	ErrorService,
 	operatorType, ISearchField, ConfirmDialogComponent, ServiceUtils
 } from 'projects/fast-code-core/src/public_api';// 'fastCodeCore';
-import { GenericApiService } from '../generic-api.service';
-import { IEmailVariableType } from './iemail-variable-type';
 import { EmailVariablTypeService } from './email-variable.type.service';
 import { EmailTemplateService } from '../email-template.service';
 
@@ -32,7 +25,7 @@ import { EmailTemplateService } from '../email-template.service';
 })
 export class EmailVariableListComponent extends BaseListComponent<IEmailVariable> implements OnInit {
 
-	title: string = "Email Merge Fields";
+	title: string = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.TITLE');
 
 	columns: IListColumn[] = [
 		{
@@ -108,10 +101,8 @@ export class EmailVariableListComponent extends BaseListComponent<IEmailVariable
 			operator: operatorType.Contains
 		};
 		const searches = [search];
-		//console.log(item);
 		this.emailService.getAll(searches).subscribe(templates => {
 			const emailTemplates = templates;
-			// console.log('email templates:', emailTemplates);
 			if (emailTemplates.length > 0) {
 				let templates = null;
 				emailTemplates.forEach(template => {
@@ -123,9 +114,9 @@ export class EmailVariableListComponent extends BaseListComponent<IEmailVariable
 				this.deleteDialogRef = this.dialog.open(ConfirmDialogComponent, {
 					disableClose: true,
 					data: {
-						title: 'Information',
-						action: 'OK',
-						message: 'Merge field {{' + item.propertyName + '}} is used in email ' + (emailTemplates.length > 1 ? 'templates' : 'template') + ' ' + templates + '. Please remove this Merge field from ' + templates + ' to delete it.'
+						title: this.translate.instant('EMAIL-EDITOR.INFORMATION'),
+						action: this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'),
+						message: this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.ERROR.DELETE-WITH-TEMPLATE', {propertyName: item.propertyName, tempaltes: templates})
 					}
 				});
 			} else {
@@ -141,10 +132,8 @@ export class EmailVariableListComponent extends BaseListComponent<IEmailVariable
 	deleteItem(item: IEmailVariable) {
 		let id = ServiceUtils.encodeIdByObject(item, this.primaryKeys);
 		this.dataService.delete(id).subscribe(result => {
-			console.log("result is", result);
-			let check = true;
 			if (result) {
-				alert("Datasource is already binded, Can Not delete");
+				alert(this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.ERRORS.DELETE'));
 			} else {
 				let r = result;
 				const index: number = this.items.findIndex(x => ServiceUtils.encodeIdByObject(x, this.primaryKeys) == id);

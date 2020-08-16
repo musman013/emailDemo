@@ -1,8 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {TextBlock} from '../../classes/Elements';
-import {createPadding, createFont, createLineHeight} from '../../utils';
-import {IpEmailBuilderService} from '../../ip-email-builder.service';
-import {EmailVariableService} from 'projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { TextBlock } from '../../classes/Elements';
+import { createPadding, createFont, createLineHeight } from '../../utils';
+import { IpEmailBuilderService } from '../../ip-email-builder.service';
+import { EmailVariableService } from 'projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.service';
 
 @Component({
   selector: 'ip-text-element',
@@ -13,19 +13,19 @@ export class TextElementComponent implements OnInit {
   showActive: boolean;
   errorMessage: any;
   quillEditorRef: any;
-  showDropDown:boolean = true;
+  showDropDown: boolean = true;
   @Input()
   block: TextBlock = new TextBlock('Text from inside a component');
 
 
   constructor(private ngjs: IpEmailBuilderService,
-              private emailVariableService: EmailVariableService, private _ngb: IpEmailBuilderService,) {
+    private emailVariableService: EmailVariableService, private _ngb: IpEmailBuilderService, ) {
     _ngb.MergeTags = new Set(['tag22']);
   }
 
 
   getTextStyles() {
-    const {color, font, lineHeight, padding} = this.block.options;
+    const { color, font, lineHeight, padding } = this.block.options;
 
     return {
       color,
@@ -42,10 +42,10 @@ export class TextElementComponent implements OnInit {
   getQuillConfig() {
     const container: Array<Array<object | string>> = [
       ['bold', 'italic', 'underline', 'strike'],
-      [{header: 1}, {header: 2}],
-      [{size: ['small', false, 'large', 'huge']}, {align: []}],
-      [{color: []}, {background: []}],
-      [{direction: 'rtl'}, 'link']
+      [{ header: 1 }, { header: 2 }],
+      [{ size: ['small', false, 'large', 'huge'] }, { align: [] }],
+      [{ color: [] }, { background: [] }],
+      [{ direction: 'rtl' }, 'link']
     ];
 
 
@@ -155,7 +155,7 @@ export class TextElementComponent implements OnInit {
     if (comboElement.classList.contains('show')) {
       comboElement.classList.remove('show');
     }
-    else{
+    else {
       comboElement.classList.add('show');
       comboElement.classList.remove('show');
     }

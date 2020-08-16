@@ -3,7 +3,7 @@
 		<mat-card-header>
 			<mat-card-title>{{title}}</mat-card-title>
 			<a name="cancel" href="javascript:void(0)" (click)="onCancel()" class="cancle-btn"><i
-					class="material-icons">add_circle</i></a>
+				class="material-icons">add_circle</i></a>
 		</mat-card-header>
 		<mat-card-content>
             <mat-table #table [dataSource]="tableSource.dataToPreview" class="mat-elevation-z8">
@@ -22,7 +22,7 @@
             </mat-table>
 		</mat-card-content>
 		<mat-card-actions class="fc-text-right">
-			<button mat-raised-button (click)="onCancel()"  type="button" >Cancel</button>
+			<button mat-raised-button (click)="onCancel()"  type="button" >{{'EMAIL-GENERAL.ACTIONS.CANCEL' | translate}}</button>
 		</mat-card-actions>
 	</mat-card>
 	

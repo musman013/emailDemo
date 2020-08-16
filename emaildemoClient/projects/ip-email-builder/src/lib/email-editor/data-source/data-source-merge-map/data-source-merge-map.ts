@@ -1,9 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { DialogeService } from '../Services/dialoge.service';
+import { DialogService } from '../Services/dialog.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { GenericApiService, ErrorService } from 'projects/fast-code-core/src/public_api';
 import { DataSourceService } from '../Services/data-source.service';
 import { MatSnackBar } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'data-source-merge-map',
@@ -14,21 +14,20 @@ export class DataSourceMergeMap implements OnInit{
 
     dataToPreview: any[];
     displayedColumns: any[] = ['Merge Field', 'Meta List','Already Mapped'];
-    title: string = "Merge Field & DataSource  Mapping";
+    title: string = this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.MERGE-MAP.TITLE');
     tableSource: any;
     totalMergeField:number=0;
     mappedMergeField:number=0;
     len : number = 0;
     emailTemplateId:any;
     constructor(
-        public _dialoge : DialogeService,
+        public _dialog : DialogService,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dataService: DataSourceService,
         public snackBar : MatSnackBar,
-        
+        public translate : TranslateService,
     ) { 
         this.emailTemplateId=data.emailTemplateId;
-        
     }
 
     ngOnInit(): void {
@@ -51,7 +50,7 @@ export class DataSourceMergeMap implements OnInit{
      }
 
     onCancel() {
-        this._dialoge.onCancel();
+        this._dialog.onCancel();
     }
 
     dropDownValueChanged(event, element) {
@@ -85,11 +84,11 @@ export class DataSourceMergeMap implements OnInit{
         let data=this.getDataToSend();
         if(data && data.length>0) {
             this.dataService.post(url, data).subscribe(res=>{
-                var snackBarRef = this.snackBar.open("Data Source mapped successfully.", null, {
+                var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.MERGE-MAP.MAPPED-SUCCESSFULLY'), null, {
                     duration: 3000,
                     panelClass: ['snackbar-background']
                 });
-                this._dialoge.onCancel();
+                this._dialog.onCancel();
             })
         } else {
             if(this.len == 0) {
@@ -97,11 +96,11 @@ export class DataSourceMergeMap implements OnInit{
             } else {
                 let deletionurl = '/email/deletemapping/'+this.emailTemplateId;
                 this.dataService.deleteByUrl(deletionurl).subscribe(res=>{
-                    var snackBarRef = this.snackBar.open("Data Source mapped successfully.", null, {
+                    var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.DATA-SOURCE.MERGE-MAP.MAPPED-SUCCESSFULLY'), null, {
                         duration: 3000,
                         panelClass: ['snackbar-background']
                     });
-                    this._dialoge.onCancel();
+                    this._dialog.onCancel();
                 })
             }
     

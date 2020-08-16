@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { DialogeService } from "../Services/dialoge.service";
+import { DialogService } from "../Services/dialog.service";
+import { TranslateService } from "@ngx-translate/core";
 @Component({
   selector: "data-source-table",
   templateUrl: "./data-source-table.html",
@@ -9,12 +10,13 @@ export class DataSourceTableComponent implements OnInit {
   dataToPreview: any[];
   displayedColumns: any[];
   displayColumnsType:any[];
-  title: string = "Preview Table";
+  title: string = this.translate.instant("EMAIL-EDITOR.DATA-SOURCE.PREVIEW-TABLE");
   tableSource: any;
   image : any;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public _dialoge : DialogeService,
+    public _dialog : DialogService,
+    public translate : TranslateService,
   ) {
       this.displayedColumns = [];
       this.dataToPreview = [];
@@ -53,7 +55,7 @@ export class DataSourceTableComponent implements OnInit {
   }
 
   onCancel() {
-   this._dialoge.onCancel();
+   this._dialog.onCancel();
   }
 
 

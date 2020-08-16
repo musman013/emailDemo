@@ -1,7 +1,5 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {EmailFileService} from '../email-file.service';
-import {Observable} from 'rxjs';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'lib-email-attachment',
@@ -15,7 +13,6 @@ export class EmailAttachmentComponent {
   file: any;
   @Output() onAttachmentAdd = new EventEmitter<Set<File>>();
 
-
   constructor(private http: HttpClient) {
   }
 
@@ -27,7 +24,6 @@ export class EmailAttachmentComponent {
           this.setFileUri(event.target.files[key]);
         }
       }
-
       this.onAttachmentAdd.emit(this.files);
     }
   }
@@ -39,7 +35,6 @@ export class EmailAttachmentComponent {
       this.filesMap.set(file, reader.result);
     };
   }
-
 
   removeFile(file: File) {
     this.files.delete(file);

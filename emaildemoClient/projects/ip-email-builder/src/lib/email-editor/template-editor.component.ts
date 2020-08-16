@@ -1,26 +1,22 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {EmailTemplateService} from './email-template.service';
-import {MailTemplateService} from './mail-template.service';
-import {EmailVariableService} from './email-variable/email-variable.service';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { EmailTemplateService } from './email-template.service';
+import { MailTemplateService } from './mail-template.service';
+import { EmailVariableService } from './email-variable/email-variable.service';
 
 import {
-  IPDefaultEmail, Structure, TextBlock, ImageBlock, IpBlock, IBlocks, DividerBlock
+  IPDefaultEmail, Structure, TextBlock, ImageBlock, DividerBlock
 } from '../classes';
-import {IpEmailBuilderService} from '../ip-email-builder.service';
-//'ip-email-builder';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {ActivatedRoute, Router} from '@angular/router';
-import {IEmailTemplate} from './iemail-template';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatSelect, MatSnackBar, MatDialog} from '@angular/material';
-import {TranslateService} from '@ngx-translate/core';
-import {map, startWith} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
-import {EmailFileService} from './email-file.service';
-import {environment} from '../environment';
-import {ConfirmDialogComponent} from 'projects/ip-email-builder/src/lib/components/dialog.component';
+import { IpEmailBuilderService } from '../ip-email-builder.service';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IEmailTemplate } from './iemail-template';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar, MatDialog } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
+import { map, startWith } from 'rxjs/operators';
+import { EmailFileService } from './email-file.service';
+import { ConfirmDialogComponent } from 'projects/ip-email-builder/src/lib/components/dialog.component';
 
-//import { DividerBlock, IBlockState } from 'ip-email-builder/public_api';
 @Component({
   selector: 'email-template-editor',
   templateUrl: './template-editor.component.html',
@@ -32,7 +28,7 @@ export class TemplateEditorComponent implements OnInit {
   api: string = '/api/files/';
   replaceapi: string = '/api/files/';
   emailTemplateId: string;
-  title = 'Create Email Template';
+  title = this.translate.instant('EMAIL-EDITOR.EMAIL-TEMPLATE.ADD-TITLE');
   isLoading: BehaviorSubject<boolean>;
   emailTemplate?: IEmailTemplate;
   errorMessage = '';
@@ -44,10 +40,10 @@ export class TemplateEditorComponent implements OnInit {
   IsCreatePermission: Boolean = false;
   IsUpdatePermission: Boolean = false;
   IsDeletePermission: Boolean = false;
-  @ViewChild('subject', {read: ElementRef, static: true})
+  @ViewChild('subject', { read: ElementRef, static: true })
   subject: ElementRef;
 
-  @ViewChild('category', {read: ElementRef, static: false})
+  @ViewChild('category', { read: ElementRef, static: false })
   category: ElementRef;
 
   categoryList: string[];
@@ -151,8 +147,8 @@ export class TemplateEditorComponent implements OnInit {
                 new ImageBlock(
                   'https://secureservercdn.net/198.71.190.232/rjq.996.myftpupload.com/wp-content/uploads/2018/07/Nav-Logo.png',
                   {
-                    width: {value: 200, unit: 'px'},
-                    height: {value: 50, unit: 'px'},
+                    width: { value: 200, unit: 'px' },
+                    height: { value: 50, unit: 'px' },
 
                   }
                 ),
@@ -163,24 +159,14 @@ export class TemplateEditorComponent implements OnInit {
                 }),
                 new TextBlock(
                   `${this.translate.instant('EMAIL-EDITOR.MESSAGES.SAMPLE-TEMPLATE')}`,
-                  // `<p>Dear Email Editor,</p><p >  With this email template editor, you can edit your text, and add buttons,images and dividers.
-                  //  The above logo image and dividers are for demo purpose, you can remove or replace them.
-                  //  You can view the list of supported elements by clicking the Drag & Drop Content section of the page</p>
-                  // <p>Thanks,</p>
-                  // <p>John</p>`,
                   {
                     lineHeight: {
                       value: 22,
                       unit: 'px'
                     },
-                    padding: {bottom: 10, left: 25, right: 25, top: 10}
+                    padding: { bottom: 10, left: 25, right: 25, top: 10 }
                   }
                 ),
-                /*   new TextBlock(
-                     `<h2 class="ql-align-center">${this.translate.instant('EMAIL-EDITOR.MESSAGES.SAMPLE-TEMPLATE2')}</h2>`
-                   )*/
-
-
               ]
             ])
         ]
@@ -211,7 +197,6 @@ export class TemplateEditorComponent implements OnInit {
     this.saveInProgress = true;
     this.waitFor(_ => this.saveInProgress === false)
       .then(_ => {
-        console.log('the wait is over!');
         this.inProgress = true;
         this.sendTestMailAfterSave(to);
         this.testSend = false;
@@ -231,16 +216,12 @@ export class TemplateEditorComponent implements OnInit {
       contentJson = contentJson.replace(this.replaceapi, 'cid:IMAGE');
     }
     this.emailTemplate.contentJson = contentJson;
-    //this.emailTemplate.contentJson = template;
     let attachments = [];
-    // this.files.forEach(file =>{
-    //   attachments.push({name: file.name, description: file.name});
-    // });
 
     let inlinImages = [];
     this.inlineImages.forEach(file => {
       const id = file['src'].replace(this.replaceapi, '');
-      inlinImages.push({name: id, description: file['src'], summary: 'IMAGE' + id});
+      inlinImages.push({ name: id, description: file['src'], summary: 'IMAGE' + id });
     });
 
     this.emailTemplate.attachments = attachments;
@@ -319,7 +300,6 @@ export class TemplateEditorComponent implements OnInit {
       })
       .afterClosed()
       .subscribe(result => {
-        console.log('reseut', result);
         if (result == 1) {
           this.resetEmailTemplate();
         }
@@ -344,7 +324,7 @@ export class TemplateEditorComponent implements OnInit {
           subject: templ.subject,
           to: templ.to,
           cc: templ.cc,
-          bcc:templ.bcc,
+          bcc: templ.bcc,
           contentJson: templ.contentJson,
           contentHtml: templ.contentHtml,
           category: templ.category,
@@ -373,11 +353,10 @@ export class TemplateEditorComponent implements OnInit {
   saveNextClick() {
     this.isSaveNextClick = true;
     this.inProgress = false;
-    this.submitted=true;
-    if(this.formGroup.valid)
-      {
-    this.saveEmail();
-      }
+    this.submitted = true;
+    if (this.formGroup.valid) {
+      this.saveEmail();
+    }
   }
 
   saveInProgress = false;
@@ -391,10 +370,7 @@ export class TemplateEditorComponent implements OnInit {
     this.onActivate();
     if (!this._ngb.IsChanged) {
       this._ngb.notify(this.translate.instant('EMAIL-EDITOR.MESSAGES.NO-CHANGES'));
-      // return Promise.reject(`There's no changes to be saved`);
     } else {
-      // this.generatingTemplate = true;
-      //await this._ngb.sendRequest();
       if (this.formGroup.invalid) {
         return;
       }
@@ -402,9 +378,7 @@ export class TemplateEditorComponent implements OnInit {
         this.editorView = true;
       } else {
         this.saveAttachmentsAndEmail();
-
       }
-      // this.generatingTemplate = false;
     }
   };
   loadEmailTemplate = () => {
@@ -443,7 +417,7 @@ export class TemplateEditorComponent implements OnInit {
           data => {
             x = data;
             y = JSON.parse(x.contentJson);
-            this.emailTemplate = {...this.emailTemplate, ...data};
+            this.emailTemplate = { ...this.emailTemplate, ...data };
             this.inProgress = false;
             if (!this.testSend) {
               var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.MESSAGES.EMAIL-SAVED-SUCCESS'), this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'), {
@@ -483,7 +457,7 @@ export class TemplateEditorComponent implements OnInit {
   };
 
   onBack(): void {
-    this.router.navigate(['./emailtemplates'], {relativeTo: this.route.parent});
+    this.router.navigate(['./emailtemplates'], { relativeTo: this.route.parent });
   }
 
 
@@ -511,13 +485,13 @@ export class TemplateEditorComponent implements OnInit {
       element.value = element.value.substring(0, pos - 2);
     }
     const updatedValue = this.insert(element.value, insString, pos);
-    if(targetId == 'to3') {
+    if (targetId == 'to3') {
       this.formGroup.get('to').patchValue(updatedValue)
     }
-    else if(targetId == 'cc3') {
+    else if (targetId == 'cc3') {
       this.formGroup.get('cc').patchValue(updatedValue)
     }
-    else if(targetId == 'bcc3') {
+    else if (targetId == 'bcc3') {
       this.formGroup.get('bcc').patchValue(updatedValue)
     }
     else if (targetId == 'subject3') {
@@ -569,15 +543,14 @@ export class TemplateEditorComponent implements OnInit {
             this.emailFileService.uploadFile(res.id, file).subscribe(res => {
 
             });
-            attachments.push({id: res.id});
+            attachments.push({ id: res.id });
           });
         }
-        else
-          {
-            let obj={};
-            obj=file;
-            attachments.push({id: obj['id']});
-          }
+        else {
+          let obj = {};
+          obj = file;
+          attachments.push({ id: obj['id'] });
+        }
       });
     }
 
@@ -592,9 +565,7 @@ export class TemplateEditorComponent implements OnInit {
               this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
                 this.emailFileService.uploadBlock(res.id, block);
                 block.src = res.id;
-                inlineImages.push({id: res.id});
-                //additional code
-                //attachments.push({id: res.id});
+                inlineImages.push({ id: res.id });
               });
             } else {
               block.src.replace(this.replaceapi, '');
@@ -625,6 +596,6 @@ export class TemplateEditorComponent implements OnInit {
 
   openEmailTemplate() {
     this.editorView = false;
-    this.submitted=false;
+    this.submitted = false;
   }
 }

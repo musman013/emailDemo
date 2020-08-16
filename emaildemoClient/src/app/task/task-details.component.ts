@@ -33,7 +33,7 @@ export class TaskDetailsComponent extends BaseDetailsComponent<ITask> implements
 		public appsService: AppsService,
 		public datePipe:DatePipe
 	) {
-		super(formBuilder, router, route, dialog, global, pickerDialogService, dataService, errorService,datePipe);
+		super(formBuilder, router, route, dialog, global, pickerDialogService, dataService, errorService);
   }
 
 	ngOnInit() {

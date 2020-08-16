@@ -55,8 +55,7 @@ export class TaskNewComponent extends BaseNewComponent<ITask>
       global,
       pickerDialogService,
       dataService,
-      errorService,
-      datePipe
+      errorService
     );
   }
 

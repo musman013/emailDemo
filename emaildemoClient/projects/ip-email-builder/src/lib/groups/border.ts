@@ -13,8 +13,8 @@ import { TranslateService } from '@ngx-translate/core';
       <mat-form-field appearance="outline" *ngIf="hasOwnProperty('style')">
         <mat-label>{{'GROUPS.BORDER.FIELDS.STYLE' | translate}}</mat-label>
         <mat-select placeholder="{{'GROUPS.BORDER.FIELDS.STYLE' | translate}}" [(value)]="border.style" disableRipple>
-          <mat-option *ngFor="let style of ['solid', 'dashed', 'dotted']" [value]="style">
-            {{style}}
+          <mat-option *ngFor="let style of styles" [value]="style.value">
+            {{style.label}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -30,6 +30,21 @@ import { TranslateService } from '@ngx-translate/core';
 export class BorderComponent {
   @Input()
   border: IBorder;
+
+  styles: any[] = [
+    {
+      label: "solid",
+      value: "solid"
+    },
+    {
+      label: "dotted",
+      value: "dotted"
+    },
+    {
+      label: "dashed",
+      value: "dashed"
+    },
+  ]
 
   constructor(private translate: TranslateService){}
 
