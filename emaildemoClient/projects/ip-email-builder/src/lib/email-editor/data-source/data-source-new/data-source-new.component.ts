@@ -100,7 +100,9 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
     super.ngOnInit();
     this.checkPassedData();
     this.emailTemplateService.getAllTemplates().subscribe((data) => {
-      this.emailTemplates = data;
+      data.forEach(e =>{
+        this.filterAlreadyMapped(e);
+      })
     });
 
     this.itemForm.get("sqlQuery").valueChanges.subscribe(() => {
@@ -108,6 +110,16 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
     });
 
     this.selectionChangeDetection();
+  }
+
+  filterAlreadyMapped(emailT) {
+    const url = `/datasource/getAlreadyMappedDatasourceForEmailTemplate/${emailT.id}`;
+    this.dataService.get(url).subscribe(res => {
+      console.log(res);
+      if (res.fields == 'NORECORD') {
+        this.emailTemplates.push(emailT);
+      }
+    });
   }
 
   selectionChangeDetection() {
@@ -119,7 +131,7 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
         this.dataService.get(url).subscribe(res => {
           console.log(res);
           if(res.fields == "NORECORD") {
-            
+
           } else {
             let id:FormControl = emailTemplate.get('id') as FormControl;
             id.reset();
@@ -141,7 +153,7 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
         this.showMessage = false;
         this.errorMessage = "";
         this.previewAvailable = true;
-        this._dialog.openDialog(DataSourceTableComponent,data);                                                                                                                                                                                                 
+        this._dialog.openDialog(DataSourceTableComponent,data);
         this.dataToPreview = data.dataToPreview;
         this.metaData = data.metaData;
         this.addControls();
@@ -177,6 +189,6 @@ export class DataSourceNewComponent extends BaseNewComponent<IDataSource>
 
     while (cursor.findNext()) {
       editor.markText(cursor.from(), cursor.to(), { css: "color: red" });
-    } 
+    }
   }
 }

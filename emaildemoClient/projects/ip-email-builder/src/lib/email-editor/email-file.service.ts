@@ -12,6 +12,7 @@ import {GenericApiService, ILibraryRootConfg} from 'projects/fast-code-core/src/
 })
 export class EmailFileService extends GenericApiService<IEmailTemplate> {
   urlPath;
+  replaceapi: string = '/api/files/';
 
   constructor(private httpclient: HttpClient, @Inject(IP_CONFIG)  config: ILibraryRootConfg) {
     super(httpclient, {apiUrl: config.apiPath}, 'email');
@@ -41,7 +42,7 @@ export class EmailFileService extends GenericApiService<IEmailTemplate> {
       this.httpclient.put(this.urlPath + '/files/' + id, fileData)
         .subscribe(res => {
           if (block.src) {
-            block.src = id;
+            block.src = this.replaceapi + id;
           }
         });
     }
