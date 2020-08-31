@@ -18,9 +18,9 @@ import {
   Globals,
   PickerDialogService,
   ErrorService,
+  ValidatorsService
 } from "projects/fast-code-core/src/public_api";
 import { DatePipe } from "@angular/common";
-import { ValidatorsService } from "src/app/validators.service";
 import { DataSourceService } from "projects/ip-email-builder/src/lib/email-editor/data-source/Services/data-source.service";
 import { IDataSource } from "projects/ip-email-builder/src/lib/email-editor/data-source/Models/IDataSource";
 import { EmailVariablTypeService } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.type.service";

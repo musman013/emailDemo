@@ -23,6 +23,7 @@ export * from './lib/common/core/iassociation';
 export * from './lib/common/core/iassociationentry';
 export * from './lib/common/core/association-column.interface';
 export * from './lib/common/core/iglobal-permission.service';
+export * from './lib/common/core/validators.service';
 export * from './lib/common/core/ipermission';
 export * from './lib/common/core/itoken-detail';
 export * from './lib/common/core/ilibrary-root-confg';

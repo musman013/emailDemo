@@ -60,21 +60,13 @@ import { ConfirmDialogComponent } from './components/dialog.component';
 import { EmptyBlockComponent } from './elements/empty-block.component';
 import { HttpClientModule } from '@angular/common/http';
 import { PreviewTemplateComponent } from './components/preview.component';
-import {Globals} from './globals';
-//
-//import {EmailListComponent} from './email-editor/email-list.component'
 import { EmailTemplateListComponent } from './email-editor/email-template-list.component';
 import { TemplateEditorComponent } from './email-editor/template-editor.component';
 import {EmailVariableListComponent} from "./email-editor/email-variable/email-variable-list.component";
 import {EmailVariableNewComponent} from "./email-editor/email-variable/email-variable-new.component";
 import {EmailVariableDetailComponent} from "./email-editor/email-variable/email-variable-detail.component";
-import { PickerComponent } from './picker/picker.component';
-//import {EmailTemplateListComponent,TemplateEditorComponent, EmailVariableListComponent, EmailVariableNewComponent, EmailVariableDetailComponent} from  './email-editor/index';
 import { RouterModule } from '@angular/router';
 import { EmailRoutes } from './email-routing.module';
-//import { ILibraryRootConfg } from './interfaces';
-//import { EmailRoutingModule } from './email-routing.module';
-//import {FastCodeCoreModule,EmailRoutes} from 'fastCodeCore';
 import { FastCodeCoreModule ,ILibraryRootConfg} from 'projects/fast-code-core/src/public_api';
 import { EmailAttachmentComponent } from './email-editor/email-attachment/email-attachment.component';
 import { InternationalPhoneNumberModule } from 'ngx-international-phone-number';
@@ -82,9 +74,6 @@ import { DataSourceListComponent } from './email-editor/data-source/data-source-
 import { DataSourceNewComponent } from './email-editor/data-source/data-source-new/data-source-new.component';
 import { DataSourceDetailComponent } from './email-editor/data-source/data-source-detail/data-source-detail.component';
 import { DataSourceTableComponent } from './email-editor/data-source/data-source-table/data-source-table';
-import { WindowRef } from "projects/ip-email-builder/src/lib/email-editor/data-source/data-source-new/WindowRef";
-//'fastCodeCore';
-//import {GenericApiService} from 'fastCodeCore/public_api';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import 'codemirror/addon/search/search.js';
 import 'codemirror/addon/display/placeholder.js';
@@ -92,7 +81,6 @@ import { DataSourceMergeMap } from './email-editor/data-source/data-source-merge
 
 @NgModule({
   imports: [
-    // EmailRoutingModule,
     FastCodeCoreModule.forRoot({apiUrl: ''}),
     RouterModule.forChild(EmailRoutes),
     HttpClientModule,
@@ -161,7 +149,12 @@ import { DataSourceMergeMap } from './email-editor/data-source/data-source-merge
     EmptyBlockComponent,
     DataSourceMergeMap,
     TemplateEditorComponent,
-    EmailTemplateListComponent,TemplateEditorComponent,PickerComponent, EmailAttachmentComponent, DataSourceListComponent, DataSourceNewComponent, DataSourceDetailComponent,
+    EmailTemplateListComponent,
+    TemplateEditorComponent,
+    EmailAttachmentComponent,
+    DataSourceListComponent,
+    DataSourceNewComponent,
+    DataSourceDetailComponent,
     DataSourceTableComponent
   ],
   exports: [IpEmailBuilderComponent,
@@ -175,7 +168,6 @@ import { DataSourceMergeMap } from './email-editor/data-source/data-source-merge
     SocialComponent,
     ConfirmDialogComponent,
     EmptyBlockComponent,
-    PickerComponent,
     DataSourceNewComponent,
     DataSourceTableComponent,
     DataSourceMergeMap
@@ -193,9 +185,7 @@ export class IpEmailBuilderModule {
         {
           provide: GENERAL_OPTIONS,
           useValue: { padding: {} }
-        },
-        Globals,
-        // WindowRef
+        }
       ]
     };
   }

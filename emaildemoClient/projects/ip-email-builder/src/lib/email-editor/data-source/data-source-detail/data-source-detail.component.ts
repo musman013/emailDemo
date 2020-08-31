@@ -7,9 +7,9 @@ import {
   Globals,
   PickerDialogService,
   ErrorService,
+  ValidatorsService
 } from "projects/fast-code-core/src/public_api"; // 'fastCodeCore';
 import { EmailVariablTypeService } from "projects/ip-email-builder/src/lib/email-editor/email-variable/email-variable.type.service";
-import { ValidatorsService } from "src/app/validators.service";
 import { IDataSource } from "projects/ip-email-builder/src/lib/email-editor/data-source/Models/IDataSource";
 import { DataSourceService } from "projects/ip-email-builder/src/lib/email-editor/data-source/Services/data-source.service";
 import { IDataSourceMeta } from "projects/ip-email-builder/src/lib/email-editor/data-source/Models/DataSourceMeta";

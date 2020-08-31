@@ -14,6 +14,7 @@ import {
   Globals,
   PickerDialogService,
   ErrorService,
+  ValidatorsService
 } from "projects/fast-code-core/src/public_api"; // 'fastCodeCore';
 import { IEmailVariableType } from "./iemail-variable-type";
 import { EmailVariablTypeService } from "./email-variable.type.service";
@@ -25,7 +26,6 @@ import {
   MAT_DATE_FORMATS
 } from "@angular/material";
 import { formatDate, DatePipe } from "@angular/common";
-import { ValidatorsService } from "src/app/validators.service";
 import { first } from "rxjs/operators";
 import { EmailFileService } from "../email-file.service";
 import { TranslateService } from "@ngx-translate/core";
@@ -80,7 +80,7 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable>
   dropDownLabel: string = "";
 
   imageSrc: string;
-  placeHolderValue = "Default Value";
+  placeHolderValue = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.DEFAULT-VALUE-PLACEHOLDER');
 
   dropdownValues: any[] = [];
   imageDropDown: any[] = [
@@ -119,7 +119,7 @@ export class EmailVariableNewComponent extends BaseNewComponent<IEmailVariable>
   ];
   decimalDropDown: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-  title: string = "Add Merge Field";
+  title: string = this.translate.instant('EMAIL-EDITOR.EMAIL-VARIABLE.ADD-TITLE');
   entityName: string = "EmailVariable";
   emailVariableType: IEmailVariableType[];
 
