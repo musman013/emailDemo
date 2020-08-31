@@ -1,21 +1,21 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { EmailTemplateService } from './email-template.service';
-import { MailTemplateService } from './mail-template.service';
-import { EmailVariableService } from './email-variable/email-variable.service';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {EmailTemplateService} from './email-template.service';
+import {MailTemplateService} from './mail-template.service';
+import {EmailVariableService} from './email-variable/email-variable.service';
 
 import {
   IPDefaultEmail, Structure, TextBlock, ImageBlock, DividerBlock
 } from '../classes';
-import { IpEmailBuilderService } from '../ip-email-builder.service';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
-import { IEmailTemplate } from './iemail-template';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar, MatDialog } from '@angular/material';
-import { TranslateService } from '@ngx-translate/core';
-import { map, startWith } from 'rxjs/operators';
-import { EmailFileService } from './email-file.service';
-import { ConfirmDialogComponent } from 'projects/ip-email-builder/src/lib/components/dialog.component';
+import {IpEmailBuilderService} from '../ip-email-builder.service';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {ActivatedRoute, Router} from '@angular/router';
+import {IEmailTemplate} from './iemail-template';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatSnackBar, MatDialog} from '@angular/material';
+import {TranslateService} from '@ngx-translate/core';
+import {map, startWith} from 'rxjs/operators';
+import {EmailFileService} from './email-file.service';
+import {ConfirmDialogComponent} from 'projects/ip-email-builder/src/lib/components/dialog.component';
 
 @Component({
   selector: 'email-template-editor',
@@ -40,10 +40,10 @@ export class TemplateEditorComponent implements OnInit {
   IsCreatePermission: Boolean = false;
   IsUpdatePermission: Boolean = false;
   IsDeletePermission: Boolean = false;
-  @ViewChild('subject', { read: ElementRef, static: true })
+  @ViewChild('subject', {read: ElementRef, static: true})
   subject: ElementRef;
 
-  @ViewChild('category', { read: ElementRef, static: false })
+  @ViewChild('category', {read: ElementRef, static: false})
   category: ElementRef;
 
   categoryList: string[];
@@ -147,8 +147,8 @@ export class TemplateEditorComponent implements OnInit {
                 new ImageBlock(
                   'https://secureservercdn.net/198.71.190.232/rjq.996.myftpupload.com/wp-content/uploads/2018/07/Nav-Logo.png',
                   {
-                    width: { value: 200, unit: 'px' },
-                    height: { value: 50, unit: 'px' },
+                    width: {value: 200, unit: 'px'},
+                    height: {value: 50, unit: 'px'},
 
                   }
                 ),
@@ -164,7 +164,7 @@ export class TemplateEditorComponent implements OnInit {
                       value: 22,
                       unit: 'px'
                     },
-                    padding: { bottom: 10, left: 25, right: 25, top: 10 }
+                    padding: {bottom: 10, left: 25, right: 25, top: 10}
                   }
                 ),
               ]
@@ -221,7 +221,7 @@ export class TemplateEditorComponent implements OnInit {
     let inlinImages = [];
     this.inlineImages.forEach(file => {
       const id = file['src'].replace(this.replaceapi, '');
-      inlinImages.push({ name: id, description: file['src'], summary: 'IMAGE' + id });
+      inlinImages.push({name: id, description: file['src'], summary: 'IMAGE' + id});
     });
 
     this.emailTemplate.attachments = attachments;
@@ -417,7 +417,7 @@ export class TemplateEditorComponent implements OnInit {
           data => {
             x = data;
             y = JSON.parse(x.contentJson);
-            this.emailTemplate = { ...this.emailTemplate, ...data };
+            this.emailTemplate = {...this.emailTemplate, ...data};
             this.inProgress = false;
             if (!this.testSend) {
               var snackBarRef = this.snackBar.open(this.translate.instant('EMAIL-EDITOR.MESSAGES.EMAIL-SAVED-SUCCESS'), this.translate.instant('EMAIL-GENERAL.ACTIONS.OK'), {
@@ -426,9 +426,9 @@ export class TemplateEditorComponent implements OnInit {
               });
             }
             this.saveInProgress = false;
-            if (!this.testSend) {
-              this.onBack();
-            }
+            /* if (!this.testSend) {
+               this.onBack();
+             }*/
           },
           error => {
           });
@@ -447,9 +447,9 @@ export class TemplateEditorComponent implements OnInit {
               });
             }
             this.saveInProgress = false;
-            if (!this.testSend) {
+            /*if (!this.testSend) {
               this.onBack();
-            }
+            }*/
           },
           error => {
           });
@@ -457,7 +457,7 @@ export class TemplateEditorComponent implements OnInit {
   };
 
   onBack(): void {
-    this.router.navigate(['./emailtemplates'], { relativeTo: this.route.parent });
+    this.router.navigate(['./emailtemplates'], {relativeTo: this.route.parent});
   }
 
 
@@ -486,16 +486,13 @@ export class TemplateEditorComponent implements OnInit {
     }
     const updatedValue = this.insert(element.value, insString, pos);
     if (targetId == 'to3') {
-      this.formGroup.get('to').patchValue(updatedValue)
-    }
-    else if (targetId == 'cc3') {
-      this.formGroup.get('cc').patchValue(updatedValue)
-    }
-    else if (targetId == 'bcc3') {
-      this.formGroup.get('bcc').patchValue(updatedValue)
-    }
-    else if (targetId == 'subject3') {
-      this.formGroup.get('subject').patchValue(updatedValue)
+      this.formGroup.get('to').patchValue(updatedValue);
+    } else if (targetId == 'cc3') {
+      this.formGroup.get('cc').patchValue(updatedValue);
+    } else if (targetId == 'bcc3') {
+      this.formGroup.get('bcc').patchValue(updatedValue);
+    } else if (targetId == 'subject3') {
+      this.formGroup.get('subject').patchValue(updatedValue);
     }
     this.formGroup.value.subject = updatedValue; //this.formGroup.value.subject + "{{" +value + "}}";
     element.value = updatedValue;
@@ -543,13 +540,12 @@ export class TemplateEditorComponent implements OnInit {
             this.emailFileService.uploadFile(res.id, file).subscribe(res => {
 
             });
-            attachments.push({ id: res.id });
+            attachments.push({id: res.id});
           });
-        }
-        else {
+        } else {
           let obj = {};
           obj = file;
-          attachments.push({ id: obj['id'] });
+          attachments.push({id: obj['id']});
         }
       });
     }
@@ -564,11 +560,11 @@ export class TemplateEditorComponent implements OnInit {
               };
               this.emailFileService.createFileMetadata(fileMetadata).subscribe(res => {
                 this.emailFileService.uploadBlock(res.id, block);
-                block.src = res.id;
-                inlineImages.push({ id: res.id });
+                block.src = this.replaceapi + res.id;
+                inlineImages.push({id: res.id});
               });
             } else {
-              block.src.replace(this.replaceapi, '');
+              // block.src.replace(this.replaceapi, '');
             }
           }
         });

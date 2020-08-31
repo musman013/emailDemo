@@ -8,9 +8,7 @@
 
 		<mat-card-content>
 			<br>
-			<h2 class="mapHeading">{{'EMAIL-EDITOR.DATA-SOURCE.MERGE-MAP.TOTAL-MERGE-FIELD' | translate}} : {{totalMergeField}}
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				{{'EMAIL-EDITOR.DATA-SOURCE.MERGE-MAP.MAPPED-MERGE-FIELD' | translate}} : {{mappedMergeField}}</h2>
+
 			<mat-table #table [dataSource]="data.data" class="mat-elevation-z8">
 				<ng-container matColumnDef="Merge Field">
 					<mat-header-cell *matHeaderCellDef>{{'EMAIL-EDITOR.DATA-SOURCE.MERGE-MAP.FIELDS.MERGE-FIELD' | translate}}</mat-header-cell>
@@ -28,7 +26,7 @@
 								{{ dropdown.dataSourceEntity.name }}.{{ dropdown.metaColumn }}
 							</mat-option>
 						</mat-select>
-						<p *ngIf="!element.dataSourceMetaList || element.dataSourceMetaList.length == 0">{{'EMAIL-EDITOR.DATA-SOURCE.MERGE-MAP.NOT-AVAILABLE' | translate}}
+						<p *ngIf="!element.dataSourceMetaList || element.dataSourceMetaList.length == 0">{{'EMAIL-EDITOR.DATA-SOURCE.MERGE-MAP.BLANK' | translate}}
 						</p>
 					</mat-cell>
 				</ng-container>
@@ -48,7 +46,7 @@
 								</span>
 							</li>
 						</ul>
-						<p *ngIf="!element.alreadyMappedList || element.alreadyMappedList.length == 0">{{'EMAIL-EDITOR.DATA-SOURCE.MERGE-MAP.NOT-AVAILABLE' | translate}}</p>
+						<p *ngIf="!element.alreadyMappedList || element.alreadyMappedList.length == 0">{{'EMAIL-EDITOR.DATA-SOURCE.MERGE-MAP.BLANK' | translate}}</p>
 					</mat-cell>
 				</ng-container>
 

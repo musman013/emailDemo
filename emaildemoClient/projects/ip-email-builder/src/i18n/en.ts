@@ -156,12 +156,13 @@ export var en: any = {
                 "TOTAL-MERGE-FIELD": "Total Merge Fields",
                 "MAPPED-MERGE-FIELD": "Mapped Merge Fields",
                 "NOT-AVAILABLE": "Not Available",
+                "BLANK": "",
                 "SAVE-MAP": "Save Map",
                 "TITLE": "Merge Field & DataSource Mapping",
                 "MAPPED-SUCCESSFULLY": "Data Source mapped successfully.",
                 "FIELDS": {
                     "MERGE-FIELD": "Merge Field",
-                    "DATASOURCE-FIELD": "Datasource Field",
+                    "DATASOURCE-FIELD": "Available Datasource Fields",
                     "MAPPING": "Mapping",
                 }
             }

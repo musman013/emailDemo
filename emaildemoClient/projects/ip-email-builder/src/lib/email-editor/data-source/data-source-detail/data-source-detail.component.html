@@ -43,7 +43,7 @@
 						{{'EMAIL-GENERAL.ERRORS.REQUIRED' | translate}}</mat-error>
 				</mat-form-field> -->
 				<div class="sqlEditor">
-					<ngx-codemirror  #myEditor  
+					<ngx-codemirror  #myEditor
 					formControlName="sqlQuery"  (keyup)="getChangeContent()" [options]="{
 					  lineNumbers: true,
 					  theme: 'eclipse',
@@ -51,7 +51,7 @@
 					  mime: 'text/x-pgsql',
 					  placeholder: translate.instant('EMAIL-EDITOR.DATA-SOURCE.LABELS.SQL-PLACEHOLDER'),
 					readOnly:readOnlyQuery
-					
+
 					}"></ngx-codemirror>
 				</div>
 
@@ -64,7 +64,7 @@
 
 
 
-			<div class="table-container">
+			<!--<div class="table-container">
 			<mat-table matSort [dataSource]="metaList" class="mat-elevation-z8">
 				<ng-container matColumnDef="columnName">
 					<mat-header-cell mat-sort-header *matHeaderCellDef>
@@ -81,17 +81,17 @@
 						{{ item.metaColumnDataType }}
 					</mat-cell>
 				</ng-container>
-			
+
 				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 				<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 			</mat-table>
-		</div>
+		</div>-->
 
 			<div class="association-div full-width">
 				<div class="fc-row">
 					<div class="fc-col-sm-12 fc-text-right">
 						<button name="back" mat-raised-button color="basic" [routerLink]="['/email/datasources']">
-							{{'EMAIL-GENERAL.ACTIONS.CANCEL' | translate}} 
+							{{'EMAIL-GENERAL.ACTIONS.CANCEL' | translate}}
 						</button>
 						<button mat-raised-button [disabled]="itemForm.get('sqlQuery').invalid" (click)="previewData()" type="button">
 							{{'EMAIL-GENERAL.ACTIONS.EXECUTE' | translate}}

@@ -10,20 +10,20 @@
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>{{disCol}}</mat-header-cell>
                     <mat-cell *matCellDef="let element ">
-						<span *ngIf="data.metaData[colIndex].metaColumnDataType != 'bytea'">{{element[disCol]}}</span> 
+						<span *ngIf="data.metaData[colIndex].metaColumnDataType != 'bytea'">{{element[disCol]}}</span>
 						<span *ngIf="data.metaData[colIndex].metaColumnDataType == 'bytea'">
 							( image )
 						</span>
                     </mat-cell>
                 </ng-container>
-        
+
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
             </mat-table>
 		</mat-card-content>
 		<mat-card-actions class="fc-text-right">
-			<button mat-raised-button (click)="onCancel()"  type="button" >{{'EMAIL-GENERAL.ACTIONS.CANCEL' | translate}}</button>
+			<button mat-raised-button (click)="onCancel()"  type="button" >{{'EMAIL-GENERAL.ACTIONS.OK' | translate}}</button>
 		</mat-card-actions>
 	</mat-card>
-	
+
 </div>

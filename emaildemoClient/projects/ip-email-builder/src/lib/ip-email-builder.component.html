@@ -6,10 +6,10 @@
       <div fxFlexlayout fxLayoutGap="0.5rem">
         <!--  <button type="button" (click)="saveEmail()" [disabled]="previewTemplate" mat-stroked-button color="primary">Save
           Email</button>-->
-        <button type="button" (click)="togglePreview()" [disabled]="!template" mat-stroked-button>
+       <!-- <button type="button" (click)="togglePreview()" [disabled]="!template" mat-stroked-button>
           <span *ngIf="!previewTemplate">{{'EMAIL-BUILDER.PREVIEW-BUTTON-TEXT' | translate}}</span>
           <span *ngIf="previewTemplate">{{'EMAIL-BUILDER.CLOSE-PREVIEW-BUTTON-TEXT' | translate}}</span>
-        </button>
+        </button>-->
       </div>
 
       <ng-content fxLayout fxLayoutGap="0.5rem" select=".top-actions">
